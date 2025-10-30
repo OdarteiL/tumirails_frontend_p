@@ -11,3 +11,4 @@
 | ADR-009 | Use AWS Aurora MySQL for DB                 | Ensure relational integrity with scalability and backups.                              | Approved |
 | ADR-010 | CI/CD with GitHub Actions + CodePipeline    | Enable automated deployment and testing per branch.                                    | Proposed |
 | ADR-011 | Laravel Layering: Controllers→Services→Actions | Keep controllers thin, isolate orchestration and units of work, improve testability.   | Approved |
+| ADR-012 | Branching Strategy: develop→staging→production | Feature branches to develop; QA on staging; releases from staging to production.       | Approved |
