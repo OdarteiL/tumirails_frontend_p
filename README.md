@@ -11,6 +11,11 @@ The Tumi Solar Configurator is a multi-stakeholder platform that connects custom
 - **New to the project?** Start with [Documentation Guide](docs/README.md)
 - **Ready to develop?** Check [MVP Roadmap](docs/product/mvp/mvp-roadmap.md)
 - **Need API reference?** See [API Documentation](docs/api/api-endpoints.md)
+- **MVP User Stories (subset)**: [MVP Stories](docs/product/mvp/mvp-user-stories.md)
+- **Two 1-week sprints plan**: [Sprint Plan](docs/product/mvp/sprint-plan.md)
+- **Need API reference?** See [API Endpoints Guide](docs/api/api-endpoints.md) and [OpenAPI](docs/api/openapi.yaml)
+- **Branching strategy**: [develop → staging → production](docs/governance/branching-strategy.md)
+- **Using AI help?** Read [AI Assistance Guide](docs/governance/ai-assistance.md)
 
 ## Key Features
 
@@ -58,22 +63,39 @@ Platform administrators who manage users, categories, and system configurations.
 
 ## Project Structure
 
+This repository is documentation-first. Backend/Frontend scaffolding will be created in Sprint 0. Current layout:
+
 ```
 tumi_configurator/
-├── backend/              # Laravel API application
-│   ├── app/
-│   ├── database/
-│   ├── routes/
-│   └── config/
-├── frontend/             # Vue.js SPA application
-│   ├── src/
-│   ├── public/
-│   └── package.json
-├── docs/                 # Project documentation
-│   ├── README.md         # Documentation guide
-│   ├── mvp/             # MVP-specific docs
-│   └── full/            # Complete system docs
-└── docker-compose.yml    # Development environment
+├── backend/
+│   └── AI_CONTEXT.md            # Backend AI assistance context
+├── frontend/
+│   └── AI_CONTEXT.md            # Frontend AI assistance context
+├── docs/
+│   ├── README.md                # Docs index (start here)
+│   ├── api/
+│   │   └── openapi.yaml         # API contract (OpenAPI 3.1)
+│   ├── architecture/
+│   │   ├── technical-architecture.md
+│   │   ├── system-architecture.mmd
+│   │   ├── deployment-view.md
+│   │   └── data-models/
+│   │       └── tumi.dbml        # ERD source (DBML)
+│   ├── decisions/
+│   │   └── adr/                 # ADRs including ADR-011, ADR-012
+│   ├── governance/
+│   │   ├── ai-assistance.md
+│   │   ├── branching-strategy.md
+│   │   ├── contribution-guide.md
+│   │   └── trr/
+│   │       └── technical-review-report.md
+│   └── product/
+│       └── mvp/
+│           ├── mvp-roadmap.md
+│           ├── mvp-user-stories.md
+│           ├── sprint-plan.md
+│           └── jira-backlog.csv
+└── docker-compose.yaml          # Local dev (to be used post-scaffold)
 ```
 
 ## Development Phases
@@ -100,6 +122,27 @@ AI/ML integration, mobile apps, business intelligence
 3. **Follow the [MVP Setup Guide](docs/product/mvp/setup.md)**
 4. **Review the [Database Schema](docs/architecture/database-schema.md)**
 5. **Start with [MVP Development](docs/product/mvp/mvp-roadmap.md)**
+
+## Architecture & Standards
+
+- Backend layering: Controllers → Services → Actions (see ADR-011)
+	- Keep controllers thin; orchestration in services; small single-purpose actions
+	- Functions should do one thing; aim for ≤ 2 parameters (use DTOs when needed)
+- Branching strategy: develop → staging → production (see ADR-012 and docs/governance/branching-strategy.md)
+- See coding standards and contribution guide under `docs/governance/`
+
+## Data Model & API
+
+- ERD source (DBML): `docs/architecture/data-models/tumi.dbml` (import on dbdiagram.io)
+- Database schema summary: `docs/database-schema.md`
+- API contract: `docs/api/openapi.yaml` and `docs/api/api-endpoints.md`
+
+## AI Assistance
+
+- When asking AI for help, attach the relevant context:
+	- Backend: `backend/AI_CONTEXT.md`
+	- Frontend: `frontend/AI_CONTEXT.md`
+- See `docs/governance/ai-assistance.md` for prompt checklist
 
 ## License
 
