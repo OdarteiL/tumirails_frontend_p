@@ -44,6 +44,7 @@ Use this page as the single entry point to understand the product vision, MVP sc
   - Contribution Guide: `docs/governance/contribution-guide.md`
   - Coding Standards: `docs/governance/coding-standards.md`
   - AI Assistance Guide: `docs/governance/ai-assistance.md`
+  - Branching Strategy: `docs/governance/branching-strategy.md`
 
 ## Viewing the diagrams
 

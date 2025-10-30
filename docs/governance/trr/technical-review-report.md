@@ -79,6 +79,7 @@ Pre-development (post-discovery, pre-Sprint 0).
 | 5 | Implement modular API          | Independent modules (Estimation, Hardware, Installations) | Backend   | ADR-005 |
 | 6 | Introduce data caching layer   | Faster load times for estimation tools                    | Backend   | ADR-006 |
 | 7 | Laravel layering: C→S→A        | Thin controllers, services orchestrate, actions do one job| Backend   | ADR-011 |
+| 8 | Branching strategy             | develop→staging→production PR flow; hotfixes from prod    | DevOps    | ADR-012 |
 
 ---
 
