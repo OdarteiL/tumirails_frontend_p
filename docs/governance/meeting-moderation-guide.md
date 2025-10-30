@@ -49,6 +49,7 @@ Use this guide to run a 90-minute alignment session to finalize MVP scope, close
 - Estimation ↔ Project linkage (add projects.estimation_id or keep implicit? choose and document)
 - Enum sets (roles, statuses, payment_method) aligned across DB and OpenAPI
 - Image management deferred (confirm MVP deferral)
+ - Branching strategy approval (develop→staging→production; PR flow; hotfix policy)
 
 ## Two one-week sprints — planning guidance
 - Sprint 1 goal: Foundation + Estimation path to recommendations (happy path)

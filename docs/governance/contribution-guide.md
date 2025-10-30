@@ -14,3 +14,11 @@
 ## Versioning
 - Use semantic headings and dates in TRRs/ADRs.
 - Include a short changelog entry if you change scope or architecture.
+
+## Branching workflow (overview)
+- Feature branches from `develop` using `feature/<short-summary>`
+- PRs into `develop` with review + passing checks
+- QA via PR from `develop` to `staging`
+- Release via PR from `staging` to `production`; tag release
+- Hotfixes from `production` then back-merge to `develop` and `staging`
+See `docs/governance/branching-strategy.md` and ADR-012 for details.
