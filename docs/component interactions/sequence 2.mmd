@@ -1,0 +1,32 @@
+sequenceDiagram
+  participant U as Customer
+  participant FE as Frontend
+  participant API as Laravel API
+  participant DB as RDS
+  participant Pay as PaySvc (Gateway)
+  participant PSP as PSP (MoMo)
+  participant Project as ProjectSvc
+  participant Split as PaymentSplitSvc
+  participant Wallet as WalletSvc
+
+  U->>FE: Accept recommended hardware + request installer -> submit order
+  FE->>API: POST /projects {estimation_id, hardware_list, installer_id}
+  API->>DB: create project, create payment_plan (milestone type), create milestones
+  API-->>FE: project created + payment_plan + milestones
+
+  U->>FE: Pays installment for Milestone #1 (amount X)
+  FE->>API: POST /payments {milestone_id, amount, method=momo}
+  API->>Pay: create payment record & call PSP (redirect / initiate)
+  Pay->>PSP: initiate transaction
+  PSP-->>Pay: webhook -> success
+  Pay->>DB: update payment (status=success)
+  Pay->>Split: create PaymentSplit entries (provider/installer/platform)
+  Split->>Wallet: credit internal wallets (or call PSP transfer APIs)
+  Wallet->>DB: update balances, create Transaction ledger records
+  Split-->>API: settled for that installment
+  API->>DB: update milestone.total_paid (sum installments)
+  alt milestone.total_paid >= milestone.amount
+    API->>DB: set milestone.status = completed
+    API->>Project: if all milestones completed set project.status = completed
+  end
+  API-->>FE: payment success + milestone progress

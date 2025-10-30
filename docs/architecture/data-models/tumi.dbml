@@ -1,0 +1,342 @@
+// Tumi Configurator DBML (source of truth for ERD)
+// Import this file into https://dbdiagram.io to visualize
+
+// Copy of the user's provided schema
+
+Table User {
+  id integer [primary key]
+  first_name varchar
+  last_name varchar
+  other_names varchar
+  username varchar
+  role enum // customer, installer, provider, admin, verifier)
+  email varchar
+  password varchar
+  profile_image_id integer
+  phone varchar
+  address varchar
+  status enum // (active, inactive, suspended)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Image {
+  id integer [primary key]
+  by_id integer
+  by_type varchar // user provider
+  imageable_id integer // user site user_appliance
+  imageable_type varchar
+  url varchar
+  caption varchar
+  metadata json
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Site {
+  id integer [primary key]
+  user_id integer
+  name varchar
+  address varchar
+  longitude double
+  latitude double
+  meter_type enum
+  status enum
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Provider {
+  id integer [primary key]
+  company_name varchar
+  address varchar
+  user_id integer [not null]
+  phone varchar
+  verified bool 
+  rating float
+  status enum
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Appliance {
+  id integer [primary key]
+  user_id integer [not null] // add by admin
+  name varchar
+  default_wattage float
+  category_id integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table UserAppliance {
+  id integer [primary key]
+  user_id integer [not null]
+  site_id integer [not null]
+  appliance_id integer [not null]
+  default_wattage float
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Category {
+  id integer [primary key]
+  name varchar
+  user_id integer [not null] // added by admins
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table HardwareType {
+  id integer [primary key]
+  name varchar // (panel, inverter, battery, meter)
+  user_id integer [not null] // added by admins or providers
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Hardware {
+  id integer [primary key]
+  name varchar
+  provider_id integer [not null] 
+  type_id integer [not null]
+  capacity float 
+  specs json 
+  price decimal 
+  warranty_months int
+  notes text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Installer {
+  id integer [primary key]
+  user_id integer
+  license varchar 
+  longitude double
+  latitude double
+  area varchar // operational area
+  status enum // (active, inactive, pending) 
+  rating float 
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Project {
+  id integer [primary key]
+  customer_id integer
+  installer_id integer
+  site_id integer
+  status enum // (initiated, in_progress, installed, verified, completed) 
+  payment_plan_id integer
+  total_cost decimal // total of all milestones
+  start_date timestamp 
+  end_date timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table ProjectHardware {
+  id integer [primary key]
+  project_id integer
+  hardware_id integer
+  quantity integer 
+  installed_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Verifier {
+  id integer [primary key]
+  user_id integer
+  status enum // (active, inactive, pending) 
+  rating float 
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Verification {
+  id integer [primary key]
+  project_id integer
+  hardware_id integer
+  verifier_id integer
+  quantity int 
+  installed_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table PaymentPlan {
+  id integer [primary key]
+  project_id integer
+  type enum // milestone upfront
+  total_amount decimal // total of all milestones
+  currency string // e.g., GHS, USD or provided by admin
+  total_paid decimal // running sum of installments
+  status enum // (pending, active, completed) 
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table PaymentMilestone {
+  id integer [primary key]
+  payment_plan_id integer
+  name string // e.g. "Hardware Delivery"
+  description text // optional
+  amount decimal // expected total for this milestone
+  due_order integer // milestone order
+  due_date timestamp // optional
+  status enum // (pending, active, completed) 
+  total_paid decimal // running sum of installments
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Payment {
+  id integer [primary key]
+  paymentable_id integer
+  paymentable_type varchar // payment plan (for upfront) or milestone
+  project_id integer
+  payer_id integer
+  amount decimal // amount paid
+  payment_method enum // (momo, card, bank, transfer) 
+  status enum // (pending, success, failed, refunded) 
+  transaction_ref string // reference from gateway
+  gateway enum // (Paystack, Flutterwave, Stripe, etc.)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table PaymentSplit {
+  id integer [primary key]
+  for_id integer
+  for_type varchar // payment plan or milestone
+  receiver_id integer
+  receiver_type varchar // provider or user (installer, verifier) or null for platform
+  project_id integer
+  role enum // (provider, installer, verifier, platform) 
+  amount decimal // amount received
+  status enum // (pending, settled) 
+  settled_at timestamp
+}
+
+Table Wallet {
+  id integer [primary key]
+  for_id integer
+  for_type varchar // provider or user (installer, verifier)
+  balance decimal // Current wallet balance
+  currency string 
+  last_updated timestamp 
+  status enum // (active, suspended)
+  created_at timestamp
+}
+
+Table Transaction {
+  id integer [primary key]
+  for_id integer
+  for_type varchar // user (including installer, verifier), provider and null for platform
+  project_id integer
+  transactionable_id integer
+  transactionable_type varchar // payment split, payment
+  type enum // (credit, debit, refund) 
+  amount decimal 
+  currency string 
+  description text // e.g. “Installer payout for Project X”
+  created_at timestamp
+}
+
+Table Estimation {
+  id integer [primary key]
+  user_id integer
+  site_id integer
+  total_kw decimal // Sum of all appliance wattages converted to kW
+  daily_kwh decimal // Daily consumption (usage × hours)
+  monthly_cost_est decimal // Approximate monthly energy bill
+  currency varchar
+  input_payload json // includes raw inputs like appliance list, meter reading, image references
+  status enum // draft, completed
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table RecommendedHardware {
+  id integer [primary key]
+  estimation_id integer
+  hardware_id integer
+  quantity integer 
+  total_cost decimal
+  currency varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Ref user_images: User.id > Image.by_id // many-to-one
+Ref: Provider.id > Image.by_id
+Ref added_categories: User.id > Category.user_id // many-to-one
+
+Ref user_sites: User.id > Site.user_id // many-to-one
+
+Ref: User.profile_image_id > Image.imageable_id // one-to-one
+Ref: UserAppliance.id > Image.imageable_id // one-to-many
+
+Ref: Appliance.category_id > Category.id // many-to-one
+Ref: Appliance.user_id > User.id
+Ref: Appliance.id > Image.imageable_id // one-to-many
+
+Ref: Provider.user_id > User.id // one-to-one
+Ref: Installer.user_id > User.id // one-to-one
+
+Ref: Provider.id > Hardware.provider_id
+Ref: Hardware.type_id > HardwareType.id // many-to-one
+Ref: User.id > HardwareType.user_id // many-to-one
+Ref: Hardware.id > Image.imageable_id // one-to-many
+
+Ref: UserAppliance.user_id > User.id
+Ref: UserAppliance.site_id > Site.id
+Ref: UserAppliance.appliance_id > Appliance.id
+
+Ref project_payment_plan: Project.id > PaymentPlan.id // one-to-one
+
+Ref project_payment_milestones: PaymentPlan.id > PaymentMilestone.payment_plan_id // one-to-many
+
+Ref: Project.installer_id > Installer.id // many-to-one
+Ref: Project.site_id > Site.id // many-to-one
+Ref: Project.customer_id > User.id // many-to-one
+
+Ref: ProjectHardware.project_id > Project.id // many-to-one
+Ref: ProjectHardware.hardware_id > Hardware.id // many-to-one
+
+Ref: Verifier.user_id > User.id
+
+Ref: Verification.hardware_id > Hardware.id
+Ref: Verification.project_id > Project.id
+Ref: Verification.verifier_id > Verifier.id
+Ref: Verification.id > Image.imageable_id // one-to-many
+
+Ref: Payment.paymentable_id < PaymentPlan.id // many-to-one 
+Ref: Payment.paymentable_id < PaymentMilestone.id // many-to-one
+Ref: Payment.project_id < Project.id // many-to-one
+Ref: Payment.payer_id < User.id // many-to-one
+
+Ref: PaymentSplit.for_id < PaymentPlan.id // many-to-one 
+Ref: PaymentSplit.for_id < PaymentMilestone.id // many-to-one
+Ref: PaymentSplit.receiver_id < User.id // many-to-one 
+Ref: PaymentSplit.receiver_id < Provider.id // many-to-one
+
+Ref: Wallet.for_id < User.id // one-to-one 
+Ref: Wallet.for_id < Provider.id // one-to-one
+
+Ref: Transaction.for_id < User.id // many-to-one 
+Ref: Transaction.for_id < Provider.id // many-to-one
+Ref: Transaction.transactionable_id < PaymentSplit.id // many-to-one 
+Ref: Transaction.transactionable_id < Payment.id // many-to-one
+
+Ref: Estimation.user_id < User.id // many-to-one
+Ref: Estimation.site_id < Site.id // many-to-one
+
+Ref: RecommendedHardware.estimation_id < Estimation.id // many-to-one
+Ref: RecommendedHardware.hardware_id < Hardware.id // many-to-one

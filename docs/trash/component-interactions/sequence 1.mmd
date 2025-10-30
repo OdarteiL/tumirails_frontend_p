@@ -1,0 +1,26 @@
+sequenceDiagram
+  participant U as User (Customer)
+  participant FE as Frontend (Vue)
+  participant API as Laravel API
+  participant Est as Estimation Engine
+  participant HW as Hardware Catalog
+  participant DB as RDS
+  participant Img as MediaSvc (S3)
+
+  U->>FE: create site + upload photos
+  FE->>API: POST /sites + images (multipart)
+  API->>Img: upload images -> S3
+  Img-->>API: s3_urls
+  API->>DB: CREATE site record
+  API-->>FE: site created
+
+  U->>FE: submit appliances + meter readings -> request estimate
+  FE->>API: POST /estimations {site_id, appliances, meter_reading, image_refs}
+  API->>Est: queue estimation job (via Redis)
+  Est->>DB: pull appliance reference + weather (if needed)
+  Est->>DB: CREATE estimation record (status=draft)
+  Est-->>API: estimation result + kWh
+  API->>HW: query hardware catalog for matching components
+  HW-->>API: returns candidate hardware sets
+  API->>DB: store recommended_hardware entries
+  API-->>FE: estimation + recommended_hardware list shown
