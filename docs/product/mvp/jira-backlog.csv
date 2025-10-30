@@ -1,0 +1,46 @@
+Issue Type,Key,Summary,Description,Acceptance Criteria,Story Points,Sprint,Priority,Labels,Epic Link
+Epic,TUMI-E1,Auth & Foundation,"User authentication and project foundation setup.","- Sanctum enabled
+- Registration & login endpoints
+- Basic UI to log in",,Sprint 1,High,auth,
+Story,TUMI-1,User Registration & Login,"As a customer, I can register and log in to access my dashboard.","- POST /auth/register creates user
+- POST /auth/login returns token
+- UI login form works
+- Tests for happy path",5,Sprint 1,High,auth, TUMI-E1
+Epic,TUMI-E2,Sites & Appliances,"Site creation and appliance catalog management.","- Create site API/UI
+- Appliance catalog seeded
+- Add user appliances to site",,Sprint 1,High,sites,
+Story,TUMI-2,Create Site (single),"As a customer, I can create one site with name/address/coords.","- POST /sites creates site
+- UI form validates inputs
+- Site visible in list",3,Sprint 1,High,sites, TUMI-E2
+Story,TUMI-3,Appliance Catalog (seed + list),"As an admin, I seed and list appliances for users to select.","- Seed script for appliances
+- GET /appliances returns catalog",3,Sprint 1,Medium,appliances, TUMI-E2
+Story,TUMI-4,Add User Appliances,"As a customer, I can add appliances to my site for estimation.","- Persist user_appliances
+- Validation and simple UI",3,Sprint 1,Medium,appliances, TUMI-E2
+Epic,TUMI-E3,Estimation & Recommendation,"Energy estimation and basic hardware recommendation.","- Estimation service computes totals
+- Recommendation suggests panel/inverter/battery",,Sprint 1,High,estimation,
+Story,TUMI-5,Create Estimation,"As a customer, I can compute totals (kW, kWh, monthly cost) for my site.","- POST /estimations returns totals
+- Persist estimation record
+- Unit tests for calc",5,Sprint 1,High,estimation, TUMI-E3
+Story,TUMI-6,Get Recommendations,"As a customer, I can view recommended hardware.","- GET /estimations/{id}/recommendations returns items
+- Ties to provider hardware",5,Sprint 1,Medium,recommendation, TUMI-E3
+Epic,TUMI-E4,DevEx & CI,"Minimal dev experience to support MVP.","- Seed data and demo script
+- Basic CI checks",,Sprint 1,Medium,devex,
+Story,TUMI-7,Seed Data & Demo,"As a developer, I have seed data and a simple demo script.","- Seeder for users/appliances/hardware
+- Demo path works end-to-end",2,Sprint 1,Medium,devex, TUMI-E4
+Epic,TUMI-E5,Project Creation & Assignment,"Project creation and manual installer assignment.","- Create project from estimation
+- Admin assigns installer",,Sprint 2,High,projects,
+Story,TUMI-8,Create Project from Estimation,"As a customer, I can create a project from a successful estimation.","- POST /projects creates a project linked to customer/site
+- Project status initialized",5,Sprint 2,High,projects, TUMI-E5
+Story,TUMI-9,Manual Installer Assignment,"As an admin, I can assign an installer to a project.","- Admin UI to select installer
+- Project updated with installer_id",3,Sprint 2,Medium,projects, TUMI-E5
+Epic,TUMI-E6,Payments (Upfront),"Upfront payment flow for projects.","- Payment endpoint and gateway integration
+- Status update & persistence",,Sprint 2,High,payments,
+Story,TUMI-10,Upfront Payment,"As a customer, I can pay upfront for my project.","- POST /projects/{id}/payments records payment
+- Gateway mock/live response handled
+- Status updated",5,Sprint 2,High,payments, TUMI-E6
+Epic,TUMI-E7,Admin Basics,"Essential admin management for MVP.","- Manage hardware types/categories
+- Basic user management",,Sprint 2,Medium,admin,
+Story,TUMI-11,Manage Hardware Types & Categories,"As an admin, I can manage hardware types and categories.","- CRUD endpoints and minimal UI
+- Validation in place",3,Sprint 2,Medium,admin, TUMI-E7
+Story,TUMI-12,Basic User Management,"As an admin, I can activate/suspend users.","- Update user status
+- Simple UI control",2,Sprint 2,Medium,admin, TUMI-E7
