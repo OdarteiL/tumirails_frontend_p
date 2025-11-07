@@ -11,7 +11,7 @@ The MVP focuses on the essential workflow: Customer creates estimate → Gets re
 
 ### 2. Site Management (MVP)
 - Customers can create sites with basic info (name, address, coordinates)
-- Single site per customer for MVP
+- Multiple site per customer for MVP
 
 ### 3. Energy Estimation (MVP)
 - Admin-managed appliance catalog
@@ -58,6 +58,7 @@ The MVP focuses on the essential workflow: Customer creates estimate → Gets re
 - `payments` - Payment records
 
 ### Simplified for MVP
+- Remove Provider's Inventory Management
 - Remove complex payment plans/milestones
 - Remove verification system
 - Remove image management
@@ -67,6 +68,7 @@ The MVP focuses on the essential workflow: Customer creates estimate → Gets re
 ## Post-MVP Features (Phase 2+)
 
 ### Phase 2: Enhanced User Experience
+- Inventory Management System
 - Image Management System
 - Advanced Estimation
 - Installer Marketplace

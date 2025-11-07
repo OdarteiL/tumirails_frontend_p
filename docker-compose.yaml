@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tumi_postgres
+    environment:
+      POSTGRES_DB: tumi
+      POSTGRES_USER: tumi
+      POSTGRES_PASSWORD: tumi_pwd
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-net
+
+  backend:
+    build: ./backend
+    container_name: tumi_backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: tumi
+      DB_USERNAME: tumi
+      DB_PASSWORD: tumi_pwd
+      APP_URL: http://localhost:8000
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    networks:
+      - app-net
+
+  frontend:
+    build: ./frontend
+    container_name: tumi_frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000/api
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
