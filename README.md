@@ -10,10 +10,9 @@ The Tumi Solar Configurator is a multi-stakeholder platform that connects custom
 
 - **New to the project?** Start with [Documentation Guide](docs/README.md)
 - **Ready to develop?** Check [MVP Roadmap](docs/product/mvp/mvp-roadmap.md)
-- **Need API reference?** See [API Documentation](docs/api/api-endpoints.md)
 - **MVP User Stories (subset)**: [MVP Stories](docs/product/mvp/mvp-user-stories.md)
 - **Two 1-week sprints plan**: [Sprint Plan](docs/product/mvp/sprint-plan.md)
-- **Need API reference?** See [API Endpoints Guide](docs/api/api-endpoints.md) and [OpenAPI](docs/api/openapi.yaml)
+- **API Reference**: [Endpoints Guide](docs/api/api-endpoints.md) · [OpenAPI Spec](docs/api/openapi.yaml)
 - **Branching strategy**: [develop → staging → production](docs/governance/branching-strategy.md)
 - **Using AI help?** Read [AI Assistance Guide](docs/governance/ai-assistance.md)
 
@@ -125,24 +124,24 @@ AI/ML integration, mobile apps, business intelligence
 
 ## Architecture & Standards
 
-- Backend layering: Controllers → Services → Actions (see ADR-011)
+- Backend layering: Controllers → Services → Actions (see [ADR-011](docs/decisions/adr/ADR-011-laravel-layering-controllers-services-actions.md))
 	- Keep controllers thin; orchestration in services; small single-purpose actions
 	- Functions should do one thing; aim for ≤ 2 parameters (use DTOs when needed)
-- Branching strategy: develop → staging → production (see ADR-012 and docs/governance/branching-strategy.md)
-- See coding standards and contribution guide under `docs/governance/`
+- Branching strategy: develop → staging → production (see [ADR-012](docs/decisions/adr/ADR-012-branching-strategy-develop-staging-production.md) and [Branching Strategy](docs/governance/branching-strategy.md))
+- See [Coding Standards](docs/governance/coding-standards.md) and [Contribution Guide](docs/governance/contribution-guide.md) under [Governance](docs/governance/)
 
 ## Data Model & API
 
-- ERD source (DBML): `docs/architecture/data-models/tumi.dbml` (import on dbdiagram.io)
-- Database schema summary: `docs/database-schema.md`
-- API contract: `docs/api/openapi.yaml` and `docs/api/api-endpoints.md`
+- ERD source (DBML): [tumi.dbml](docs/architecture/data-models/tumi.dbml) (import at dbdiagram.io)
+- Database schema summary: [database-schema.md](docs/architecture/database-schema.md)
+- API contract: [openapi.yaml](docs/api/openapi.yaml) and [api-endpoints.md](docs/api/api-endpoints.md)
 
 ## AI Assistance
 
-- When asking AI for help, attach the relevant context:
-	- Backend: `backend/AI_CONTEXT.md`
-	- Frontend: `frontend/AI_CONTEXT.md`
-- See `docs/governance/ai-assistance.md` for prompt checklist
+- When asking AI for help, include the relevant context and acceptance criteria.
+  - Backend: [backend/AI_CONTEXT.md](backend/AI_CONTEXT.md)
+  - Frontend: [frontend/AI_CONTEXT.md](frontend/AI_CONTEXT.md)
+- See the full guidelines: [AI Assistance Guide](docs/governance/ai-assistance.md)
 
 ## License
 
