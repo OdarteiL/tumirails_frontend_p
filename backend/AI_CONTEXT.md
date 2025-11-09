@@ -20,6 +20,7 @@ Use this file as context whenever requesting AI assistance for backend work.
 - Handle errors explicitly; avoid silent failures; throw domain exceptions and map to HTTP responses
 - Wrap multi-write operations in DB::transaction()
 - Logging: Log unexpected exceptions; avoid leaking PII
+- Respect RESTful API conventions
 
 ## Naming and structure
 - Services: App/Services/* (e.g., EstimationService)
@@ -27,6 +28,23 @@ Use this file as context whenever requesting AI assistance for backend work.
 - Requests: App/Http/Requests/*
 - Resources: App/Http/Resources/*
 - Controllers: App/Http/Controllers/Api/*
+
+## Response Format
+```javascript
+// Success
+{
+  "success": true,
+  "data": {},
+  "message": "Operation successful"
+}
+
+// Error
+{
+  "success": false,
+  "error": "Error message",
+  "errors": {}
+}
+```
 
 ## Testing
 - Unit tests for Actions and domain logic (PHPUnit)

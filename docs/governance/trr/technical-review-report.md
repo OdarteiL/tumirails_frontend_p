@@ -16,7 +16,7 @@ Validate the technical architecture, data model, and integration flow of the Con
 **Scope:**
 
 * Backend system architecture (Laravel API + database design)
-* Frontend SPA design (Vue 3 + Pinia + Tailwind)
+* Frontend SPA design (Angular 17+ with Router and Tailwind; NgRx optional post‑MVP)
 * Integration with MoMo payment systems
 * Workflow for estimation → hardware selection → installation → verification
 * Data model and relationships between entities
@@ -64,7 +64,7 @@ Pre-development (post-discovery, pre-Sprint 0).
 | 4 | Hardware Provider Integration | Each provider to have API or CSV upload option                                            | Backend       |
 | 5 | Frontend Offline Access       | PWA support for offline site data entry                                                   | Frontend      |
 | 6 | Security & Privacy            | JWT + Role-based Access; encrypted MoMo payloads                                          | Security      |
-| 7 | Hosting & Scalability         | Laravel on ECS Fargate; Aurora MySQL; CloudFront for Vue                                  | DevOps        |
+| 7 | Hosting & Scalability         | Laravel on ECS Fargate; Aurora MySQL; CloudFront for Angular                              | DevOps        |
 
 ---
 
@@ -73,12 +73,12 @@ Pre-development (post-discovery, pre-Sprint 0).
 | # | Decision                       | Rationale                                                 | Owner     | ADR Ref |
 | - | ------------------------------ | --------------------------------------------------------- | --------- | ------- |
 | 1 | Use Laravel 11 for backend API | Rapid API dev, strong Eloquent ORM                        | Eng. Lead | ADR-001 |
-| 2 | Use Vue 3 + Pinia + Tailwind   | Fast prototyping, strong component structure              | FE Lead   | ADR-002 |
+| 2 | Use Angular + Tailwind         | Enterprise‑ready framework, strong CLI, predictable structure | FE Lead   | ADR-002 |
 | 3 | Use AWS ECS Fargate            | Simplified scaling, zero server management                | DevOps    | ADR-003 |
 | 4 | Payment via MoMo Escrow        | Ensures trust and reduces disputes                        | Security  | ADR-004 |
 | 5 | Implement modular API          | Independent modules (Estimation, Hardware, Installations) | Backend   | ADR-005 |
 | 6 | Introduce data caching layer   | Faster load times for estimation tools                    | Backend   | ADR-006 |
-| 7 | Laravel layering: C→S→A        | Thin controllers, services orchestrate, actions do one job| Backend   | ADR-011 |
+| 7 | Laravel layering: C→S→A        | Controllers only validate/delegate; Services orchestrate; Actions are single units of work | Backend   | ADR-011 |
 | 8 | Branching strategy             | develop→staging→production PR flow; hotfixes from prod    | DevOps    | ADR-012 |
 
 ---
@@ -101,7 +101,7 @@ Pre-development (post-discovery, pre-Sprint 0).
 | - | ------------------------------------- | ------------- | ---------- | ----------- |
 | 1 | Finalize ERD and seed data scripts    | Data Engineer | 2025-10-31 | In Progress |
 | 2 | Define API contracts in Postman       | Backend       | 2025-10-28 | In Progress |
-| 3 | Finalize frontend component hierarchy | Frontend      | 2025-11-02 | Pending     |
+| 3 | Finalize Angular module/component hierarchy | Frontend      | 2025-11-02 | Pending     |
 | 4 | Prepare Terraform infra setup for ECS | DevOps        | 2025-11-05 | Planned     |
 | 5 | Conduct security threat modeling      | Security      | 2025-11-07 | Planned     |
 | 6 | Sprint 0 backlog refinement           | Scrum Master  | 2025-11-01 | Pending     |

@@ -6,8 +6,8 @@ The Tumi Solar Configurator follows a modern web application architecture with c
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Vue.js SPA    │    │   Laravel API   │    │   Database      │
-│   (Frontend)    │◄──►│   (Backend)     │◄──►│   (MySQL)       │
+│  Angular SPA    │    │   Laravel API   │    │   Database      │
+│   (Frontend)    │◄──►│   (Backend)     │◄──►│ (Postgres/MySQL)│
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          │                       │                       │
@@ -89,62 +89,60 @@ backend/
 - Foreign key constraints
 - Soft deletes for important records
 
-## Frontend Architecture (Vue.js)
+## Frontend Architecture (Angular)
 
 ### Directory Structure
 ```
 frontend/
 ├── src/
-│   ├── components/
-│   │   ├── common/
-│   │   ├── forms/
-│   │   └── charts/
-│   ├── views/
-│   │   ├── auth/
-│   │   ├── dashboard/
-│   │   ├── sites/
-│   │   ├── projects/
-│   │   └── admin/
-│   ├── router/
-│   ├── store/
-│   │   ├── modules/
-│   │   │   ├── auth.js
-│   │   │   ├── sites.js
-│   │   │   ├── projects.js
-│   │   │   └── payments.js
-│   │   └── index.js
-│   ├── services/
-│   │   ├── api.js
-│   │   ├── auth.js
-│   │   └── payment.js
-│   └── utils/
-├── public/
+│   ├── app/
+│   │   ├── core/               # Singleton services (api, auth, config)
+│   │   ├── shared/             # Reusable components, pipes, directives
+│   │   ├── features/
+│   │   │   ├── auth/
+│   │   │   ├── dashboard/
+│   │   │   ├── sites/
+│   │   │   ├── projects/
+│   │   │   └── payments/
+│   │   ├── state/              # NgRx slices or Signal-based stores (future)
+│   │   ├── routing/            # App routing module(s)
+│   │   └── app.module.ts
+│   ├── environments/           # environment.ts files
+│   └── main.ts
+├── index.html
+├── tailwind.config.js
 └── package.json
 ```
 
 ### Key Technologies
-- **Vue 3**: Composition API for better code organization
-- **Vue Router**: Client-side routing with guards
-- **Vuex/Pinia**: State management
-- **Axios**: HTTP client for API calls
-- **Tailwind CSS**: Utility-first CSS framework
-- **Chart.js**: Data visualization for analytics
+- **Angular 17+**: Component & module architecture; Signals (optional) for reactive state
+- **Angular Router**: Client-side navigation with guards & lazy loading
+- **RxJS**: Reactive programming for async flows
+- **NgRx (post-MVP optional)**: Predictable state management if complexity grows
+- **HTTP Client (Angular)**: Built-in typed API access; interceptors for auth
+- **Tailwind CSS**: Utility-first styling
+- **Charting (ngx-charts / Chart.js)**: Data visualization for analytics
 
 ### State Management
-```javascript
-// Store modules structure
-store/
-├── auth.js      // User authentication state
-├── sites.js     // Site management
-├── projects.js  // Project tracking
-├── hardware.js  // Hardware catalog
-└── payments.js  // Payment processing
+Initial MVP will rely on component + service state (RxJS Subjects / Signals). Introduce NgRx only when:
+- Cross-feature state coordination becomes complex
+- Time-travel debugging or advanced caching is needed
+
+Structure (future NgRx example):
+```
+state/
+├── auth/
+├── sites/
+├── projects/
+├── hardware/
+└── payments/
 ```
 
 ### Component Architecture
-- **Atomic Design**: Atoms → Molecules → Organisms → Templates → Pages
-- **Reusable Components**: Form inputs, data tables, charts
-- **Smart/Dumb Components**: Container vs Presentational
+- **Feature Modules**: Encapsulate domain (e.g., SitesModule, ProjectsModule)
+- **Shared Module**: Cross-cutting UI components and utilities
+- **Core Module**: Singleton services (AuthService, ApiService)
+- **Container vs Presentational**: Keep business logic in services, presentation in components
 
 ## API Design
 
@@ -172,10 +170,20 @@ store/
 ```
 
 ### Authentication Flow
-1. User login → API returns JWT token
-2. Frontend stores token in localStorage
-3. All API requests include Authorization header
-4. Backend validates token on protected routes
+1. User login → API returns Sanctum token (or session cookie for SPA)
+2. Frontend stores token securely (in memory or localStorage if acceptable)
+3. HTTP interceptor attaches Authorization header (Bearer <token>) or relies on cookie
+4. Backend validates token via Sanctum on protected routes
+
+### Backend Layering (Controllers → Services → Actions)
+- Controllers: Thin adapters, validate input, delegate work only
+- Services: Orchestrate application use-cases, transactions, and cross-entity operations
+- Actions: Single-responsibility units of work (side-effecting or pure), reusable and testable
+
+Recommended conventions:
+- Services end with `Service` (e.g., `EstimationService`)
+- Actions end with `Action` and use imperative naming (e.g., `CalculateEstimationAction`)
+- Do not place business logic in controllers or models; keep Eloquent models lean
 
 ## Payment Integration
 
@@ -235,28 +243,28 @@ Frontend → Laravel PaymentService → Gateway API → Webhook → Laravel
 ## Performance Optimization
 
 ### Backend Optimization
-- Database query optimization
-- Eager loading relationships
-- Caching (Redis)
-- Queue jobs for heavy tasks
-- API response caching
+- Database query optimization & eager loading
+- Layered architecture (Controllers → Services → Actions) ensures small units and testability
+- Caching (Redis) for estimation & recommendations
+- Queue jobs for heavy tasks (reports, notifications)
+- API response caching (headers / application layer)
 
 ### Frontend Optimization
-- Code splitting
-- Lazy loading routes
-- Image optimization
-- Bundle size optimization
-- Progressive Web App features
+- Route-based code splitting (lazy-loaded Angular modules)
+- Preloading strategy where beneficial (e.g., after auth)
+- Image optimization & responsive sources
+- Tailwind purge to reduce CSS size
+- Progressive Web App features (offline estimation entry, caching)
 
 ## Deployment Architecture
 
 ### Development Environment
 ```
 Docker Compose:
-├── Laravel (PHP-FPM + Nginx)
-├── Vue.js (Development server)
-├── MySQL
-├── Redis
+├── Laravel (PHP-FPM + Nginx) / Sanctum
+├── Angular (ng serve dev server)
+├── Postgres (Primary) or MySQL (alternate)
+├── Redis (Cache/Queue)
 └── MailHog (Email testing)
 ```
 
@@ -294,10 +302,10 @@ AWS Infrastructure:
 - Database tests
 
 ### Frontend Testing
-- Unit tests (Jest)
-- Component tests (Vue Test Utils)
+- Unit/component tests (Jest + Angular Testing Library)
+- Integration tests (Jest + HTTP mocks)
 - E2E tests (Cypress)
-- Visual regression tests
+- Visual regression tests (Percy/Chromatic optional)
 
 ## Scalability Considerations
 

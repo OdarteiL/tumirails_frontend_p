@@ -141,7 +141,7 @@ Centralize validation and business rules within the Laravel backend service laye
 **Reasoning:**
 
 * Keeps API predictable and consistent.
-* Simplifies front-end integration (Vue.js or React-based clients).
+* Simplifies front-end integration (Angular).
 * Allows shared validation utilities for entities like Milestones and Payments.
 
 **Trade-offs:**
@@ -181,7 +181,7 @@ Centralize validation and business rules within the Laravel backend service laye
 | ---------- | ---------------- | -------------------------------------------- |
 | API Design | OpenAPI 3.1      | Contract-first approach                      |
 | Backend    | Laravel          | Modular, scalable                            |
-| Frontend   | Vue.js           | Lightweight and flexible for dashboards      |
+| Frontend   | Angular           | Lightweight and flexible for dashboards      |
 | Database   | PostgreSQL       | Supports complex relationships & JSON fields |
 | ORM        | Eloquent         | First-class ORM in Laravel                   |
 | CI/CD      | GitHub Actions   | Automated testing and deployment             |
