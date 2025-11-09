@@ -1,21 +1,53 @@
-# Backend Dockerfile: Laravel + PHP 8.3 + Composer, runs artisan serve
+FROM php:8.3-fpm
 
-FROM php:8.3-cli-alpine AS base
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN set -eux \
-    && apk add --no-cache bash git unzip libpq postgresql-dev icu-dev oniguruma-dev \
-    && docker-php-ext-install pdo pdo_pgsql \
-    && rm -rf /var/cache/apk/*
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd zip
 
+# Install Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
 WORKDIR /var/www/html
 
-# Install Composer (copy from official composer image)
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Copy composer files
+COPY composer.json composer.lock ./
 
-# Copy overlay files and entrypoint
-COPY overlay/ /opt/app-overlay/
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
+# Copy application files
+COPY . .
+
+# Complete composer setup
+RUN composer dump-autoload --optimize
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Copy supervisor config
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Expose port
 EXPOSE 8000
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Start supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
