@@ -1,9 +1,22 @@
-# Frontend Dockerfile: Vue 3 + Vite + Tailwind
 FROM node:20-alpine
+
+# Install Angular CLI globally
+RUN npm install -g @angular/cli
+
+# Set working directory
 WORKDIR /app
-COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
-RUN npm install --legacy-peer-deps || yarn install || pnpm install
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy application files
 COPY . .
-EXPOSE 5173
-ENV HOST=0.0.0.0
-CMD ["npm","run","dev"]
+
+# Expose port
+EXPOSE 4200
+
+# Start development server with hot reload
+CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000"]
