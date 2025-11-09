@@ -1,6 +1,6 @@
 # Tumi Solar Configurator
 
-A comprehensive solar energy system configurator and project management platform built with Laravel (backend) and Vue.js (frontend).
+A comprehensive solar energy system configurator and project management platform built with Laravel (backend) and Angular (frontend).
 
 ## Overview
 
@@ -27,9 +27,12 @@ The Tumi Solar Configurator is a multi-stakeholder platform that connects custom
 
 ### Advanced Features (Post-MVP)
 - **Verification System**: Quality assurance through certified verifiers
+- **Identification System**: Third-party identification verification with institutions such as NIA
 - **Advanced Payment Plans**: Milestone-based payments with automated splitting
 - **AI-Powered Recommendations**: Machine learning for optimal hardware selection
 - **Mobile Applications**: Native iOS and Android apps
+- **Installer Bids**: Incentive-based bids on projects by installers
+- **SLOs**: Improved availability and reliability of application ([Read more](docs/overview/non-functional-requirements.md))
 - **Analytics Dashboard**: Business intelligence and reporting
 
 ## Stakeholders
@@ -52,7 +55,7 @@ Platform administrators who manage users, categories, and system configurations.
 ## Technology Stack
 
 - **Backend**: Laravel 10+ (PHP 8.1+)
-- **Frontend**: Vue.js 3 with Composition API
+- **Frontend**: Angular (latest) with standalone components, RxJS services, Tailwind CSS
 - **Database**: MySQL 8.0+ / PostgreSQL 13+
 - **Payment**: Paystack (primary), Flutterwave, Stripe
 - **File Storage**: AWS S3 (production) / Local (development)
@@ -99,20 +102,35 @@ tumi_configurator/
 
 ## Development Phases
 
-### Phase 1: MVP (Weeks 1-12)
+### Phase 1: MVP
 Core functionality for end-to-end solar project workflow
 
-### Phase 2: Enhanced UX (Weeks 13-18)
-Image management, installer marketplace, advanced estimation
+### Phase 2: Enhanced User Experience
+- Inventory Management System
+- Image Management System
+- Advanced Estimation
+- Installer Marketplace
+- Finance Options/Payment model
 
-### Phase 3: Quality Assurance (Weeks 19-24)
-Verification system, advanced project management
+### Phase 3: Quality Assurance
+- Verification System
+- Advanced Project Management
+- Identification System (third-party identity verification, e.g., NIA)
 
-### Phase 4: Financial Features (Weeks 25-30)
-Advanced payments, wallet system, automated payouts
+### Phase 4: Financial Features
+- Advanced Payment System
+- Wallet System
+- Insurance
 
-### Phase 5+: Advanced Features
-AI/ML integration, mobile apps, business intelligence
+### Phase 5: Business Intelligence
+- Analytics Dashboard
+- Reporting System
+
+### Phase 6: Advanced Features
+- AI/ML Integration
+- Mobile Applications
+- Integration Ecosystem
+- SLOs: Improved availability and reliability of application ([Read more](docs/overview/non-functional-requirements.md))
 
 ## Getting Started
 
