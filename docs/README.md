@@ -13,38 +13,38 @@ Use this page as the single entry point to understand the product vision, MVP sc
 ## Table of contents
 
 - Overview
-  - Vision: `docs/overview/vision.md`
-  - Stakeholders: `docs/overview/stakeholders.md`
-  - Glossary: `docs/overview/glossary.md`
-  - Non-Functional Requirements: `docs/overview/non-functional-requirements.md`
+  - Vision: [overview/vision.md](overview/vision.md)
+  - Stakeholders: [overview/stakeholders.md](overview/stakeholders.md)
+  - Glossary: [overview/glossary.md](overview/glossary.md)
+  - Non-Functional Requirements: [overview/non-functional-requirements.md](overview/non-functional-requirements.md)
 - Product
-  - MVP Roadmap: `docs/product/mvp/mvp-roadmap.md`
-  - MVP Setup (Sprint 0): `docs/product/mvp/setup.md`
-  - User Stories (full): `docs/product/user-stories.md`
-  - MVP User Stories (subset): `docs/product/mvp/mvp-user-stories.md`
-  - Sprint Plan (2 x 1-week sprints): `docs/product/mvp/sprint-plan.md`
-  - Jira Backlog (CSV): `docs/product/mvp/jira-backlog.csv`
+  - MVP Roadmap: [product/mvp/mvp-roadmap.md](product/mvp/mvp-roadmap.md)
+  - MVP Setup (Sprint 0): [product/mvp/setup.md](product/mvp/setup.md)
+  - User Stories (full): [product/user-stories.md](product/user-stories.md)
+  - MVP User Stories (subset): [product/mvp/mvp-user-stories.md](product/mvp/mvp-user-stories.md)
+  - Sprint Plan (2 x 1-week sprints): [product/mvp/sprint-plan.md](product/mvp/sprint-plan.md)
+  - Jira Backlog (CSV): [product/mvp/jira-backlog.csv](product/mvp/jira-backlog.csv)
 - Architecture
-  - Technical Architecture: `docs/architecture/technical-architecture.md`
-  - System Architecture (Mermaid): `docs/architecture/system-architecture.mmd`
-  - Deployment View: `docs/architecture/deployment-view.md`
+  - Technical Architecture: [architecture/technical-architecture.md](architecture/technical-architecture.md)
+  - System Architecture (Mermaid): [architecture/system-architecture.mmd](architecture/system-architecture.mmd)
+  - Deployment View: [architecture/deployment-view.md](architecture/deployment-view.md)
   - Data Models:
-    - Mermaid ER: `docs/architecture/data-models/data model.mmd`
-    - DBML source: `docs/architecture/data-models/tumi.dbml`
-    - Database Schema summary: `docs/architecture/database-schema.md`
-- API
-  - OpenAPI spec: `docs/api/openapi.yaml`
-  - API Endpoints Guide: `docs/api/api-endpoints.md`
-- Decisions & Governance
-  - Decision Log: `docs/decisions/decisions-summary.md`
-  - ADRs: `docs/decisions/adr/adr-set.md` and template `docs/decisions/adr/adr-template.md`
+  - Mermaid ER: [architecture/data-models/data model.mmd](architecture/data-models/data%20model.mmd)
+  - DBML source: [architecture/data-models/tumi.dbml](architecture/data-models/tumi.dbml)
+  - Database Schema summary: [architecture/database-schema.md](architecture/database-schema.md)
+-- API
+  - OpenAPI spec: [api/openapi.yaml](api/openapi.yaml)
+  - API Endpoints Guide: [api/api-endpoints.md](api/api-endpoints.md)
+-- Decisions & Governance
+  - Decision Log: [decisions/decisions-summary.md](decisions/decisions-summary.md)
+  - ADRs: [decisions/adr/adr-set.md](decisions/adr/adr-set.md) and template [decisions/adr/adr-template.md](decisions/adr/adr-template.md)
   - Technical Review Report (TRR):
-    - Template: `docs/governance/trr/technical-review-report-template.md`
-    - Example: `docs/governance/trr/technical-review-report.md`
-  - Contribution Guide: `docs/governance/contribution-guide.md`
-  - Coding Standards: `docs/governance/coding-standards.md`
-  - AI Assistance Guide: `docs/governance/ai-assistance.md`
-  - Branching Strategy: `docs/governance/branching-strategy.md`
+    - Template: [governance/trr/technical-review-report-template.md](governance/trr/technical-review-report-template.md)
+    - Example: [governance/trr/technical-review-report.md](governance/trr/technical-review-report.md)
+  - Contribution Guide: [governance/contribution-guide.md](governance/contribution-guide.md)
+  - Coding Standards: [governance/coding-standards.md](governance/coding-standards.md)
+  - AI Assistance Guide: [governance/ai-assistance.md](governance/ai-assistance.md)
+  - Branching Strategy: [governance/branching-strategy.md](governance/branching-strategy.md)
 
 ## Viewing the diagrams
 
@@ -59,13 +59,13 @@ Use this page as the single entry point to understand the product vision, MVP sc
 ## Using AI assistance
 
 - When asking AI for help, always attach the relevant context:
-  - Backend: `backend/AI_CONTEXT.md`
-  - Frontend: `frontend/AI_CONTEXT.md`
+  - Backend: [backend/AI_CONTEXT.md](../backend/AI_CONTEXT.md)
+  - Frontend: [frontend/AI_CONTEXT.md](../frontend/AI_CONTEXT.md)
 - Include file paths, constraints, acceptance criteria, and ask for tests.
 
 ## Next steps for Sprint 0
 
 - Finalize ERD from `tumi.dbml` and align OpenAPI payloads.
-- Scaffold backend (Laravel) and frontend (Vue) repos or subfolders.
+- Scaffold backend (Laravel) and frontend (Angular) repos or subfolders.
 - Set up CI, environments, and seed data for a demo flow.
 

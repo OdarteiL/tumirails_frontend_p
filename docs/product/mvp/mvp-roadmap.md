@@ -2,7 +2,7 @@
 
 ## MVP Core Features (End-to-End Flow)
 
-The MVP focuses on the essential workflow: Customer creates estimate → Gets recommendations → Initiates project → Installer completes → Customer pays.
+The MVP focuses on the essential workflow: Customer creates estimate → Gets recommendations → Initiates project → Customer pays -> Installer verifies hardware -> Payment split to Provider -> Installer completes →  Complete split.
 
 ### 1. User Management (MVP)
 - User registration/login (Customer, Provider, Installer, Admin)
@@ -60,7 +60,7 @@ The MVP focuses on the essential workflow: Customer creates estimate → Gets re
 ### Simplified for MVP
 - Remove Provider's Inventory Management
 - Remove complex payment plans/milestones
-- Remove verification system
+- Remove verification system 
 - Remove image management
 - Remove wallet/transaction splitting
 - Remove advanced payment splitting
@@ -72,14 +72,18 @@ The MVP focuses on the essential workflow: Customer creates estimate → Gets re
 - Image Management System
 - Advanced Estimation
 - Installer Marketplace
+ - Finance Options/Payment model
+ - Installer Bids (incentive-based bids on projects by installers)
 
 ### Phase 3: Quality Assurance
 - Verification System
-- Advanced Project Management
+ - Advanced Project Management
+ - Identification System (third-party identity verification, e.g., NIA)
 
 ### Phase 4: Financial Features
 - Advanced Payment System
 - Wallet System
+- Insurance
 
 ### Phase 5: Business Intelligence
 - Analytics Dashboard
@@ -89,37 +93,38 @@ The MVP focuses on the essential workflow: Customer creates estimate → Gets re
 - AI/ML Integration
 - Mobile Applications
 - Integration Ecosystem
+ - SLOs: Improved availability and reliability of application ([Read more](../../overview/non-functional-requirements.md))
 
 ## MVP Development Priority
 
-### Week 1-2: Foundation
+### Foundation
 - Laravel project setup
-- Vue.js frontend setup
+- Angular frontend setup
 - Database migrations
 - Authentication system
 
-### Week 3-4: Core Models
+### Core Models
 - User management
 - Site management
 - Appliance catalog
 - Basic admin panel
 
-### Week 5-6: Estimation Engine
+### Estimation Engine
 - Energy calculation logic
 - Hardware recommendation
 - Estimation interface
 
-### Week 7-8: Project Management
+### Project Management
 - Project creation
 - Basic workflow
 - Installer assignment
 
-### Week 9-10: Payment Integration
+### Payment Integration
 - Payment gateway setup
 - Payment processing
 - Payment tracking
 
-### Week 11-12: Testing & Polish
+### Testing & Polish
 - End-to-end testing
 - UI/UX refinements
 - Bug fixes

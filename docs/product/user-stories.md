@@ -15,7 +15,7 @@
 ### Project Management
 - As a customer, I want to initiate a solar project so I can get my system installed
 - As a customer, I want to track project progress so I know when installation will be complete
-- As a customer, I want to view project costs so I can budget accordingly
+- As a customer, I want to view project costs so I can budget accordingly (ADR later)
 
 ### Payment
 - As a customer, I want to choose payment plans so I can pay in installments
@@ -38,12 +38,12 @@
 ## Installer Stories
 
 ### Profile Management
-- As an installer, I want to set my operational area so customers can find me
+- As an installer, I want to set my operational area and time availability so customers can find me
 - As an installer, I want to upload my license and certifications so customers trust me
 - As an installer, I want to manage my availability so I can control my workload
 
 ### Project Execution
-- As an installer, I want to view available projects so I can bid on work
+- As an installer, I want to view available projects so I can bid on work (Incentive based feature Post MVP) - Customers will be able to rate the Installers
 - As an installer, I want to accept project assignments so I can start work
 - As an installer, I want to update project status so customers know progress
 - As an installer, I want to upload installation photos so I can document my work
@@ -52,7 +52,7 @@
 - As an installer, I want to track my earnings so I know what I'll be paid
 - As an installer, I want to receive payments automatically so I get paid on time
 
-## Verifier Stories
+## Verifier Stories (Post MVP)
 
 ### Verification Process
 - As a verifier, I want to view completed installations so I can schedule inspections
@@ -69,7 +69,7 @@
 ### User Management
 - As an admin, I want to manage user accounts so I can control platform access
 - As an admin, I want to verify installer/verifier credentials so only qualified professionals work
-- As an admin, I want to suspend problematic users so I can maintain platform quality
+- As an admin, I want to suspend and deactivate/reactivate problematic users so I can maintain platform quality
 
 ### System Management
 - As an admin, I want to manage appliance categories so the system stays organized

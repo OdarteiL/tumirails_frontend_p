@@ -15,14 +15,14 @@ This repository currently contains documentation only. Use this setup guide to p
   - users, sites, appliances, user_appliances, categories, hardware_types, providers, hardware, installers, estimations, recommended_hardware, projects, project_hardware, payments
 - Seed minimal test data for a demo flow.
 
-## Frontend (Vue 3) – planned scaffolding
+## Frontend (Angular 17+) – planned scaffolding
 
-- Create `frontend/` SPA with Pinia, Vue Router, Tailwind.
+- Create `frontend/` SPA with Angular, Router, Tailwind.
 - Implement flows: Auth → Sites → Estimation → Recommendation → Project → Payment.
 
 ## Developer experience
 
-- Add `docker-compose.yml` for local MySQL/Postgres, Redis, Laravel API, and Vue dev server.
+- Add `docker-compose.yml` for local MySQL/Postgres, Redis, Laravel API, and Angular server.
 - Setup GitHub Actions for lint/test (PHPUnit, ESLint) and basic build checks.
 
 ## Data model alignment
