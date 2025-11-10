@@ -26,3 +26,22 @@ This subset lists only the stories required to complete the MVP defined in `mvp-
 - Milestone-based payments, payment splitting, wallets.
 - Verification workflows and image/document management.
 - Installer marketplace, bidding, advanced scheduling.
+
+## Sprint assignments (2 × 1-week sprints)
+
+| Jira Key | Story (summary) | Sprint |
+|---------:|-----------------|:------:|
+| TUMI-1   | User Registration & Login | Sprint 1 |
+| TUMI-2   | Create Site (single) | Sprint 1 |
+| TUMI-3   | Appliance Catalog (seed + list) | Sprint 1 |
+| TUMI-4   | Add User Appliances | Sprint 1 |
+| TUMI-5   | Create Estimation (kW/kWh/monthly cost) | Sprint 1 |
+| TUMI-6   | Get Recommendations (hardware) | Sprint 1 |
+| TUMI-7   | Seed Data & Demo | Sprint 1 |
+| TUMI-8   | Create Project from Estimation | Sprint 2 |
+| TUMI-9   | Manual Installer Assignment (admin) | Sprint 2 |
+| TUMI-10  | Upfront Payment (gateway integration) | Sprint 2 |
+| TUMI-11  | Manage Hardware Types & Categories (admin) | Sprint 2 |
+| TUMI-12  | Basic User Management (admin) | Sprint 2 |
+
+Each story in Sprint 1 is sized and prioritized to deliver an end-to-end estimation → recommendation flow. Sprint 2 focuses on project creation, assignment, and payment to complete the MVP business flow.
