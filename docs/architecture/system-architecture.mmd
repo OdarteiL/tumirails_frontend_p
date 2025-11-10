@@ -1,0 +1,77 @@
+flowchart LR
+  subgraph Clients
+    C1["Web App (Admin / Customer / Installer)"]
+    C2["Mobile App (PWA)"]
+    C3["USSD / SMS Gateway"]
+  end
+
+  subgraph Edge["Edge / Ingress"]
+    ALB["ALB / API Gateway / Nginx"]
+    CDN["CDN (CloudFront)"]
+  end
+
+  subgraph App["Application (Laravel micro-services)"]
+    Auth["Auth Service (Sanctum / JWT)"]
+    API["Laravel API - Monolith or Modular Services"]
+    Est["Estimation Engine / Worker"]
+    Market["Configurator / Recommendation Service"]
+    ProjectSvc["Project & Workflow Service"]
+    PaySvc["Payment & Escrow Service"]
+    Verif["Verification & M&V Service"]
+    MediaSvc["Media service (image uploads processing)"]
+  end
+
+  subgraph Data["Data & Infra"]
+    RDS["Aurora / RDS MySQL"]
+    Redis["Redis - cache & queues"]
+    S3["S3 - images, docs"]
+    Ledger["Immutable Ledger - S3+Dynamo/Append store"]
+    Observability["Prometheus/Grafana / CloudWatch / OpenSearch"]
+  end
+
+  subgraph Integrations
+    MoMo["MoMo / PSPs (Flutterwave, Paystack)"]
+    GhanaID["Ghana Card eKYC"]
+    ECG["Utility APIs (ECG/GRIDCo/PURC)"]
+    SMS["SMS Provider"]
+    Email["Email Provider"]
+  end
+
+  C1 --> CDN
+  C2 --> CDN
+  CDN --> ALB
+  C3 --> ALB
+
+  ALB --> Auth
+  ALB --> API
+
+  API --> Est
+  API --> Market
+  API --> ProjectSvc
+  API --> PaySvc
+  API --> Verif
+  API --> MediaSvc
+
+  Est --> RDS
+  Market --> RDS
+  ProjectSvc --> RDS
+  PaySvc --> RDS
+  Verif --> RDS
+
+  MediaSvc --> S3
+  PaySvc --> MoMo
+  Auth --> GhanaID
+  Verif --> ECG
+  API --> SMS
+  API --> Email
+
+  Est --> Redis
+  ProjectSvc --> Redis
+  PaySvc --> Redis
+
+  Verif --> Ledger
+  ProjectSvc --> Ledger
+
+  Observability --> API
+  Observability --> Est
+  Observability --> PaySvc

@@ -1,0 +1,37 @@
+erDiagram
+  USER ||--o{ SITE : owns
+  USER ||--o{ PAYMENT : "pays"
+  USER ||--o{ WALLET : "has"
+  USER ||--o{ INSTALLER : "is"
+  USER ||--o{ VERIFIER : "is"
+  USER ||--o{ PROVIDER : "can_be"
+  SITE ||--o{ USERAPPLIANCE : "has"
+  SITE ||--o{ ESTIMATION : "has"
+  SITE ||--o{ PROJECT : "hosts"
+  ESTIMATION ||--o{ RECOMMENDEDHARDWARE : "suggests"
+  RECOMMENDEDHARDWARE }o--|| HARDWARE : "references"
+  HARDWARE }o--|| PROVIDER : "supplied_by"
+  PROJECT ||--o{ PROJECTHARDWARE : "includes"
+  PROJECT ||--o{ VERIFICATION : "has"
+  PROJECT ||--o{ PAYMENTPLAN : "has"
+  PAYMENTPLAN ||--o{ PAYMENTMILESTONE : "defines"
+  PAYMENTMILESTONE ||--o{ PAYMENT : "receives"
+  PAYMENT ||--o{ PAYMENTSPLIT : "generates"
+  PAYMENTSPLIT ||--o{ TRANSACTION : "creates"
+  WALLET ||--o{ TRANSACTION : "records"
+
+  %% Images polymorphic
+  IMAGE {
+    id uuid
+    url varchar
+    imageable_id uuid
+    imageable_type varchar
+    caption varchar
+    metadata json
+  }
+
+  IMAGE ||--o{ USER : "morphs_to*" 
+  IMAGE ||--o{ SITE : "morphs_to*" 
+  IMAGE ||--o{ USERAPPLIANCE : "morphs_to*"
+  IMAGE ||--o{ PROJECT : "morphs_to*"
+  IMAGE ||--o{ VERIFICATION : "morphs_to*"

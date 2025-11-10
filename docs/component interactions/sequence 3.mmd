@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant Installer
+  participant API
+  participant Verifier
+  participant VerifSvc
+  participant Ledger
+  participant Split
+  participant Wallet
+
+  Installer->>API: mark project installed + upload evidence images
+  API->>VerifSvc: create verification task
+  Verifier->>API: submit verification (photos, notes)
+  API->>Ledger: write verification hash (immutable proof)
+  Ledger-->>API: hash_id
+  API->>DB: mark verification record with hash, status=approved
+  API->>Split: trigger final settlement for any pending splits (transfer or wallet credit)
+  Split->>Wallet: disburse funds
+  Wallet->>DB: create transaction records
+  API-->>Installer: notify payout
