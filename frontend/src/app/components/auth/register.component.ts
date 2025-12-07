@@ -41,6 +41,16 @@ import { AuthService } from '../../services/auth.service';
           </div>
           
           <div class="form-group">
+            <label for="other_names" class="form-label">Other Names (Optional)</label>
+            <input
+              id="other_names"
+              type="text"
+              formControlName="other_names"
+              class="form-input"
+            />
+          </div>
+          
+          <div class="form-group">
             <label for="email" class="form-label">Email</label>
             <input
               id="email"
@@ -62,6 +72,16 @@ import { AuthService } from '../../services/auth.service';
           </div>
           
           <div class="form-group">
+            <label for="address" class="form-label">Address (Optional)</label>
+            <textarea
+              id="address"
+              formControlName="address"
+              class="form-input"
+              rows="2"
+            ></textarea>
+          </div>
+          
+          <div class="form-group">
             <label for="password" class="form-label">Password</label>
             <input
               id="password"
@@ -72,6 +92,23 @@ import { AuthService } from '../../services/auth.service';
             />
             <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error">
               Password must be at least 8 characters
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password_confirmation" class="form-label">Confirm Password</label>
+            <input
+              id="password_confirmation"
+              type="password"
+              formControlName="password_confirmation"
+              class="form-input"
+              [style.border-color]="registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched ? '#dc2626' : ''"
+            />
+            <div *ngIf="registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched" class="error">
+              Please confirm your password
+            </div>
+            <div *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('password_confirmation')?.touched" class="error">
+              Passwords do not match
             </div>
           </div>
 
@@ -106,6 +143,17 @@ export class RegisterComponent {
   isLoading = signal(false);
   errorMessage = signal('');
 
+  passwordMatchValidator(form: FormGroup): { [key: string]: boolean } | null {
+    const password = form.get('password');
+    const passwordConfirmation = form.get('password_confirmation');
+    
+    if (!password || !passwordConfirmation) {
+      return null;
+    }
+    
+    return password.value === passwordConfirmation.value ? null : { passwordMismatch: true };
+  }
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -114,10 +162,13 @@ export class RegisterComponent {
     this.registerForm = this.fb.group({
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
+      other_names: [''],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
-      password: ['', [Validators.required, Validators.minLength(8)]]
-    });
+      address: [''],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      password_confirmation: ['', Validators.required]
+    }, { validators: this.passwordMatchValidator });
   }
 
   onSubmit(): void {

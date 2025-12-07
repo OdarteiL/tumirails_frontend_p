@@ -12,8 +12,10 @@ return new class extends Migration
             $table->dropColumn('name');
             $table->string('first_name')->after('id');
             $table->string('last_name')->after('first_name');
+            $table->string('other_names')->nullable()->after('last_name');
             $table->string('phone')->nullable()->after('email');
-            $table->enum('role', ['customer', 'installer', 'provider', 'admin', 'verifier'])->default('customer')->after('phone');
+            $table->string('address')->nullable()->after('phone');
+            $table->enum('role', ['customer', 'installer', 'provider', 'admin', 'verifier'])->default('customer')->after('address');
             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active')->after('role');
         });
     }
@@ -22,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('name')->after('id');
-            $table->dropColumn(['first_name', 'last_name', 'phone', 'role', 'status']);
+            $table->dropColumn(['first_name', 'last_name', 'other_names', 'phone', 'address', 'role', 'status']);
         });
     }
 };

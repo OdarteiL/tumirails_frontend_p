@@ -21,8 +21,12 @@ class AuthController extends Controller
         $result = $this->authService->register($request->validated());
 
         return response()->json([
-            'user' => new UserResource($result['user']),
-            'access_token' => $result['access_token'],
+            'success' => true,
+            'message' => 'Registration successful',
+            'data' => [
+                'user' => new UserResource($result['user']),
+                'access_token' => $result['access_token'],
+            ],
         ], 201);
     }
 
@@ -32,13 +36,18 @@ class AuthController extends Controller
 
         if (!$result) {
             return response()->json([
-                'message' => 'Invalid credentials'
+                'success' => false,
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
         return response()->json([
-            'user' => new UserResource($result['user']),
-            'access_token' => $result['access_token'],
+            'success' => true,
+            'message' => 'Login successful',
+            'data' => [
+                'user' => new UserResource($result['user']),
+                'access_token' => $result['access_token'],
+            ],
         ]);
     }
 
@@ -47,14 +56,18 @@ class AuthController extends Controller
         $this->authService->logout($request->user());
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'success' => true,
+            'message' => 'Successfully logged out',
         ]);
     }
 
     public function me(Request $request): JsonResponse
     {
         return response()->json([
-            'user' => new UserResource($request->user())
+            'success' => true,
+            'data' => [
+                'user' => new UserResource($request->user()),
+            ],
         ]);
     }
 }

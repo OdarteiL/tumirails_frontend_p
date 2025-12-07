@@ -1,23 +1,50 @@
 Issue Type,Key,Summary,Description,Acceptance Criteria,Story Points,Sprint,Priority,Labels,Epic Link
-Epic,TUMI-E1,Auth & Foundation,"User authentication and project foundation setup.","- Sanctum enabled
-- Registration & login endpoints
-- Basic UI to log in",,Sprint 1,High,auth,
-Story,TUMI-1,User Registration & Login,"As a customer, I can register and log in to access my dashboard.","- POST /auth/register creates user
-- POST /auth/login returns token
-- UI login form works
-- Tests for happy path",5,Sprint 1,High,auth, TUMI-E1
-Epic,TUMI-E2,Sites & Appliances,"Site creation and appliance catalog management.","- Create site API/UI
-- Appliance catalog seeded
-- Add user appliances to site",,Sprint 1,High,sites,
-Story,TUMI-2,Create Site (single),"As a customer, I can create one site with name/address/coords.","- POST /sites creates site
-- UI form validates inputs
-- Site visible in list",3,Sprint 1,High,sites, TUMI-E2
-Story,TUMI-3,Appliance Catalog (seed + list),"As an admin, I seed and list appliances for users to select.","- Seed script for appliances
-- GET /appliances returns catalog",3,Sprint 1,Medium,appliances, TUMI-E2
-Story,TUMI-4,Add User Appliances,"As a customer, I can add appliances to my site for estimation.","- Persist user_appliances
-- Validation and simple UI",3,Sprint 1,Medium,appliances, TUMI-E2
+Epic,TUMI-E1,Auth & Foundation,"User authentication and project foundation setup.","High level scope: provide secure authentication using Laravel Sanctum, foundational user model and permissions, and hooks for CI/deployment migrations.",,Sprint 1,High,auth,
+Story,TUMI-1,User Registration & Login,"As a customer, I can register and log in to access my dashboard.","Description:
+- Backend: Implement POST /api/auth/register and POST /api/auth/login using Laravel Sanctum. Include validation (email, password strength), user creation, password hashing, and return an access token (personal access token or cookie+CSRF flow). Add migrations (users table + basic profile fields), unit tests, and API documentation (OpenAPI entries).
+- Frontend: Create registration and login UI (Angular standalone components) with client-side validation, show clear error states, and store token/session securely. Implement 'remember me' optional and redirect to dashboard on success.
+- DevOps: Add required environment variables (APP_URL, SANCTUM_STATEFUL_DOMAINS, SESSION_DOMAIN) to compose/dev setup and ensure migrations run at container start. Add CI job to run PHP unit tests and linting.
+Suggested subtasks (create from these):
+	- Backend: migration, controller, request validation, service + unit tests, OpenAPI spec entry
+	- Frontend: login/register components, form validation, auth service, e2e test
+	- DevOps: env config, container migration step, CI job for tests
+","Acceptance Criteria:
+- POST /api/auth/register returns 201 and user id on valid payload; invalid payload returns 422 with error details.
+- POST /api/auth/login returns 200 with access token (or sets auth cookie) and user payload for valid credentials; invalid creds return 401.
+- Token-based auth allows accessing a protected endpoint /api/me which returns the authenticated user's profile.
+- Frontend: user can register and log in via the UI, errors surfaced, redirected to /dashboard on success.
+- Automated unit tests (backend) and at least one e2e test (frontend) covering login flow exist and pass in CI.
+- DevOps: migrations executed at container startup in dev compose and CI runs tests for pull requests.
+",5,Sprint 1,High,auth,TUMI-E1
+Epic,TUMI-E2,Sites & Appliances,"Site creation and appliance catalog management.","High level: allow users to create a single site (MVP), store its metadata, and provide an appliance catalog for selection during estimation.",,Sprint 1,High,sites,
+Story,TUMI-2,Create Site (single),"As a customer, I can create one site with name/address/coords.","Description:
+- Backend: POST /api/sites accepts name, address, latitude, longitude, timezone, and optional notes. Validate address format and coords. Add site model/migration, relation to user, repository/service layer, and unit tests. Expose GET /api/sites and GET /api/sites/{id}.
+- Frontend: Site creation form with map/coords entry (simple lat/long inputs acceptable for MVP). List sites on dashboard and allow selecting the active site for estimation.
+- DevOps: Ensure DB migrations and seeders for demo data include a sample site. Document ENV or API base URL for frontend.
 Epic,TUMI-E3,Estimation & Recommendation,"Energy estimation and basic hardware recommendation.","- Estimation service computes totals
+	- Backend: migration, model, controller, service, tests, OpenAPI addition
+	- Frontend: site form component, site list, site-selection state in store
+	- DevOps: seeder for demo site, update compose envs
+","Acceptance Criteria:
+- POST /api/sites returns 201 and saved site including coords and linked user_id.
+- GET /api/sites returns list including created site; GET /api/sites/{id} returns full details.
+- Frontend: user can create a site and choose it for estimation; UI shows created site in list.
+- Unit tests validate model relations; CI includes a smoke test to POST a sample site.
+",3,Sprint 1,High,sites,TUMI-E2
+Story,TUMI-3,Appliance Catalog (seed + list),"As an admin, I seed and list appliances for users to select.","Description:
+- Backend: Create appliances table and seed script with fields: name, category, typical_wattage, usage_profile (hours/day), provider_id, SKU, and price. Provide GET /api/appliances (public read) and admin CRUD endpoints (protected).
+- Frontend: Appliance catalog browse/list component and selection controls when building an estimation. Admin UI (minimal) to view and add appliances.
+- DevOps: Migration and seeder included in container start and demo seed job.
 - Recommendation suggests panel/inverter/battery",,Sprint 1,High,estimation,
+	- Backend: migration, seeder, controller, admin auth for CRUD, tests, OpenAPI entries
+	- Frontend: catalog list & selection components, admin create form (minimal)
+	- DevOps: seed orchestration for demo environment
+","Acceptance Criteria:
+- Seeded appliances exist in DB and GET /api/appliances returns them with required fields.
+- Admin CRUD endpoints require admin role and return 403 for non-admins.
+- Frontend shows a list of appliances and allows selecting an appliance to add to a site estimation.
+- Seeder can be run independently and is idempotent for demo purposes.
+",3,Sprint 1,Medium,appliances,TUMI-E2
 Story,TUMI-5,Create Estimation,"As a customer, I can compute totals (kW, kWh, monthly cost) for my site.","- POST /estimations returns totals
 - Persist estimation record
 - Unit tests for calc",5,Sprint 1,High,estimation, TUMI-E3
