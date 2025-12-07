@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Actions\Auth\GenerateAuthTokenAction;
+use App\Actions\Auth\GetAuthenticatedUserAction;
 use App\Actions\Auth\LoginUserAction;
 use App\Actions\Auth\RegisterUserAction;
 use App\Actions\Auth\RevokeAuthTokenAction;
@@ -22,6 +23,7 @@ class AuthServiceTest extends TestCase
     private LoginUserAction $loginUserAction;
     private GenerateAuthTokenAction $generateAuthTokenAction;
     private RevokeAuthTokenAction $revokeAuthTokenAction;
+    private GetAuthenticatedUserAction $getAuthenticatedUserAction;
 
     protected function setUp(): void
     {
@@ -31,12 +33,14 @@ class AuthServiceTest extends TestCase
         $this->loginUserAction = app(LoginUserAction::class);
         $this->generateAuthTokenAction = app(GenerateAuthTokenAction::class);
         $this->revokeAuthTokenAction = app(RevokeAuthTokenAction::class);
+        $this->getAuthenticatedUserAction = app(GetAuthenticatedUserAction::class);
         
         $this->service = new AuthService(
             $this->registerUserAction,
             $this->loginUserAction,
             $this->generateAuthTokenAction,
-            $this->revokeAuthTokenAction
+            $this->revokeAuthTokenAction,
+            $this->getAuthenticatedUserAction
         );
     }
 
@@ -160,5 +164,22 @@ class AuthServiceTest extends TestCase
         $this->assertDatabaseMissing('personal_access_tokens', [
             'id' => $token->accessToken->id,
         ]);
+    }
+
+    /** @test */
+    public function get_authenticated_user_returns_user(): void
+    {
+        $user = User::factory()->create([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john@example.com',
+        ]);
+
+        $result = $this->service->getAuthenticatedUser($user);
+
+        $this->assertInstanceOf(User::class, $result);
+        $this->assertEquals($user->id, $result->id);
+        $this->assertEquals('john@example.com', $result->email);
+        $this->assertEquals('John', $result->first_name);
     }
 }

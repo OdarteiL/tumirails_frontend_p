@@ -261,6 +261,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'success',
+                'message',
                 'data' => [
                     'user' => [
                         'id',
@@ -274,6 +275,7 @@ class AuthControllerTest extends TestCase
             ])
             ->assertJson([
                 'success' => true,
+                'message' => 'User retrieved successfully',
                 'data' => [
                     'user' => [
                         'email' => 'john@example.com',

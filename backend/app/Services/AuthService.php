@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Actions\Auth\GenerateAuthTokenAction;
+use App\Actions\Auth\GetAuthenticatedUserAction;
 use App\Actions\Auth\LoginUserAction;
 use App\Actions\Auth\RegisterUserAction;
 use App\Actions\Auth\RevokeAuthTokenAction;
@@ -15,7 +16,8 @@ class AuthService
         private RegisterUserAction $registerUserAction,
         private LoginUserAction $loginUserAction,
         private GenerateAuthTokenAction $generateAuthTokenAction,
-        private RevokeAuthTokenAction $revokeAuthTokenAction
+        private RevokeAuthTokenAction $revokeAuthTokenAction,
+        private GetAuthenticatedUserAction $getAuthenticatedUserAction
     ) {}
 
     public function register(array $data): array
@@ -50,5 +52,10 @@ class AuthService
     public function logout(User $user): void
     {
         $this->revokeAuthTokenAction->execute($user);
+    }
+
+    public function getAuthenticatedUser(User $user): User
+    {
+        return $this->getAuthenticatedUserAction->execute($user);
     }
 }
