@@ -25,13 +25,13 @@ export class ApiService {
     });
   }
 
-  post<T>(endpoint: string, data: any): Observable<T> {
+  post<T>(endpoint: string, data: unknown): Observable<T> {
     return this.http.post<T>(`${this.baseUrl}${endpoint}`, data, {
       headers: this.getHeaders()
     });
   }
 
-  put<T>(endpoint: string, data: any): Observable<T> {
+  put<T>(endpoint: string, data: unknown): Observable<T> {
     return this.http.put<T>(`${this.baseUrl}${endpoint}`, data, {
       headers: this.getHeaders()
     });

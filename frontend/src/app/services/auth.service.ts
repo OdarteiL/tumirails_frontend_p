@@ -60,8 +60,8 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<any> {
-    return this.apiService.post('/auth/logout', {}).pipe(
+  logout(): Observable<{ success: boolean; message: string }> {
+    return this.apiService.post<{ success: boolean; message: string }>('/auth/logout', {}).pipe(
       tap(() => this.clearAuthState()),
       catchError(error => {
         // Clear auth state even if logout fails

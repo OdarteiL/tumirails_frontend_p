@@ -162,8 +162,6 @@ jobs:
           file: ./backend/Dockerfile.prod
           push: false
           tags: tumi-backend:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           load: true
 
       - name: Test migrations with production image
@@ -247,8 +245,6 @@ jobs:
           file: ./frontend/Dockerfile.prod
           push: false
           tags: tumi-frontend:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   integration-check:
     name: Integration Verification
