@@ -19,22 +19,27 @@ class AuthServiceTest extends TestCase
     use RefreshDatabase;
 
     private AuthService $service;
+
     private RegisterUserAction $registerUserAction;
+
     private LoginUserAction $loginUserAction;
+
     private GenerateAuthTokenAction $generateAuthTokenAction;
+
     private RevokeAuthTokenAction $revokeAuthTokenAction;
+
     private GetAuthenticatedUserAction $getAuthenticatedUserAction;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->registerUserAction = app(RegisterUserAction::class);
         $this->loginUserAction = app(LoginUserAction::class);
         $this->generateAuthTokenAction = app(GenerateAuthTokenAction::class);
         $this->revokeAuthTokenAction = app(RevokeAuthTokenAction::class);
         $this->getAuthenticatedUserAction = app(GetAuthenticatedUserAction::class);
-        
+
         $this->service = new AuthService(
             $this->registerUserAction,
             $this->loginUserAction,

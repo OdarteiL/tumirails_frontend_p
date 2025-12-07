@@ -37,7 +37,7 @@ class AuthService
     {
         $user = $this->loginUserAction->execute($credentials);
 
-        if (!$user) {
+        if (! $user) {
             return null;
         }
 

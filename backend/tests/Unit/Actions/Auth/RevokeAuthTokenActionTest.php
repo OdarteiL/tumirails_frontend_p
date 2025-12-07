@@ -24,7 +24,7 @@ class RevokeAuthTokenActionTest extends TestCase
     {
         $user = User::factory()->create();
         $token = $user->createToken('auth_token');
-        
+
         // Simulate authenticated user with current token
         $user->withAccessToken($token->accessToken);
 
@@ -52,7 +52,7 @@ class RevokeAuthTokenActionTest extends TestCase
         $user = User::factory()->create();
         $token1 = $user->createToken('token1');
         $token2 = $user->createToken('token2');
-        
+
         // Set token1 as current
         $user->withAccessToken($token1->accessToken);
 

@@ -39,13 +39,13 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         $name = $this->first_name;
-        
+
         if ($this->other_names) {
-            $name .= ' ' . $this->other_names;
+            $name .= ' '.$this->other_names;
         }
-        
-        $name .= ' ' . $this->last_name;
-        
+
+        $name .= ' '.$this->last_name;
+
         return $name;
     }
 }

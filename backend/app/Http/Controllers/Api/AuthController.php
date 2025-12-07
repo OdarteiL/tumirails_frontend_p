@@ -34,7 +34,7 @@ class AuthController extends Controller
     {
         $result = $this->authService->login($request->validated());
 
-        if (!$result) {
+        if (! $result) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid credentials',

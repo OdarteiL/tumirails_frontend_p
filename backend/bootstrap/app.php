@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*') || $request->expectsJson()) {
                 throw new \Illuminate\Auth\AuthenticationException();
             }
+
             return '/login'; // Fallback for web routes
         });
     })

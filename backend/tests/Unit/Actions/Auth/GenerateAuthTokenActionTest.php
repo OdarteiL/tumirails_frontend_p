@@ -5,7 +5,6 @@ namespace Tests\Unit\Actions\Auth;
 use App\Actions\Auth\GenerateAuthTokenAction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
 
 class GenerateAuthTokenActionTest extends TestCase
