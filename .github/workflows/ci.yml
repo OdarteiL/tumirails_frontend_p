@@ -123,7 +123,7 @@ jobs:
 
       - name: Upload coverage reports
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: backend/coverage/
@@ -165,15 +165,10 @@ jobs:
           cache-to: type=gha,mode=max
           load: true
 
-      - name: Create Docker network
-        run: docker network create tumi-test-network
-
-      - name: Connect postgres to network
-        run: docker network connect tumi-test-network postgres
-
       - name: Test migrations with production image
         run: |
-          docker run --rm --network tumi-test-network \
+          docker run --rm \
+            --network ${{ job.services.postgres.network }} \
             -e APP_KEY=base64:$(openssl rand -base64 32) \
             -e DB_CONNECTION=pgsql \
             -e DB_HOST=postgres \
@@ -186,7 +181,8 @@ jobs:
 
       - name: Verify database connection
         run: |
-          docker run --rm --network tumi-test-network \
+          docker run --rm \
+            --network ${{ job.services.postgres.network }} \
             -e APP_KEY=base64:$(openssl rand -base64 32) \
             -e DB_CONNECTION=pgsql \
             -e DB_HOST=postgres \
