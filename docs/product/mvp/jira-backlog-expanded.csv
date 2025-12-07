@@ -1,0 +1,15 @@
+Issue Type,Key,Summary,Description,Acceptance Criteria,Story Points,Sprint,Priority,Labels,Epic Link
+Epic,TUMI-E1,Auth & Foundation,"User authentication and project foundation setup.","High level scope: provide secure authentication using Laravel Sanctum, foundational user model and permissions, and hooks for CI/deployment migrations.",,Sprint 1,High,auth,
+
+Epic,TUMI-E2,Sites & Appliances,"Site creation and appliance catalog management.","High level: allow users to create a single site (MVP), store its metadata, and provide an appliance catalog for selection during estimation.",,Sprint 1,High,sites,
+
+Epic,TUMI-E3,Estimation & Recommendation,"Energy estimation and basic hardware recommendation.","High level: compute energy consumption estimates from user appliances and provide a simple rule-based hardware recommendation (panels, inverter, battery) backed by provider catalog.",,Sprint 1,High,estimation,
+
+Epic,TUMI-E4,DevEx & CI,"Minimal dev experience to support MVP.","High level: seed data, demo script and basic CI checks so developers can run a demo and tests locally and in CI.",,Sprint 1,Medium,devex,
+
+Epic,TUMI-E5,Project Creation & Assignment,"Project creation and manual installer assignment.","High level: allow customers to create projects from estimations and allow admins to assign installer profiles to projects.",,Sprint 2,High,projects,
+
+Epic,TUMI-E6,Payments (Upfront),"Upfront payment flow for projects.","High level: provide a simple upfront payment integration with a mock gateway for MVP and persisted payment records.",,Sprint 2,High,payments,
+
+Epic,TUMI-E7,Admin Basics,"Essential admin management for MVP.","High level: minimal admin UIs and endpoints for managing hardware and user statuses.",,Sprint 2,Medium,admin,
+

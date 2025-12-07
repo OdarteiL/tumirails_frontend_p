@@ -28,31 +28,52 @@ components:
     User:
       type: object
       properties:
-        id: integer
-        first_name: string
-        last_name: string
-        email: string
-        phone: string
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        other_names:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
         role:
           type: string
           enum: [customer, installer, provider, admin, verifier]
         status:
           type: string
           enum: [active, inactive, suspended]
-        profile_image_url: string
-        created_at: string
-        updated_at: string
+        profile_image_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
       example:
         id: 1
-        first_name: Ama
-        last_name: Mensah
-        email: ama@example.com
+        first_name: "Ama"
+        last_name: "Mensah"
+        other_names: "Abena"
+        email: "ama@example.com"
         phone: "+233500000000"
-        role: customer
-        status: active
-        profile_image_url: https://s3.amazonaws.com/tumi/profile1.png
-        created_at: 2025-01-10T08:00:00Z
-        updated_at: 2025-01-10T08:00:00Z
+        address: "Osu, Accra"
+        role: "customer"
+        status: "active"
+        profile_image_url: "https://s3.amazonaws.com/tumi/profile1.png"
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
 
     # ---------------------- SITE ----------------------
     Site:
@@ -184,12 +205,22 @@ components:
     ErrorResponse:
       type: object
       properties:
-        message: string
-        errors: object
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
       example:
+        success: false
         message: "Validation failed"
         errors:
-          email: ["Email already exists"]
+          email: ["This email is already registered"]
 
 paths:
   # ---------------- AUTH ----------------
@@ -197,33 +228,116 @@ paths:
     post:
       summary: Register a new user
       tags: [Auth]
+      security: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [first_name, last_name, email, password]
+              required: [first_name, last_name, email, password, password_confirmation]
               properties:
-                first_name: string
-                last_name: string
-                email: string
-                password: string
-                role: string
-                phone: string
+                first_name:
+                  type: string
+                  example: "Ama"
+                last_name:
+                  type: string
+                  example: "Mensah"
+                other_names:
+                  type: string
+                  nullable: true
+                  example: "Abena"
+                email:
+                  type: string
+                  format: email
+                  example: "ama.mensah@example.com"
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "SecurePass123"
+                password_confirmation:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "SecurePass123"
+                phone:
+                  type: string
+                  nullable: true
+                  example: "+233500000000"
+                address:
+                  type: string
+                  nullable: true
+                  example: "Osu, Accra"
+                role:
+                  type: string
+                  enum: [customer, installer, provider, admin]
+                  nullable: true
+                  example: "customer"
       responses:
         "201":
           description: User registered successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "400":
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Registration successful"
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      access_token:
+                        type: string
+                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+              example:
+                success: true
+                message: "Registration successful"
+                data:
+                  user:
+                    id: 1
+                    first_name: "Ama"
+                    last_name: "Mensah"
+                    other_names: "Abena"
+                    email: "ama.mensah@example.com"
+                    phone: "+233500000000"
+                    address: "Osu, Accra"
+                    role: "customer"
+                    status: "active"
+                    created_at: "2025-12-07T10:30:00Z"
+                    updated_at: "2025-12-07T10:30:00Z"
+                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+        "422":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                success: false
+                message: "Validation failed"
+                errors:
+                  email: ["This email is already registered"]
+                  password: ["Password confirmation does not match"]
 
   /auth/login:
     post:
@@ -246,17 +360,148 @@ paths:
               schema:
                 type: object
                 properties:
-                  access_token: string
-                  user:
-                    $ref: "#/components/schemas/User"
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Login successful"
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      access_token:
+                        type: string
+                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
               example:
-                access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                user:
-                  id: 1
-                  first_name: Ama
-                  email: ama@example.com
+                success: true
+                message: "Login successful"
+                data:
+                  user:
+                    id: 1
+                    first_name: "Ama"
+                    last_name: "Mensah"
+                    email: "ama@example.com"
+                    role: "customer"
+                    status: "active"
+                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
         "401":
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid credentials"
+              example:
+                success: false
+                message: "Invalid credentials"
+
+  /auth/me:
+    get:
+      summary: Get authenticated user details
+      description: Returns the profile information of the currently authenticated user
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+              example:
+                success: true
+                message: "User retrieved successfully"
+                data:
+                  user:
+                    id: 1
+                    first_name: "Ama"
+                    last_name: "Mensah"
+                    other_names: "Abena"
+                    email: "ama@example.com"
+                    phone: "+233500000000"
+                    address: "Osu, Accra"
+                    role: "customer"
+                    status: "active"
+                    created_at: "2025-01-10T08:00:00Z"
+                    updated_at: "2025-01-10T08:00:00Z"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Unauthenticated"
+              example:
+                success: false
+                message: "Unauthenticated"
+
+  /auth/logout:
+    post:
+      summary: Logout user
+      description: Revoke the current access token
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Successfully logged out"
+              example:
+                success: true
+                message: "Successfully logged out"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Unauthenticated"
+              example:
+                success: false
+                message: "Unauthenticated"
 
   # ---------------- SITES ----------------
   /sites:

@@ -48,20 +48,20 @@ export class AuthService {
 
   register(data: RegisterRequest): Observable<AuthResponse> {
     return this.apiService.post<AuthResponse>('/auth/register', data).pipe(
-      tap(response => this.setAuthState(response.user, response.access_token)),
+      tap(response => this.setAuthState(response.data.user, response.data.access_token)),
       catchError(error => throwError(() => error))
     );
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.apiService.post<AuthResponse>('/auth/login', credentials).pipe(
-      tap(response => this.setAuthState(response.user, response.access_token)),
+      tap(response => this.setAuthState(response.data.user, response.data.access_token)),
       catchError(error => throwError(() => error))
     );
   }
 
-  logout(): Observable<any> {
-    return this.apiService.post('/auth/logout', {}).pipe(
+  logout(): Observable<{ success: boolean; message: string }> {
+    return this.apiService.post<{ success: boolean; message: string }>('/auth/logout', {}).pipe(
       tap(() => this.clearAuthState()),
       catchError(error => {
         // Clear auth state even if logout fails

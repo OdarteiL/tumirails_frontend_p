@@ -2,22 +2,29 @@
 
 namespace App\Services;
 
+use App\Actions\Auth\GenerateAuthTokenAction;
+use App\Actions\Auth\GetAuthenticatedUserAction;
+use App\Actions\Auth\LoginUserAction;
 use App\Actions\Auth\RegisterUserAction;
+use App\Actions\Auth\RevokeAuthTokenAction;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AuthService
 {
     public function __construct(
-        private RegisterUserAction $registerUserAction
+        private RegisterUserAction $registerUserAction,
+        private LoginUserAction $loginUserAction,
+        private GenerateAuthTokenAction $generateAuthTokenAction,
+        private RevokeAuthTokenAction $revokeAuthTokenAction,
+        private GetAuthenticatedUserAction $getAuthenticatedUserAction
     ) {}
 
     public function register(array $data): array
     {
         return DB::transaction(function () use ($data) {
             $user = $this->registerUserAction->execute($data);
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $this->generateAuthTokenAction->execute($user);
 
             return [
                 'user' => $user,
@@ -28,12 +35,13 @@ class AuthService
 
     public function login(array $credentials): ?array
     {
-        if (!Auth::attempt($credentials)) {
+        $user = $this->loginUserAction->execute($credentials);
+
+        if (! $user) {
             return null;
         }
 
-        $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $this->generateAuthTokenAction->execute($user);
 
         return [
             'user' => $user,
@@ -43,6 +51,11 @@ class AuthService
 
     public function logout(User $user): void
     {
-        $user->currentAccessToken()->delete();
+        $this->revokeAuthTokenAction->execute($user);
+    }
+
+    public function getAuthenticatedUser(User $user): User
+    {
+        return $this->getAuthenticatedUserAction->execute($user);
     }
 }

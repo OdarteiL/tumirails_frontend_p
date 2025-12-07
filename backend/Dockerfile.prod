@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.3-fpm AS base
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
     libicu-dev \
-    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -21,11 +20,11 @@ RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd zip intl
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
-# Install PCOV for code coverage
-RUN pecl install pcov && docker-php-ext-enable pcov
-
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Production build stage
+FROM base AS production
 
 # Set working directory
 WORKDIR /var/www/html
@@ -33,8 +32,8 @@ WORKDIR /var/www/html
 # Copy composer files
 COPY composer.json composer.lock ./
 
-# Install dependencies (including dev dependencies for local development)
-RUN composer install --optimize-autoloader --no-scripts
+# Install production dependencies only
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
 
 # Copy application files
 COPY . .
@@ -47,15 +46,30 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Copy supervisor config
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Copy and set permissions for startup script
-COPY docker/startup.sh /usr/local/bin/startup.sh
-RUN chmod +x /usr/local/bin/startup.sh
+# Create startup script for production
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+echo "Starting production Laravel application..."\n\
+\n\
+# Run migrations in production\n\
+if [ "$RUN_MIGRATIONS" = "true" ]; then\n\
+    echo "Running database migrations..."\n\
+    php artisan migrate --force --no-interaction\n\
+    echo "Migrations completed!"\n\
+fi\n\
+\n\
+# Cache optimization\n\
+php artisan config:cache\n\
+php artisan route:cache\n\
+php artisan view:cache\n\
+\n\
+# Start PHP-FPM\n\
+php-fpm\n\
+' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 # Expose port
-EXPOSE 8000
+EXPOSE 9000
 
-# Start with startup script
-CMD ["/usr/local/bin/startup.sh"]
+# Start application
+CMD ["/usr/local/bin/start.sh"]

@@ -1,59 +1,207 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tumi Configurator - Backend API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![CI Pipeline](https://github.com/tumirailsdotcom/tumi_configurator/workflows/CI%20Pipeline/badge.svg)](https://github.com/tumirailsdotcom/tumi_configurator/actions)
 
-## About Laravel
+Laravel 12 backend API for the Tumi Solar Configurator platform.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **RESTful API** - Clean API endpoints following REST conventions
+- **Authentication** - Laravel Sanctum for API token authentication
+- **Service Layer Architecture** - Controllers → Services → Actions pattern
+- **Comprehensive Testing** - 96%+ code coverage with PHPUnit
+- **Code Quality** - Laravel Pint for consistent code style
+- **Database** - PostgreSQL with migrations and seeders
+- **Caching** - Redis for sessions and cache
+- **Broadcasting** - Real-time events with Soketi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech Stack
 
-## Learning Laravel
+- **PHP** 8.3
+- **Laravel** 12.x
+- **PostgreSQL** 16
+- **Redis** 7
+- **Sanctum** - API authentication
+- **PHPUnit** - Testing framework
+- **Laravel Pint** - Code style fixer
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Getting Started
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Prerequisites
 
-## Laravel Sponsors
+- Docker & Docker Compose
+- Git
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Installation
 
-### Premium Partners
+1. Clone the repository:
+```bash
+git clone https://github.com/tumirailsdotcom/tumi_configurator.git
+cd tumi_configurator
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. Start the development environment:
+```bash
+docker compose up -d
+```
+
+3. The backend API will be available at `http://localhost:8000`
+
+Database migrations run automatically on container startup.
+
+### Environment Variables
+
+Key environment variables (see `.env.example`):
+
+```env
+APP_URL=http://localhost:8000
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_DATABASE=tumi
+REDIS_HOST=redis
+SESSION_DOMAIN=.localhost
+SANCTUM_STATEFUL_DOMAINS=localhost:4200,127.0.0.1:4200
+```
+
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests
+docker compose exec backend php artisan test
+
+# Run tests with coverage
+docker compose exec backend php artisan test --coverage --min=80
+
+# Run specific test file
+docker compose exec backend php artisan test tests/Feature/Http/Controllers/Api/AuthControllerTest.php
+```
+
+### Code Style
+
+This project uses Laravel Pint for code style consistency:
+
+```bash
+# Check code style
+docker compose exec backend ./vendor/bin/pint --test
+
+# Fix code style issues
+docker compose exec backend ./vendor/bin/pint
+```
+
+### Database Migrations
+
+```bash
+# Run migrations
+docker compose exec backend php artisan migrate
+
+# Rollback migrations
+docker compose exec backend php artisan migrate:rollback
+
+# Fresh migration with seeders
+docker compose exec backend php artisan migrate:fresh --seed
+```
+
+## API Documentation
+
+API endpoints are documented using OpenAPI 3.1 specification.
+
+See [`/docs/api/openapi.yaml`](../docs/api/openapi.yaml) for complete API documentation.
+
+### Authentication Endpoints
+
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout (authenticated)
+- `GET /api/auth/me` - Get authenticated user (authenticated)
+
+## Architecture
+
+This project follows a clean architecture pattern:
+
+```
+Controllers → Services → Actions
+```
+
+- **Controllers** - Handle HTTP requests/responses
+- **Services** - Orchestrate business logic
+- **Actions** - Single-responsibility units of work
+
+### Project Structure
+
+```
+app/
+├── Actions/         # Single-purpose action classes
+├── Http/
+│   ├── Controllers/ # HTTP request handlers
+│   ├── Requests/    # Form request validation
+│   └── Resources/   # API resource transformers
+├── Models/          # Eloquent models
+└── Services/        # Business logic orchestrators
+```
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration.
+
+### Automated Checks
+
+On every push and pull request:
+
+1. **Code Style** - Laravel Pint verification
+2. **Unit Tests** - PHPUnit with 80% coverage requirement
+3. **Build Validation** - Production Docker image builds
+4. **Migration Check** - Database migrations tested against PostgreSQL
+
+### Running CI Checks Locally
+
+```bash
+# Code style check
+./vendor/bin/pint --test
+
+# Run tests with coverage
+php artisan test --coverage --min=80
+
+# Build production image
+docker build -f Dockerfile.prod -t backend:test .
+```
+
+See [CI/CD Documentation](../docs/CI-CD.md) for detailed pipeline information.
+
+## Production Deployment
+
+### Building Production Image
+
+```bash
+docker build -f Dockerfile.prod -t tumi-backend:latest .
+```
+
+The production Dockerfile:
+- Installs production dependencies only
+- Optimizes autoloader
+- Caches configuration, routes, and views
+- Runs as non-root user
+
+### Environment Configuration
+
+Set `RUN_MIGRATIONS=true` to run migrations on container startup.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. Create a feature branch from `develop`
+2. Make your changes following the architecture patterns
+3. Ensure tests pass: `php artisan test`
+4. Ensure code style is correct: `./vendor/bin/pint`
+5. Submit a pull request to `develop`
 
-## Code of Conduct
+### Code Standards
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Follow PSR-12 coding standards (enforced by Pint)
+- Write tests for new features (minimum 80% coverage)
+- Use type hints and return types
+- Follow the Controllers → Services → Actions pattern
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is proprietary software. All rights reserved.
