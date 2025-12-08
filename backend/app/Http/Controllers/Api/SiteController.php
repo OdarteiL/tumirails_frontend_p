@@ -7,17 +7,20 @@ use App\Http\Requests\CreateSiteRequest;
 use App\Http\Resources\SiteResource;
 use App\Services\SiteService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class SiteController extends Controller
 {
     public function __construct(private readonly SiteService $siteService) {}
 
-    public function index(): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
         $sites = $this->siteService->getUserSites(auth()->user());
 
-        return SiteResource::collection($sites);
+        return response()->json([
+            'success' => true,
+            'message' => 'Sites retrieved successfully',
+            'data' => SiteResource::collection($sites),
+        ]);
     }
 
     public function store(CreateSiteRequest $request): JsonResponse

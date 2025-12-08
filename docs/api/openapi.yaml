@@ -507,32 +507,276 @@ paths:
   /sites:
     get:
       summary: List all user sites
+      description: Retrieve all sites belonging to the authenticated user
       tags: [Sites]
+      security:
+        - bearerAuth: []
       responses:
         "200":
-          description: Site list
+          description: Sites retrieved successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Site"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Sites retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Site"
+              example:
+                success: true
+                message: "Sites retrieved successfully"
+                data:
+                  - id: 101
+                    user_id: 1
+                    name: "Accra Apartment"
+                    address: "Osu, Accra"
+                    latitude: 5.603717
+                    longitude: -0.186964
+                    timezone: "Africa/Accra"
+                    notes: "Single phase connection"
+                    created_at: "2025-12-08T10:00:00Z"
+                    updated_at: "2025-12-08T10:00:00Z"
+                  - id: 102
+                    user_id: 1
+                    name: "Kumasi Office"
+                    address: "Adum, Kumasi"
+                    latitude: 6.688437
+                    longitude: -1.624845
+                    timezone: "Africa/Accra"
+                    notes: "Three phase connection"
+                    created_at: "2025-12-08T11:00:00Z"
+                    updated_at: "2025-12-08T11:00:00Z"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Authentication required. Please provide a valid access token."
+              example:
+                success: false
+                message: "Authentication required. Please provide a valid access token."
 
     post:
       summary: Create a new site
+      description: Create a new site with location coordinates and details
       tags: [Sites]
+      security:
+        - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Site"
+              type: object
+              required: [name, address, latitude, longitude, timezone]
+              properties:
+                name:
+                  type: string
+                  example: "Accra Apartment"
+                address:
+                  type: string
+                  example: "Osu, Accra, Ghana"
+                latitude:
+                  type: number
+                  format: double
+                  minimum: -90
+                  maximum: 90
+                  example: 5.603717
+                longitude:
+                  type: number
+                  format: double
+                  minimum: -180
+                  maximum: 180
+                  example: -0.186964
+                timezone:
+                  type: string
+                  example: "Africa/Accra"
+                  description: "Valid timezone identifier (e.g., Africa/Accra, America/New_York)"
+                notes:
+                  type: string
+                  nullable: true
+                  example: "Single phase connection, accessible via main road"
       responses:
         "201":
           description: Site created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Site"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Site created successfully"
+                  data:
+                    $ref: "#/components/schemas/Site"
+              example:
+                success: true
+                message: "Site created successfully"
+                data:
+                  id: 101
+                  user_id: 1
+                  name: "Accra Apartment"
+                  address: "Osu, Accra, Ghana"
+                  latitude: 5.603717
+                  longitude: -0.186964
+                  timezone: "Africa/Accra"
+                  notes: "Single phase connection, accessible via main road"
+                  created_at: "2025-12-08T10:00:00Z"
+                  updated_at: "2025-12-08T10:00:00Z"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                success: false
+                message: "Validation failed"
+                errors:
+                  name: ["The name field is required."]
+                  latitude: ["The latitude must be between -90 and 90."]
+                  longitude: ["The longitude must be between -180 and 180."]
+                  timezone: ["The timezone field is required."]
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Authentication required. Please provide a valid access token."
+              example:
+                success: false
+                message: "Authentication required. Please provide a valid access token."
+
+  /sites/{id}:
+    get:
+      summary: Get a specific site
+      description: Retrieve details of a specific site by ID
+      tags: [Sites]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Site ID
+          example: 101
+      responses:
+        "200":
+          description: Site retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Site retrieved successfully"
+                  data:
+                    $ref: "#/components/schemas/Site"
+              example:
+                success: true
+                message: "Site retrieved successfully"
+                data:
+                  id: 101
+                  user_id: 1
+                  name: "Accra Apartment"
+                  address: "Osu, Accra, Ghana"
+                  latitude: 5.603717
+                  longitude: -0.186964
+                  timezone: "Africa/Accra"
+                  notes: "Single phase connection"
+                  created_at: "2025-12-08T10:00:00Z"
+                  updated_at: "2025-12-08T10:00:00Z"
+        "404":
+          description: Site not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Site not found"
+              example:
+                success: false
+                message: "Site not found"
+        "403":
+          description: Forbidden - Not site owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "You do not have access to this site"
+              example:
+                success: false
+                message: "You do not have access to this site"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Authentication required. Please provide a valid access token."
+              example:
+                success: false
+                message: "Authentication required. Please provide a valid access token."
 
   # ---------------- ESTIMATION ----------------
   /estimations:
