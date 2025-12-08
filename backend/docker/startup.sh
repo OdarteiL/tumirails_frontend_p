@@ -5,7 +5,7 @@ echo "Waiting for database connection..."
 max_attempts=30
 attempt=0
 
-until php artisan migrate:status --database=pgsql >/dev/null 2>&1 || [ $attempt -eq $max_attempts ]; do
+until php artisan db:show --database=pgsql >/dev/null 2>&1 || [ $attempt -eq $max_attempts ]; do
     attempt=$((attempt + 1))
     echo "Waiting for database... (attempt $attempt/$max_attempts)"
     sleep 2
