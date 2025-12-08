@@ -46,14 +46,14 @@ class GetUserSitesActionTest extends TestCase
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
-        
+
         Site::factory()->count(2)->create(['user_id' => $user->id]);
         Site::factory()->count(3)->create(['user_id' => $otherUser->id]);
 
         $sites = $this->action->execute($user);
 
         $this->assertCount(2, $sites);
-        $this->assertTrue($sites->every(fn($site) => $site->user_id === $user->id));
+        $this->assertTrue($sites->every(fn ($site) => $site->user_id === $user->id));
     }
 
     public function test_execute_returns_sites_in_latest_order(): void

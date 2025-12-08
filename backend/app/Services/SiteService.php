@@ -34,7 +34,7 @@ class SiteService
     {
         $site = $this->getSiteByIdAction->execute($id);
 
-        if (!$site) {
+        if (! $site) {
             throw new NotFoundHttpException('Site not found');
         }
 

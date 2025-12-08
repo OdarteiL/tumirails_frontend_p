@@ -2,9 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+return new class() extends Migration
 {
     public function up(): void
     {
@@ -20,8 +21,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement('ALTER TABLE sites ADD CONSTRAINT check_latitude CHECK (latitude >= -90 AND latitude <= 90)');
-        DB::statement('ALTER TABLE sites ADD CONSTRAINT check_longitude CHECK (longitude >= -180 AND longitude <= 180)');
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE sites ADD CONSTRAINT check_latitude CHECK (latitude >= -90 AND latitude <= 90)');
+            DB::statement('ALTER TABLE sites ADD CONSTRAINT check_longitude CHECK (longitude >= -180 AND longitude <= 180)');
+        }
     }
 
     public function down(): void

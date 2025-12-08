@@ -19,8 +19,11 @@ class SiteServiceTest extends TestCase
     use RefreshDatabase;
 
     private SiteService $service;
+
     private CreateSiteAction $createSiteAction;
+
     private GetUserSitesAction $getUserSitesAction;
+
     private GetSiteByIdAction $getSiteByIdAction;
 
     protected function setUp(): void

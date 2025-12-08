@@ -14,7 +14,7 @@ class SiteFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => fake()->company() . ' Site',
+            'name' => fake()->company().' Site',
             'address' => fake()->address(),
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
