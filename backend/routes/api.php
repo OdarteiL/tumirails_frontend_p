@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\SiteController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes (no CSRF)
@@ -15,4 +16,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
     });
+
+    Route::apiResource('sites', SiteController::class)->only(['index', 'store', 'show']);
 });
