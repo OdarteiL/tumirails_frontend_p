@@ -14,7 +14,7 @@ class SiteControllerTest extends TestCase
     public function test_index_returns_user_sites(): void
     {
         $user = User::factory()->create();
-        Site::factory()->count(3)->create(['user_id' => $user->id]);
+        Site::factory()->count(3)->create(['owner_id' => $user->id, 'owner_type' => User::class]);
         Site::factory()->count(2)->create(); // Other user's sites
 
         $response = $this->actingAs($user)->getJson('/api/sites');
@@ -50,7 +50,8 @@ class SiteControllerTest extends TestCase
 
         $this->assertDatabaseHas('sites', [
             'name' => 'New Site',
-            'user_id' => $user->id,
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
         ]);
     }
 
@@ -101,7 +102,7 @@ class SiteControllerTest extends TestCase
     public function test_show_returns_site_for_owner(): void
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['owner_id' => $user->id, 'owner_type' => User::class]);
 
         $response = $this->actingAs($user)->getJson("/api/sites/{$site->id}");
 
@@ -117,7 +118,7 @@ class SiteControllerTest extends TestCase
     {
         $owner = User::factory()->create();
         $otherUser = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $owner->id]);
+        $site = Site::factory()->create(['owner_id' => $owner->id, 'owner_type' => User::class]);
 
         $response = $this->actingAs($otherUser)->getJson("/api/sites/{$site->id}");
 

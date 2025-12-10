@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Authentication required. Please provide a valid access token.',
+                    'error' => 'Authentication required. Please provide a valid access token.',
                 ], 401);
             }
         });
@@ -38,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($exception instanceof \Illuminate\Auth\AuthenticationException) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Authentication required. Please provide a valid access token.',
+                        'error' => 'Authentication required. Please provide a valid access token.',
                     ], 401);
                 }
 
@@ -54,7 +54,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($exception instanceof \Illuminate\Validation\ValidationException) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Validation failed',
+                        'error' => 'Validation failed',
                         'errors' => $exception->errors(),
                     ], 422);
                 }
@@ -62,7 +62,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 // Handle other exceptions
                 return response()->json([
                     'success' => false,
-                    'message' => $exception->getMessage() ?: 'An error occurred',
+                    'error' => $exception->getMessage() ?: 'An error occurred',
                 ], $statusCode);
             }
 

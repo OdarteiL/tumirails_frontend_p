@@ -6,8 +6,8 @@ use App\Actions\Site\AddApplianceToSiteAction;
 use App\Models\Appliance;
 use App\Models\Category;
 use App\Models\Site;
+use App\Models\SiteAppliance;
 use App\Models\User;
-use App\Models\UserAppliance;
 use App\Services\SiteApplianceService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -32,12 +32,13 @@ class SiteApplianceServiceTest extends TestCase
     public function test_add_appliance_success(): void
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['owner_id' => $user->id, 'owner_type' => User::class]);
         $category = Category::factory()->create(['user_id' => $user->id]);
-        $appliance = Appliance::factory()->create(['category_id' => $category->id, 'user_id' => $user->id]);
+        $appliance = Appliance::factory()->create(['category_id' => $category->id, 'owner_id' => $user->id, 'owner_type' => User::class]);
 
-        $expectedUserAppliance = new UserAppliance([
-            'user_id' => $user->id,
+        $expectedSiteAppliance = new SiteAppliance([
+            'added_by_id' => $user->id,
+            'added_by_type' => User::class,
             'site_id' => $site->id,
             'appliance_id' => $appliance->id,
             'quantity' => 2,
@@ -47,19 +48,19 @@ class SiteApplianceServiceTest extends TestCase
         $this->mockAction
             ->shouldReceive('execute')
             ->once()
-            ->with($user->id, $site->id, $appliance->id, 2, 8.0, null)
-            ->andReturn($expectedUserAppliance);
+            ->with($user->id, User::class, $site->id, $appliance->id, 2, 8.0, null)
+            ->andReturn($expectedSiteAppliance);
 
         $result = $this->service->addAppliance($user->id, $site->id, $appliance->id, 2, 8.0);
 
-        $this->assertEquals($expectedUserAppliance, $result);
+        $this->assertEquals($expectedSiteAppliance, $result);
     }
 
     public function test_add_appliance_throws_exception_for_non_owned_site(): void
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $otherUser->id]);
+        $site = Site::factory()->create(['owner_id' => $otherUser->id, 'owner_type' => User::class]);
 
         $this->expectException(ModelNotFoundException::class);
 
@@ -78,12 +79,13 @@ class SiteApplianceServiceTest extends TestCase
     public function test_add_appliance_with_notes(): void
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['owner_id' => $user->id, 'owner_type' => User::class]);
         $category = Category::factory()->create(['user_id' => $user->id]);
-        $appliance = Appliance::factory()->create(['category_id' => $category->id, 'user_id' => $user->id]);
+        $appliance = Appliance::factory()->create(['category_id' => $category->id, 'owner_id' => $user->id, 'owner_type' => User::class]);
 
-        $expectedUserAppliance = new UserAppliance([
-            'user_id' => $user->id,
+        $expectedSiteAppliance = new SiteAppliance([
+            'added_by_id' => $user->id,
+            'added_by_type' => User::class,
             'site_id' => $site->id,
             'appliance_id' => $appliance->id,
             'quantity' => 1,
@@ -94,11 +96,11 @@ class SiteApplianceServiceTest extends TestCase
         $this->mockAction
             ->shouldReceive('execute')
             ->once()
-            ->with($user->id, $site->id, $appliance->id, 1, 10.0, 'Test notes')
-            ->andReturn($expectedUserAppliance);
+            ->with($user->id, User::class, $site->id, $appliance->id, 1, 10.0, 'Test notes')
+            ->andReturn($expectedSiteAppliance);
 
         $result = $this->service->addAppliance($user->id, $site->id, $appliance->id, 1, 10.0, 'Test notes');
 
-        $this->assertEquals($expectedUserAppliance, $result);
+        $this->assertEquals($expectedSiteAppliance, $result);
     }
 }

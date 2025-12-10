@@ -5,8 +5,8 @@ namespace Tests\Feature\Api;
 use App\Models\Appliance;
 use App\Models\Category;
 use App\Models\Site;
+use App\Models\SiteAppliance;
 use App\Models\User;
-use App\Models\UserAppliance;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -26,9 +26,9 @@ class SiteApplianceTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->site = Site::factory()->create(['user_id' => $this->user->id]);
+        $this->site = Site::factory()->create(['owner_id' => $this->user->id, 'owner_type' => User::class]);
         $category = Category::factory()->create(['user_id' => $this->user->id]);
-        $this->appliance = Appliance::factory()->create(['category_id' => $category->id, 'user_id' => $this->user->id]);
+        $this->appliance = Appliance::factory()->create(['category_id' => $category->id, 'owner_id' => $this->user->id, 'owner_type' => User::class]);
 
         Sanctum::actingAs($this->user);
     }
@@ -47,7 +47,8 @@ class SiteApplianceTest extends TestCase
                 'success' => true,
                 'message' => 'Appliance added to site successfully',
                 'data' => [
-                    'user_id' => $this->user->id,
+                    'added_by_id' => $this->user->id,
+                    'added_by_type' => User::class,
                     'site_id' => $this->site->id,
                     'appliance_id' => $this->appliance->id,
                     'quantity' => 2,
@@ -56,8 +57,9 @@ class SiteApplianceTest extends TestCase
                 ],
             ]);
 
-        $this->assertDatabaseHas('user_appliances', [
-            'user_id' => $this->user->id,
+        $this->assertDatabaseHas('site_appliances', [
+            'added_by_id' => $this->user->id,
+            'added_by_type' => User::class,
             'site_id' => $this->site->id,
             'appliance_id' => $this->appliance->id,
             'quantity' => 2,
@@ -156,8 +158,9 @@ class SiteApplianceTest extends TestCase
     public function test_add_appliance_duplicate_returns_409(): void
     {
         // Add appliance first time
-        UserAppliance::create([
-            'user_id' => $this->user->id,
+        SiteAppliance::create([
+            'added_by_id' => $this->user->id,
+            'added_by_type' => User::class,
             'site_id' => $this->site->id,
             'appliance_id' => $this->appliance->id,
             'quantity' => 1,
@@ -181,7 +184,7 @@ class SiteApplianceTest extends TestCase
     public function test_add_appliance_to_non_owned_site_returns_404(): void
     {
         $otherUser = User::factory()->create();
-        $otherSite = Site::factory()->create(['user_id' => $otherUser->id]);
+        $otherSite = Site::factory()->create(['owner_id' => $otherUser->id, 'owner_type' => User::class]);
 
         $response = $this->postJson("/api/sites/{$otherSite->id}/appliances", [
             'appliance_id' => $this->appliance->id,

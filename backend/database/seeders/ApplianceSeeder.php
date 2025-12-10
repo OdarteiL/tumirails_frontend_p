@@ -39,7 +39,8 @@ class ApplianceSeeder extends Seeder
 
         foreach ($appliances as $appliance) {
             Appliance::create([
-                'user_id' => $admin->id,
+                'owner_id' => $admin->id,
+                'owner_type' => User::class,
                 ...$appliance,
             ]);
         }

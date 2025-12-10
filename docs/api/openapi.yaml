@@ -75,14 +75,293 @@ components:
         created_at: "2025-01-10T08:00:00Z"
         updated_at: "2025-01-10T08:00:00Z"
 
-    # ---------------------- SITE ----------------------
-    Site:
+    # ---------------------- INSTALLER DETAIL ----------------------
+    InstallerDetail:
       type: object
       properties:
         id:
           type: integer
         user_id:
           type: integer
+        company_name:
+          type: string
+          nullable: true
+          description: "Company name for company installers, null for individuals"
+        license_number:
+          type: string
+        service_areas:
+          type: array
+          items:
+            type: string
+        certifications:
+          type: array
+          items:
+            type: string
+          nullable: true
+        years_experience:
+          type: integer
+        rating:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: 1
+        user_id: 10
+        company_name: "ABC Installations Ltd"
+        license_number: "LIC-GH-2024-001"
+        service_areas: ["Greater Accra", "Ashanti", "Western"]
+        certifications: ["Solar PV Installation", "Electrical Safety", "NABCEP Certified"]
+        years_experience: 8
+        rating: 4.75
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
+
+    # ---------------------- PROVIDER DETAIL ----------------------
+    ProviderDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        company_name:
+          type: string
+          nullable: true
+          description: "Company name for company providers, null for individuals"
+        business_registration:
+          type: string
+        service_areas:
+          type: array
+          items:
+            type: string
+        certifications:
+          type: array
+          items:
+            type: string
+          nullable: true
+        rating:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: 1
+        user_id: 15
+        company_name: "Solar Providers Ghana Ltd"
+        business_registration: "BRN-GH-2024-5678"
+        service_areas: ["Greater Accra", "Central", "Eastern"]
+        certifications: ["ISO 9001:2015", "Solar Alliance Member", "Ghana Standards Authority"]
+        rating: 4.85
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
+
+    # ---------------------- ORGANISATION ----------------------
+    Organisation:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [installer, provider, customer]
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        installer_detail:
+          $ref: "#/components/schemas/OrganisationInstallerDetail"
+        provider_detail:
+          $ref: "#/components/schemas/OrganisationProviderDetail"
+      example:
+        id: 1
+        name: "Solar Installations Co."
+        type: "installer"
+        description: "Professional solar installation company"
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
+
+    OrganisationInstallerDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        organisation_id:
+          type: integer
+        license_number:
+          type: string
+        service_areas:
+          type: array
+          items:
+            type: string
+        certifications:
+          type: array
+          items:
+            type: string
+          nullable: true
+        years_experience:
+          type: integer
+        rating:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: 1
+        organisation_id: 1
+        license_number: "ORG-LIC-GH-2024-001"
+        service_areas: ["Greater Accra", "Ashanti", "Western"]
+        certifications: ["ISO 9001:2015", "Solar PV Installation"]
+        years_experience: 10
+        rating: 4.8
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
+
+    OrganisationProviderDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        organisation_id:
+          type: integer
+        business_registration:
+          type: string
+        service_areas:
+          type: array
+          items:
+            type: string
+        certifications:
+          type: array
+          items:
+            type: string
+          nullable: true
+        rating:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 5
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: 1
+        organisation_id: 2
+        business_registration: "ORG-BRN-GH-2024-001"
+        service_areas: ["Greater Accra", "Central"]
+        certifications: ["ISO 9001:2015", "Ghana Standards Authority"]
+        rating: 4.9
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
+
+    OrganisationMember:
+      type: object
+      properties:
+        id:
+          type: integer
+        organisation_id:
+          type: integer
+        user_id:
+          type: integer
+        role:
+          type: string
+          enum: [owner, admin, installer, provider, customer]
+        joined_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        user:
+          $ref: "#/components/schemas/User"
+      example:
+        id: 1
+        organisation_id: 1
+        user_id: 5
+        role: "admin"
+        joined_at: "2025-01-10T08:00:00Z"
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
+
+    OrganisationInvitation:
+      type: object
+      properties:
+        id:
+          type: integer
+        organisation_id:
+          type: integer
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [admin, installer, provider, customer]
+        status:
+          type: string
+          enum: [pending, accepted, rejected, expired]
+        token:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: 1
+        organisation_id: 1
+        email: "newmember@example.com"
+        role: "installer"
+        status: "pending"
+        token: "inv_abc123xyz789"
+        expires_at: "2025-01-17T08:00:00Z"
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
+
+    # ---------------------- SITE ----------------------
+    Site:
+      type: object
+      properties:
+        id:
+          type: integer
+        owner_id:
+          type: integer
+        owner_type:
+          type: string
+          enum: [User, Organisation]
         name:
           type: string
         address:
@@ -111,18 +390,19 @@ components:
         updated_at:
           type: string
           format: date-time
-      required: [id, user_id, name, address, latitude, longitude, timezone]
+      required: [id, owner_id, owner_type, name, address, latitude, longitude, timezone]
       example:
         id: 101
-        user_id: 1
+        owner_id: 1
+        owner_type: "User"
         name: "Accra Apartment"
-        address: "Osu, Accra, Ghana"
-        latitude: 5.603717
+        address: "Osu, Accra"
         longitude: -0.186964
+        latitude: 5.603717
         timezone: "Africa/Accra"
         notes: "Single phase connection"
-        created_at: "2025-12-08T10:00:00Z"
-        updated_at: "2025-12-08T10:00:00Z"
+        created_at: "2025-01-10T08:00:00Z"
+        updated_at: "2025-01-10T08:00:00Z"
 
     # ---------------------- IMAGE ----------------------
     Image:
@@ -150,14 +430,17 @@ components:
         default_wattage: 75
         category: "Cooling"
 
-    # ---------------------- USER APPLIANCE ----------------------
-    UserAppliance:
+    # ---------------------- SITE APPLIANCE ----------------------
+    SiteAppliance:
       type: object
       properties:
         id:
           type: integer
-        user_id:
+        owner_id:
           type: integer
+        owner_type:
+          type: string
+          enum: [User, Organisation]
         site_id:
           type: integer
         appliance_id:
@@ -179,10 +462,11 @@ components:
         updated_at:
           type: string
           format: date-time
-      required: [id, user_id, site_id, appliance_id, quantity, daily_usage_hours]
+      required: [id, owner_id, owner_type, site_id, appliance_id, quantity, daily_usage_hours]
       example:
         id: 1
-        user_id: 1
+        owner_id: 1
+        owner_type: "User"
         site_id: 101
         appliance_id: 7
         quantity: 2
@@ -267,7 +551,7 @@ components:
         success:
           type: boolean
           example: false
-        message:
+        error:
           type: string
         errors:
           type: object
@@ -382,7 +666,7 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Validation failed"
                   errors:
@@ -393,10 +677,318 @@ paths:
                         type: string
               example:
                 success: false
-                message: "Validation failed"
+                error: "Validation failed"
                 errors:
                   email: ["This email is already registered"]
                   password: ["Password confirmation does not match"]
+
+  /auth/register/installer:
+    post:
+      summary: Register a new installer
+      description: |
+        Register a user with installer role and professional details.
+        
+        **Supports both individuals and companies:**
+        - Individual installers: Omit company_name or set to null
+        - Company installers: Provide company_name
+        
+        All installers must have a valid license_number and specify their service_areas.
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [first_name, last_name, email, password, password_confirmation, license_number, service_areas, years_experience]
+              properties:
+                first_name:
+                  type: string
+                  example: "John"
+                last_name:
+                  type: string
+                  example: "Installer"
+                other_names:
+                  type: string
+                  nullable: true
+                  example: "David"
+                email:
+                  type: string
+                  format: email
+                  example: "john.installer@example.com"
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "SecurePass123"
+                password_confirmation:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "SecurePass123"
+                phone:
+                  type: string
+                  nullable: true
+                  example: "+233501234567"
+                address:
+                  type: string
+                  nullable: true
+                  example: "Tema, Greater Accra"
+                company_name:
+                  type: string
+                  nullable: true
+                  example: "ABC Installations Ltd"
+                  description: "Company name (optional - for companies) or null for individual installers"
+                license_number:
+                  type: string
+                  example: "LIC-GH-2024-001"
+                service_areas:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  example: ["Greater Accra", "Ashanti", "Western"]
+                certifications:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  example: ["Solar PV Installation", "Electrical Safety"]
+                years_experience:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  example: 8
+      responses:
+        "201":
+          description: Installer registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Installer registration successful"
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      installer:
+                        $ref: "#/components/schemas/InstallerDetail"
+                      access_token:
+                        type: string
+                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+              example:
+                success: true
+                message: "Installer registration successful"
+                data:
+                  user:
+                    id: 10
+                    first_name: "John"
+                    last_name: "Installer"
+                    other_names: "David"
+                    email: "john.installer@example.com"
+                    phone: "+233501234567"
+                    address: "Tema, Greater Accra"
+                    role: "installer"
+                    status: "active"
+                    created_at: "2025-12-10T10:30:00Z"
+                    updated_at: "2025-12-10T10:30:00Z"
+                  installer:
+                    id: 1
+                    user_id: 10
+                    company_name: "ABC Installations Ltd"
+                    license_number: "LIC-GH-2024-001"
+                    service_areas: ["Greater Accra", "Ashanti", "Western"]
+                    certifications: ["Solar PV Installation", "Electrical Safety"]
+                    years_experience: 8
+                    rating: 0.00
+                    created_at: "2025-12-10T10:30:00Z"
+                    updated_at: "2025-12-10T10:30:00Z"
+                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                success: false
+                error: "Validation failed"
+                errors:
+                  email: ["This email is already registered"]
+                  license_number: ["This license number is already in use"]
+                  service_areas: ["The service areas field is required"]
+
+  /auth/register/provider:
+    post:
+      summary: Register a new provider
+      description: |
+        Register a user with provider role and business details.
+        
+        **Supports both individuals and companies:**
+        - Individual providers: Omit company_name or set to null
+        - Company providers: Provide company_name
+        
+        All providers must have a valid business_registration and specify their service_areas.
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [first_name, last_name, email, password, password_confirmation, business_registration, service_areas]
+              properties:
+                first_name:
+                  type: string
+                  example: "Sarah"
+                last_name:
+                  type: string
+                  example: "Provider"
+                other_names:
+                  type: string
+                  nullable: true
+                  example: "Jane"
+                email:
+                  type: string
+                  format: email
+                  example: "sarah.provider@example.com"
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "SecurePass123"
+                password_confirmation:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "SecurePass123"
+                phone:
+                  type: string
+                  nullable: true
+                  example: "+233507654321"
+                address:
+                  type: string
+                  nullable: true
+                  example: "Kumasi, Ashanti"
+                company_name:
+                  type: string
+                  nullable: true
+                  example: "Solar Providers Ghana Ltd"
+                  description: "Company name (optional - for companies) or null for individual providers"
+                business_registration:
+                  type: string
+                  example: "BRN-GH-2024-5678"
+                service_areas:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  example: ["Greater Accra", "Central", "Eastern"]
+                certifications:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  example: ["ISO 9001:2015", "Solar Alliance Member"]
+      responses:
+        "201":
+          description: Provider registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Provider registration successful"
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      provider:
+                        $ref: "#/components/schemas/ProviderDetail"
+                      access_token:
+                        type: string
+                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+              example:
+                success: true
+                message: "Provider registration successful"
+                data:
+                  user:
+                    id: 15
+                    first_name: "Sarah"
+                    last_name: "Provider"
+                    other_names: "Jane"
+                    email: "sarah.provider@example.com"
+                    phone: "+233507654321"
+                    address: "Kumasi, Ashanti"
+                    role: "provider"
+                    status: "active"
+                    created_at: "2025-12-10T11:00:00Z"
+                    updated_at: "2025-12-10T11:00:00Z"
+                  provider:
+                    id: 1
+                    user_id: 15
+                    company_name: "Solar Providers Ghana Ltd"
+                    business_registration: "BRN-GH-2024-5678"
+                    service_areas: ["Greater Accra", "Central", "Eastern"]
+                    certifications: ["ISO 9001:2015", "Solar Alliance Member"]
+                    rating: 0.00
+                    created_at: "2025-12-10T11:00:00Z"
+                    updated_at: "2025-12-10T11:00:00Z"
+                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                success: false
+                error: "Validation failed"
+                errors:
+                  email: ["This email is already registered"]
+                  business_registration: ["This business registration number is already in use"]
+                  service_areas: ["The service areas field is required"]
 
   /auth/login:
     post:
@@ -455,12 +1047,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Invalid credentials"
               example:
                 success: false
-                message: "Invalid credentials"
+                error: "Invalid credentials"
 
   /auth/me:
     get:
@@ -514,12 +1106,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Unauthenticated"
               example:
                 success: false
-                message: "Unauthenticated"
+                error: "Unauthenticated"
 
   /auth/logout:
     post:
@@ -555,24 +1147,710 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Unauthenticated"
               example:
                 success: false
-                message: "Unauthenticated"
+                error: "Unauthenticated"
+
+  # ---------------- ORGANISATIONS ----------------
+  /organisations:
+    get:
+      summary: List all organisations for authenticated user
+      description: Returns all organisations where the user is a member
+      tags: [Organisations]
+      responses:
+        "200":
+          description: List of organisations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Organisations retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Organisation"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      summary: Create a new organisation
+      description: |
+        Create an organisation with optional site transfer.
+        
+        **Organisation Types:**
+        - installer: Requires license_number, service_areas, years_experience
+        - provider: Requires business_registration, service_areas
+        - customer: Only requires name and description
+        
+        **Site Transfer:**
+        Set transfer_sites to true to migrate user's existing sites to the new organisation.
+      tags: [Organisations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, type]
+              properties:
+                name:
+                  type: string
+                  example: "Solar Installations Co."
+                type:
+                  type: string
+                  enum: [installer, provider, customer]
+                  example: "installer"
+                description:
+                  type: string
+                  nullable: true
+                  example: "Professional solar installation company"
+                transfer_sites:
+                  type: boolean
+                  nullable: true
+                  example: true
+                  description: "Transfer user's existing sites to organisation"
+                license_number:
+                  type: string
+                  example: "ORG-LIC-GH-2024-001"
+                  description: "Required for installer type"
+                business_registration:
+                  type: string
+                  example: "ORG-BRN-GH-2024-001"
+                  description: "Required for provider type"
+                service_areas:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Greater Accra", "Ashanti"]
+                  description: "Required for installer and provider types"
+                certifications:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                  example: ["ISO 9001:2015"]
+                years_experience:
+                  type: integer
+                  example: 10
+                  description: "Required for installer type"
+      responses:
+        "201":
+          description: Organisation created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Organisation created successfully"
+                  data:
+                    $ref: "#/components/schemas/Organisation"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /organisations/{id}:
+    get:
+      summary: Get organisation details
+      description: Get detailed information about a specific organisation
+      tags: [Organisations]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Organisation details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Organisation retrieved successfully"
+                  data:
+                    $ref: "#/components/schemas/Organisation"
+        "403":
+          description: Forbidden - Not a member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Organisation not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      summary: Update organisation
+      description: Update organisation details (requires admin or owner permission)
+      tags: [Organisations]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Organisation updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Organisation updated successfully"
+                  data:
+                    $ref: "#/components/schemas/Organisation"
+        "403":
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      summary: Delete organisation
+      description: Delete organisation (requires owner permission)
+      tags: [Organisations]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Organisation deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Organisation deleted successfully"
+        "403":
+          description: Forbidden - Not the owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /organisations/{id}/members:
+    get:
+      summary: Get organisation members
+      description: List all members of an organisation
+      tags: [Organisations]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Members retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OrganisationMember"
+
+  /organisations/{id}/invite:
+    post:
+      summary: Invite user to organisation
+      description: Send invitation to join organisation (requires admin or owner permission)
+      tags: [Organisations]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, role]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "newmember@example.com"
+                role:
+                  type: string
+                  enum: [admin, installer, provider, customer]
+                  example: "installer"
+      responses:
+        "201":
+          description: Invitation sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Invitation sent successfully"
+                  data:
+                    $ref: "#/components/schemas/OrganisationInvitation"
+
+  /organisations/invitations/{token}/accept:
+    post:
+      summary: Accept organisation invitation
+      description: Accept an invitation to join an organisation
+      tags: [Organisations]
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation accepted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Invitation accepted successfully"
+                  data:
+                    $ref: "#/components/schemas/OrganisationMember"
+
+  /organisations/invitations/{token}/reject:
+    post:
+      summary: Reject organisation invitation
+      description: Reject an invitation to join an organisation
+      tags: [Organisations]
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation rejected successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Invitation rejected successfully"
+        "422":
+          description: Validation error or invalid invitation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Invalid or expired invitation token."
+
+  /organisations/{id}/members/{memberId}:
+    delete:
+      summary: Remove member from organisation
+      description: Remove a member from organisation (requires admin or owner permission)
+      tags: [Organisations]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Member removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Member removed successfully"
+
+    patch:
+      summary: Update member role
+      description: Update a member's role in organisation (requires owner permission)
+      tags: [Organisations]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: string
+                  enum: [owner, admin, installer, provider, customer]
+                  example: "admin"
+      responses:
+        "200":
+          description: Member role updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Member role updated successfully"
+                  data:
+                    $ref: "#/components/schemas/OrganisationMember"
+
+  /organisations/{id}/sites:
+    get:
+      summary: List organisation sites
+      description: Get all sites owned by the organisation (requires membership)
+      tags: [Organisations, Sites]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of organisation sites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Organisation sites retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Site"
+        "403":
+          description: Forbidden - Not a member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      summary: Create organisation site
+      description: Create a new site for the organisation (requires admin or owner permission)
+      tags: [Organisations, Sites]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, address, latitude, longitude, timezone]
+              properties:
+                name:
+                  type: string
+                  example: "Accra Office"
+                address:
+                  type: string
+                  example: "123 Independence Ave, Accra"
+                latitude:
+                  type: number
+                  minimum: -90
+                  maximum: 90
+                  example: 5.603717
+                longitude:
+                  type: number
+                  minimum: -180
+                  maximum: 180
+                  example: -0.186964
+                timezone:
+                  type: string
+                  example: "Africa/Accra"
+                notes:
+                  type: string
+                  nullable: true
+                  example: "Main office location"
+      responses:
+        "201":
+          description: Site created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Site created successfully"
+                  data:
+                    $ref: "#/components/schemas/Site"
+        "403":
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /organisations/{id}/sites/{siteId}:
+    get:
+      summary: Get organisation site details
+      description: Get details of a specific organisation site (requires membership)
+      tags: [Organisations, Sites]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: siteId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Site details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Site retrieved successfully"
+                  data:
+                    $ref: "#/components/schemas/Site"
+        "403":
+          description: Forbidden - Not a member or site belongs to different organisation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /organisations/{id}/sites/{siteId}/appliances:
+    post:
+      summary: Add appliance to organisation site
+      description: Add an appliance to an organisation site (requires admin or owner permission)
+      tags: [Organisations, Sites, Appliances]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Organisation ID
+        - name: siteId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Site ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - appliance_id
+                - quantity
+                - daily_usage_hours
+              properties:
+                appliance_id:
+                  type: integer
+                  description: ID of the appliance to add
+                quantity:
+                  type: integer
+                  minimum: 1
+                  description: Number of appliances
+                daily_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  description: Average daily usage in hours
+                notes:
+                  type: string
+                  nullable: true
+                  description: Additional notes about the appliance usage
+      responses:
+        "201":
+          description: Appliance added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Appliance added to site successfully"
+                  data:
+                    $ref: "#/components/schemas/SiteAppliance"
+        "403":
+          description: Forbidden - Not authorized to add appliances
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "You do not have permission to add appliances to this organisation site"
+        "404":
+          description: Site not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Site not found or access denied"
+        "409":
+          description: Conflict - Appliance already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "This appliance is already added to the site."
 
   # ---------------- SITES ----------------
   /sites:
     get:
-      summary: List all user sites
-      description: Retrieve all sites belonging to the authenticated user
+      summary: List user's personal sites
+      description: Get all sites owned by the authenticated user
       tags: [Sites]
-      security:
-        - bearerAuth: []
       responses:
         "200":
-          description: Sites retrieved successfully
+          description: List of user sites
           content:
             application/json:
               schema:
@@ -622,16 +1900,16 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Authentication required. Please provide a valid access token."
               example:
                 success: false
-                message: "Authentication required. Please provide a valid access token."
+                error: "Authentication required. Please provide a valid access token."
 
     post:
-      summary: Create a new site
-      description: Create a new site with location coordinates and details
+      summary: Create a user site
+      description: Create a new site for the authenticated user
       tags: [Sites]
       security:
         - bearerAuth: []
@@ -645,30 +1923,27 @@ paths:
               properties:
                 name:
                   type: string
-                  example: "Accra Apartment"
+                  example: "Home"
                 address:
                   type: string
-                  example: "Osu, Accra, Ghana"
+                  example: "123 Main St, Accra"
                 latitude:
                   type: number
-                  format: double
                   minimum: -90
                   maximum: 90
                   example: 5.603717
                 longitude:
                   type: number
-                  format: double
                   minimum: -180
                   maximum: 180
                   example: -0.186964
                 timezone:
                   type: string
                   example: "Africa/Accra"
-                  description: "Valid timezone identifier (e.g., Africa/Accra, America/New_York)"
                 notes:
                   type: string
                   nullable: true
-                  example: "Single phase connection, accessible via main road"
+                  example: "Residential property"
       responses:
         "201":
           description: Site created successfully
@@ -709,7 +1984,7 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Validation failed"
                   errors:
@@ -720,7 +1995,7 @@ paths:
                         type: string
               example:
                 success: false
-                message: "Validation failed"
+                error: "Validation failed"
                 errors:
                   name: ["The name field is required."]
                   latitude: ["The latitude must be between -90 and 90."]
@@ -736,12 +2011,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Authentication required. Please provide a valid access token."
               example:
                 success: false
-                message: "Authentication required. Please provide a valid access token."
+                error: "Authentication required. Please provide a valid access token."
 
   /sites/{id}:
     get:
@@ -798,12 +2073,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Site not found"
               example:
                 success: false
-                message: "Site not found"
+                error: "Site not found"
         "403":
           description: Forbidden - Not site owner
           content:
@@ -814,12 +2089,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "You do not have access to this site"
               example:
                 success: false
-                message: "You do not have access to this site"
+                error: "You do not have access to this site"
         "401":
           description: Unauthenticated
           content:
@@ -830,12 +2105,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Authentication required. Please provide a valid access token."
               example:
                 success: false
-                message: "Authentication required. Please provide a valid access token."
+                error: "Authentication required. Please provide a valid access token."
 
   /sites/{site_id}/appliances:
     post:
@@ -897,7 +2172,7 @@ paths:
                     type: string
                     example: "Appliance added to site successfully"
                   data:
-                    $ref: "#/components/schemas/UserAppliance"
+                    $ref: "#/components/schemas/SiteAppliance"
               example:
                 success: true
                 message: "Appliance added to site successfully"
@@ -921,12 +2196,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Unauthenticated"
               example:
                 success: false
-                message: "Unauthenticated"
+                error: "Unauthenticated"
         "403":
           description: Forbidden - User doesn't own the site
           content:
@@ -937,12 +2212,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "You do not have access to this site"
               example:
                 success: false
-                message: "You do not have access to this site"
+                error: "You do not have access to this site"
         "404":
           description: Site not found or access denied
           content:
@@ -985,7 +2260,7 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Validation failed"
                   errors:
@@ -996,7 +2271,7 @@ paths:
                         type: string
               example:
                 success: false
-                message: "Validation failed"
+                error: "Validation failed"
                 errors:
                   appliance_id: ["Selected appliance does not exist"]
                   quantity: ["Quantity must be at least 1"]

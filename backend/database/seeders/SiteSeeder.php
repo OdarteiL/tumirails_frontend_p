@@ -64,7 +64,8 @@ class SiteSeeder extends Seeder
         foreach ($sites as $siteData) {
             Site::create([
                 ...$siteData,
-                'user_id' => $users->random()->id,
+                'owner_id' => $users->random()->id,
+                'owner_type' => User::class,
             ]);
         }
 

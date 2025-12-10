@@ -24,7 +24,8 @@ class CreateSiteActionTest extends TestCase
     {
         $user = User::factory()->create();
         $data = [
-            'user_id' => $user->id,
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
             'name' => 'Test Site',
             'address' => '123 Test St',
             'latitude' => 40.7128,
@@ -45,7 +46,8 @@ class CreateSiteActionTest extends TestCase
     {
         $user = User::factory()->create();
         $data = [
-            'user_id' => $user->id,
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
             'name' => 'Site Without Notes',
             'address' => '456 Test Ave',
             'latitude' => 0,

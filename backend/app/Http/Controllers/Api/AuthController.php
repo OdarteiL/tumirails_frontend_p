@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterInstallerRequest;
+use App\Http\Requests\RegisterProviderRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\InstallerDetailResource;
+use App\Http\Resources\ProviderDetailResource;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -37,7 +41,7 @@ class AuthController extends Controller
         if (! $result) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid credentials',
+                'error' => 'Invalid credentials',
             ], 401);
         }
 
@@ -72,5 +76,35 @@ class AuthController extends Controller
                 'user' => new UserResource($user),
             ],
         ]);
+    }
+
+    public function registerInstaller(RegisterInstallerRequest $request): JsonResponse
+    {
+        $result = $this->authService->registerInstaller($request->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Installer registration successful',
+            'data' => [
+                'user' => new UserResource($result['user']),
+                'installer' => new InstallerDetailResource($result['installer']),
+                'access_token' => $result['access_token'],
+            ],
+        ], 201);
+    }
+
+    public function registerProvider(RegisterProviderRequest $request): JsonResponse
+    {
+        $result = $this->authService->registerProvider($request->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Provider registration successful',
+            'data' => [
+                'user' => new UserResource($result['user']),
+                'provider' => new ProviderDetailResource($result['provider']),
+                'access_token' => $result['access_token'],
+            ],
+        ], 201);
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Actions\Site\CreateSiteAction;
+use App\Actions\Site\GetOrganisationSitesAction;
 use App\Actions\Site\GetSiteByIdAction;
 use App\Actions\Site\GetUserSitesAction;
 use App\Models\Site;
@@ -24,6 +25,8 @@ class SiteServiceTest extends TestCase
 
     private GetUserSitesAction $getUserSitesAction;
 
+    private GetOrganisationSitesAction $getOrganisationSitesAction;
+
     private GetSiteByIdAction $getSiteByIdAction;
 
     protected function setUp(): void
@@ -32,11 +35,13 @@ class SiteServiceTest extends TestCase
 
         $this->createSiteAction = new CreateSiteAction();
         $this->getUserSitesAction = new GetUserSitesAction();
+        $this->getOrganisationSitesAction = new GetOrganisationSitesAction();
         $this->getSiteByIdAction = new GetSiteByIdAction();
 
         $this->service = new SiteService(
             $this->createSiteAction,
             $this->getUserSitesAction,
+            $this->getOrganisationSitesAction,
             $this->getSiteByIdAction
         );
     }
@@ -45,7 +50,8 @@ class SiteServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $data = [
-            'user_id' => $user->id,
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
             'name' => 'Test Site',
             'address' => '123 Test St',
             'latitude' => 40.7128,
@@ -64,7 +70,10 @@ class SiteServiceTest extends TestCase
     public function test_get_user_sites_returns_user_sites(): void
     {
         $user = User::factory()->create();
-        Site::factory()->count(3)->create(['user_id' => $user->id]);
+        Site::factory()->count(3)->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+        ]);
 
         $sites = $this->service->getUserSites($user);
 
@@ -75,7 +84,10 @@ class SiteServiceTest extends TestCase
     public function test_get_site_by_id_returns_site_for_owner(): void
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+        ]);
 
         $result = $this->service->getSiteById($site->id, $user);
 
@@ -97,7 +109,10 @@ class SiteServiceTest extends TestCase
     {
         $owner = User::factory()->create();
         $otherUser = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $owner->id]);
+        $site = Site::factory()->create([
+            'owner_id' => $owner->id,
+            'owner_type' => User::class,
+        ]);
 
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessage('You do not have access to this site');
