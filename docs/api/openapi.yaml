@@ -150,6 +150,47 @@ components:
         default_wattage: 75
         category: "Cooling"
 
+    # ---------------------- USER APPLIANCE ----------------------
+    UserAppliance:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        site_id:
+          type: integer
+        appliance_id:
+          type: integer
+        quantity:
+          type: integer
+          minimum: 1
+        daily_usage_hours:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 24
+        notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required: [id, user_id, site_id, appliance_id, quantity, daily_usage_hours]
+      example:
+        id: 1
+        user_id: 1
+        site_id: 101
+        appliance_id: 7
+        quantity: 2
+        daily_usage_hours: 8.5
+        notes: "Living room and bedroom fans"
+        created_at: "2025-12-10T10:00:00Z"
+        updated_at: "2025-12-10T10:00:00Z"
+
     # ---------------------- ESTIMATION ----------------------
     Estimation:
       type: object
@@ -795,6 +836,171 @@ paths:
               example:
                 success: false
                 message: "Authentication required. Please provide a valid access token."
+
+  /sites/{site_id}/appliances:
+    post:
+      summary: Add appliance to site
+      description: Add an appliance with quantity and daily usage hours to a specific site
+      tags: [Sites]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Site ID
+          example: 101
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appliance_id, quantity, daily_usage_hours]
+              properties:
+                appliance_id:
+                  type: integer
+                  description: ID of the appliance to add
+                  example: 7
+                quantity:
+                  type: integer
+                  minimum: 1
+                  description: Number of appliances
+                  example: 2
+                daily_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  description: Daily usage hours (0-24)
+                  example: 8.5
+                notes:
+                  type: string
+                  nullable: true
+                  maxLength: 1000
+                  description: Optional notes about the appliance usage
+                  example: "Living room and bedroom fans"
+      responses:
+        "201":
+          description: Appliance added to site successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Appliance added to site successfully"
+                  data:
+                    $ref: "#/components/schemas/UserAppliance"
+              example:
+                success: true
+                message: "Appliance added to site successfully"
+                data:
+                  id: 1
+                  user_id: 1
+                  site_id: 101
+                  appliance_id: 7
+                  quantity: 2
+                  daily_usage_hours: 8.5
+                  notes: "Living room and bedroom fans"
+                  created_at: "2025-12-10T10:00:00Z"
+                  updated_at: "2025-12-10T10:00:00Z"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Unauthenticated"
+              example:
+                success: false
+                message: "Unauthenticated"
+        "403":
+          description: Forbidden - User doesn't own the site
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "You do not have access to this site"
+              example:
+                success: false
+                message: "You do not have access to this site"
+        "404":
+          description: Site not found or access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Site not found or access denied"
+              example:
+                success: false
+                error: "Site not found or access denied"
+        "409":
+          description: Appliance already added to site
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Appliance already added to this site"
+              example:
+                success: false
+                error: "Appliance already added to this site"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                success: false
+                message: "Validation failed"
+                errors:
+                  appliance_id: ["Selected appliance does not exist"]
+                  quantity: ["Quantity must be at least 1"]
+                  daily_usage_hours: ["Daily usage hours cannot exceed 24"]
 
   # ---------------- ESTIMATION ----------------
   /estimations:

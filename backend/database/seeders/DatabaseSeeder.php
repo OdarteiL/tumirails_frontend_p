@@ -25,9 +25,18 @@ class DatabaseSeeder extends Seeder
             'role' => 'customer',
         ]);
 
-        // Seed sites
+        User::factory()->create([
+            'first_name' => 'Admin',
+            'last_name' => 'User',
+            'email' => 'admin@tumi.com',
+            'role' => 'admin',
+        ]);
+
+        // Seed sites and appliances
         $this->call([
             SiteSeeder::class,
+            CategorySeeder::class,
+            ApplianceSeeder::class,
         ]);
     }
 }
