@@ -66,6 +66,14 @@ class Organisation extends Model
     }
 
     /**
+     * Get appliances owned by the organisation.
+     */
+    public function appliances(): MorphMany
+    {
+        return $this->morphMany(Appliance::class, 'owner');
+    }
+
+    /**
      * Get the owner of the organisation.
      */
     public function owner()

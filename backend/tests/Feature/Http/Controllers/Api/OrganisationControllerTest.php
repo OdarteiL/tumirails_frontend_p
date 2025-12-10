@@ -397,7 +397,7 @@ class OrganisationControllerTest extends TestCase
             'expires_at' => now()->addDays(7),
         ]);
 
-        $response = $this->actingAs($user)->postJson("/api/organisations/invitations/accept", [
+        $response = $this->actingAs($user)->postJson('/api/organisations/invitations/accept', [
             'token' => $invitation->token,
         ]);
 

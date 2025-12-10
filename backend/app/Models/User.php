@@ -58,6 +58,22 @@ class User extends Authenticatable
         return $this->morphMany(Site::class, 'owner');
     }
 
+    /**
+     * Get appliances owned by the user.
+     */
+    public function appliances(): MorphMany
+    {
+        return $this->morphMany(Appliance::class, 'owner');
+    }
+
+    /**
+     * Get site appliances added by the user.
+     */
+    public function siteAppliancesAdded(): MorphMany
+    {
+        return $this->morphMany(SiteAppliance::class, 'added_by');
+    }
+
     public function installerDetail(): HasOne
     {
         return $this->hasOne(InstallerDetail::class);

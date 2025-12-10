@@ -16,7 +16,7 @@ class AcceptOrganisationInvitationAction
                 ->where('email', $user->email)
                 ->firstOrFail();
 
-            if (!$invitation->isValid()) {
+            if (! $invitation->isValid()) {
                 throw new \Exception('This invitation is no longer valid.');
             }
 

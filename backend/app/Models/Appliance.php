@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Appliance extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'owner_id',
+        'owner_type',
         'name',
         'default_wattage',
         'category_id',
@@ -25,9 +27,22 @@ class Appliance extends Model
         ];
     }
 
+    /**
+     * Get the owner (User or Organisation) of the appliance.
+     */
+    public function owner(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * Legacy method for backward compatibility.
+     *
+     * @deprecated Use owner() instead
+     */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function category(): BelongsTo
@@ -35,8 +50,8 @@ class Appliance extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function userAppliances(): HasMany
+    public function siteAppliances(): HasMany
     {
-        return $this->hasMany(UserAppliance::class);
+        return $this->hasMany(SiteAppliance::class);
     }
 }

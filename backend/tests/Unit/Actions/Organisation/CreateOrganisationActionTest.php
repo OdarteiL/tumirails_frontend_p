@@ -4,9 +4,6 @@ namespace Tests\Unit\Actions\Organisation;
 
 use App\Actions\Organisation\CreateOrganisationAction;
 use App\Models\Organisation;
-use App\Models\OrganisationInstallerDetail;
-use App\Models\OrganisationMember;
-use App\Models\OrganisationProviderDetail;
 use App\Models\Site;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,7 +44,7 @@ class CreateOrganisationActionTest extends TestCase
         $this->assertInstanceOf(Organisation::class, $organisation);
         $this->assertEquals('Test Installer', $organisation->name);
         $this->assertEquals('installer', $organisation->type);
-        
+
         $this->assertDatabaseHas('organisations', [
             'name' => 'Test Installer',
             'type' => 'installer',
@@ -84,7 +81,7 @@ class CreateOrganisationActionTest extends TestCase
         $organisation = $this->action->execute($data, $user);
 
         $this->assertEquals('provider', $organisation->type);
-        
+
         $this->assertDatabaseHas('organisation_provider_details', [
             'organisation_id' => $organisation->id,
             'business_registration' => 'BRN-001',

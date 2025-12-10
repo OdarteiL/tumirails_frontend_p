@@ -33,7 +33,7 @@ class CreateOrganisationRequest extends FormRequest
             'service_areas.*' => ['string', 'max:100'],
             'certifications' => ['nullable', 'array'],
             'certifications.*' => ['string', 'max:255'],
-            
+
             // Site transfer option
             'transfer_sites' => ['nullable', 'boolean'],
         ];

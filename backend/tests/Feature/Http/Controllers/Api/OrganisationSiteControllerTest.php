@@ -17,7 +17,7 @@ class OrganisationSiteControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create(['type' => 'customer']);
-        
+
         // Add user as member
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
@@ -31,7 +31,7 @@ class OrganisationSiteControllerTest extends TestCase
             'owner_id' => $organisation->id,
             'owner_type' => Organisation::class,
         ]);
-        
+
         // Create sites for other organisation
         Site::factory()->count(2)->create();
 
@@ -55,7 +55,7 @@ class OrganisationSiteControllerTest extends TestCase
         $response->assertForbidden()
             ->assertJson([
                 'success' => false,
-                'message' => 'You do not have access to this organisation',
+                'error' => 'You do not have access to this organisation',
             ]);
     }
 
@@ -63,7 +63,7 @@ class OrganisationSiteControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create(['type' => 'customer']);
-        
+
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
@@ -100,7 +100,7 @@ class OrganisationSiteControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create(['type' => 'customer']);
-        
+
         // Add user as regular member (not admin)
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
@@ -122,7 +122,7 @@ class OrganisationSiteControllerTest extends TestCase
         $response->assertForbidden()
             ->assertJson([
                 'success' => false,
-                'message' => 'You do not have permission to create sites for this organisation',
+                'error' => 'You do not have permission to create sites for this organisation',
             ]);
     }
 
@@ -130,7 +130,7 @@ class OrganisationSiteControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create(['type' => 'customer']);
-        
+
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
@@ -157,7 +157,7 @@ class OrganisationSiteControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create(['type' => 'customer']);
-        
+
         $site = Site::factory()->create([
             'owner_id' => $organisation->id,
             'owner_type' => Organisation::class,
@@ -176,7 +176,7 @@ class OrganisationSiteControllerTest extends TestCase
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create(['type' => 'customer']);
         $otherOrganisation = Organisation::factory()->create(['type' => 'customer']);
-        
+
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
@@ -201,7 +201,7 @@ class OrganisationSiteControllerTest extends TestCase
     public function test_create_organisation_transfers_sites_when_requested(): void
     {
         $user = User::factory()->create(['role' => 'customer']);
-        
+
         // Create some sites for the user
         Site::factory()->count(2)->create([
             'owner_id' => $user->id,
@@ -218,7 +218,7 @@ class OrganisationSiteControllerTest extends TestCase
         $response = $this->actingAs($user)->postJson('/api/organisations', $data);
 
         $response->assertCreated();
-        
+
         $organisationId = $response->json('data.id');
 
         // Verify sites were transferred
@@ -226,7 +226,7 @@ class OrganisationSiteControllerTest extends TestCase
             'owner_id' => $organisationId,
             'owner_type' => Organisation::class,
         ]);
-        
+
         $this->assertDatabaseMissing('sites', [
             'owner_id' => $user->id,
             'owner_type' => User::class,
@@ -236,7 +236,7 @@ class OrganisationSiteControllerTest extends TestCase
     public function test_create_organisation_does_not_transfer_sites_when_not_requested(): void
     {
         $user = User::factory()->create(['role' => 'customer']);
-        
+
         Site::factory()->count(2)->create([
             'owner_id' => $user->id,
             'owner_type' => User::class,
@@ -263,7 +263,7 @@ class OrganisationSiteControllerTest extends TestCase
     public function test_organisation_endpoints_require_authentication(): void
     {
         $organisation = Organisation::factory()->create(['type' => 'customer']);
-        
+
         $this->getJson("/api/organisations/{$organisation->id}/sites")->assertUnauthorized();
         $this->postJson("/api/organisations/{$organisation->id}/sites")->assertUnauthorized();
         $this->getJson("/api/organisations/{$organisation->id}/sites/1")->assertUnauthorized();
