@@ -60,7 +60,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonStructure([
                 'success',
-                'message',
+                'error',
                 'errors' => [
                     'first_name',
                     'last_name',
@@ -203,7 +203,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401)
             ->assertJson([
                 'success' => false,
-                'message' => 'Invalid credentials',
+                'error' => 'Invalid credentials',
             ]);
     }
 
@@ -215,7 +215,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonStructure([
                 'success',
-                'message',
+                'error',
                 'errors' => [
                     'email',
                     'password',

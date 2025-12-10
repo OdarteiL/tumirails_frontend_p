@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Actions\Organisation\AcceptOrganisationInvitationAction;
 use App\Actions\Organisation\CreateOrganisationAction;
 use App\Actions\Organisation\InviteOrganisationMemberAction;
+use App\Actions\Organisation\RejectOrganisationInvitationAction;
 use App\Actions\Organisation\RemoveOrganisationMemberAction;
 use App\Actions\Organisation\UpdateOrganisationAction;
 use App\Actions\Organisation\UpdateOrganisationMemberAction;
@@ -30,6 +31,7 @@ class OrganisationServiceTest extends TestCase
             new UpdateOrganisationAction(),
             new InviteOrganisationMemberAction(),
             new AcceptOrganisationInvitationAction(),
+            new RejectOrganisationInvitationAction(),
             new UpdateOrganisationMemberAction(),
             new RemoveOrganisationMemberAction()
         );
@@ -140,4 +142,3 @@ class OrganisationServiceTest extends TestCase
         $this->assertFalse($this->service->userHasPermission($user, $organisation, 'admin'));
     }
 }
-
