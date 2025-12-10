@@ -29,11 +29,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{organisation}/invite', [OrganisationController::class, 'inviteMember']);
         Route::patch('/{organisation}/members/{member}', [OrganisationController::class, 'updateMember']);
         Route::delete('/{organisation}/members/{member}', [OrganisationController::class, 'removeMember']);
-        
+
         // Organisation sites
         Route::get('/{organisation}/sites', [SiteController::class, 'organisationIndex']);
         Route::post('/{organisation}/sites', [SiteController::class, 'organisationStore']);
         Route::get('/{organisation}/sites/{siteId}', [SiteController::class, 'organisationShow']);
+
+        // Organisation site appliances
+        Route::post('/{organisation}/sites/{siteId}/appliances', [SiteController::class, 'addApplianceToOrganisationSite']);
     });
     Route::post('/invitations/accept', [OrganisationController::class, 'acceptInvitation']);
+    Route::post('/invitations/reject', [OrganisationController::class, 'rejectInvitation']);
+
+    // User site appliances
+    Route::post('sites/{site}/appliances', [SiteController::class, 'addAppliance']);
 });

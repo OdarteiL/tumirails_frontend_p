@@ -366,12 +366,21 @@ components:
           type: string
         address:
           type: string
-        longitude:
-          type: number
         latitude:
           type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          description: "Latitude coordinate (must be between -90 and 90)"
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          description: "Longitude coordinate (must be between -180 and 180)"
         timezone:
           type: string
+          description: "Valid timezone identifier (e.g., Africa/Accra, America/New_York)"
         notes:
           type: string
           nullable: true
@@ -381,6 +390,7 @@ components:
         updated_at:
           type: string
           format: date-time
+      required: [id, owner_id, owner_type, name, address, latitude, longitude, timezone]
       example:
         id: 101
         owner_id: 1
@@ -419,6 +429,51 @@ components:
         name: "Ceiling Fan"
         default_wattage: 75
         category: "Cooling"
+
+    # ---------------------- SITE APPLIANCE ----------------------
+    SiteAppliance:
+      type: object
+      properties:
+        id:
+          type: integer
+        owner_id:
+          type: integer
+        owner_type:
+          type: string
+          enum: [User, Organisation]
+        site_id:
+          type: integer
+        appliance_id:
+          type: integer
+        quantity:
+          type: integer
+          minimum: 1
+        daily_usage_hours:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 24
+        notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required: [id, owner_id, owner_type, site_id, appliance_id, quantity, daily_usage_hours]
+      example:
+        id: 1
+        owner_id: 1
+        owner_type: "User"
+        site_id: 101
+        appliance_id: 7
+        quantity: 2
+        daily_usage_hours: 8.5
+        notes: "Living room and bedroom fans"
+        created_at: "2025-12-10T10:00:00Z"
+        updated_at: "2025-12-10T10:00:00Z"
 
     # ---------------------- ESTIMATION ----------------------
     Estimation:
@@ -496,7 +551,7 @@ components:
         success:
           type: boolean
           example: false
-        message:
+        error:
           type: string
         errors:
           type: object
@@ -611,7 +666,7 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Validation failed"
                   errors:
@@ -622,7 +677,7 @@ paths:
                         type: string
               example:
                 success: false
-                message: "Validation failed"
+                error: "Validation failed"
                 errors:
                   email: ["This email is already registered"]
                   password: ["Password confirmation does not match"]
@@ -767,7 +822,7 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Validation failed"
                   errors:
@@ -778,7 +833,7 @@ paths:
                         type: string
               example:
                 success: false
-                message: "Validation failed"
+                error: "Validation failed"
                 errors:
                   email: ["This email is already registered"]
                   license_number: ["This license number is already in use"]
@@ -918,7 +973,7 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Validation failed"
                   errors:
@@ -929,7 +984,7 @@ paths:
                         type: string
               example:
                 success: false
-                message: "Validation failed"
+                error: "Validation failed"
                 errors:
                   email: ["This email is already registered"]
                   business_registration: ["This business registration number is already in use"]
@@ -992,12 +1047,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Invalid credentials"
               example:
                 success: false
-                message: "Invalid credentials"
+                error: "Invalid credentials"
 
   /auth/me:
     get:
@@ -1051,12 +1106,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Unauthenticated"
               example:
                 success: false
-                message: "Unauthenticated"
+                error: "Unauthenticated"
 
   /auth/logout:
     post:
@@ -1092,12 +1147,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  message:
+                  error:
                     type: string
                     example: "Unauthenticated"
               example:
                 success: false
-                message: "Unauthenticated"
+                error: "Unauthenticated"
 
   # ---------------- ORGANISATIONS ----------------
   /organisations:
@@ -1432,6 +1487,45 @@ paths:
                   data:
                     $ref: "#/components/schemas/OrganisationMember"
 
+  /organisations/invitations/{token}/reject:
+    post:
+      summary: Reject organisation invitation
+      description: Reject an invitation to join an organisation
+      tags: [Organisations]
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation rejected successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Invitation rejected successfully"
+        "422":
+          description: Validation error or invalid invitation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Invalid or expired invitation token."
+
   /organisations/{id}/members/{memberId}:
     delete:
       summary: Remove member from organisation
@@ -1646,6 +1740,108 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /organisations/{id}/sites/{siteId}/appliances:
+    post:
+      summary: Add appliance to organisation site
+      description: Add an appliance to an organisation site (requires admin or owner permission)
+      tags: [Organisations, Sites, Appliances]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Organisation ID
+        - name: siteId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Site ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - appliance_id
+                - quantity
+                - daily_usage_hours
+              properties:
+                appliance_id:
+                  type: integer
+                  description: ID of the appliance to add
+                quantity:
+                  type: integer
+                  minimum: 1
+                  description: Number of appliances
+                daily_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  description: Average daily usage in hours
+                notes:
+                  type: string
+                  nullable: true
+                  description: Additional notes about the appliance usage
+      responses:
+        "201":
+          description: Appliance added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Appliance added to site successfully"
+                  data:
+                    $ref: "#/components/schemas/SiteAppliance"
+        "403":
+          description: Forbidden - Not authorized to add appliances
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "You do not have permission to add appliances to this organisation site"
+        "404":
+          description: Site not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Site not found or access denied"
+        "409":
+          description: Conflict - Appliance already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "This appliance is already added to the site."
+
   # ---------------- SITES ----------------
   /sites:
     get:
@@ -1670,17 +1866,53 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Site"
+              example:
+                success: true
+                message: "Sites retrieved successfully"
+                data:
+                  - id: 101
+                    user_id: 1
+                    name: "Accra Apartment"
+                    address: "Osu, Accra"
+                    latitude: 5.603717
+                    longitude: -0.186964
+                    timezone: "Africa/Accra"
+                    notes: "Single phase connection"
+                    created_at: "2025-12-08T10:00:00Z"
+                    updated_at: "2025-12-08T10:00:00Z"
+                  - id: 102
+                    user_id: 1
+                    name: "Kumasi Office"
+                    address: "Adum, Kumasi"
+                    latitude: 6.688437
+                    longitude: -1.624845
+                    timezone: "Africa/Accra"
+                    notes: "Three phase connection"
+                    created_at: "2025-12-08T11:00:00Z"
+                    updated_at: "2025-12-08T11:00:00Z"
         "401":
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authentication required. Please provide a valid access token."
+              example:
+                success: false
+                error: "Authentication required. Please provide a valid access token."
 
     post:
       summary: Create a user site
       description: Create a new site for the authenticated user
       tags: [Sites]
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1728,27 +1960,82 @@ paths:
                     example: "Site created successfully"
                   data:
                     $ref: "#/components/schemas/Site"
+              example:
+                success: true
+                message: "Site created successfully"
+                data:
+                  id: 101
+                  user_id: 1
+                  name: "Accra Apartment"
+                  address: "Osu, Accra, Ghana"
+                  latitude: 5.603717
+                  longitude: -0.186964
+                  timezone: "Africa/Accra"
+                  notes: "Single phase connection, accessible via main road"
+                  created_at: "2025-12-08T10:00:00Z"
+                  updated_at: "2025-12-08T10:00:00Z"
         "422":
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                success: false
+                error: "Validation failed"
+                errors:
+                  name: ["The name field is required."]
+                  latitude: ["The latitude must be between -90 and 90."]
+                  longitude: ["The longitude must be between -180 and 180."]
+                  timezone: ["The timezone field is required."]
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authentication required. Please provide a valid access token."
+              example:
+                success: false
+                error: "Authentication required. Please provide a valid access token."
 
   /sites/{id}:
     get:
-      summary: Get user site details
-      description: Get details of a specific user site
+      summary: Get a specific site
+      description: Retrieve details of a specific site by ID
       tags: [Sites]
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
+          description: Site ID
+          example: 101
       responses:
         "200":
-          description: Site details
+          description: Site retrieved successfully
           content:
             application/json:
               schema:
@@ -1762,18 +2049,233 @@ paths:
                     example: "Site retrieved successfully"
                   data:
                     $ref: "#/components/schemas/Site"
-        "403":
-          description: Forbidden - Not the owner
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                success: true
+                message: "Site retrieved successfully"
+                data:
+                  id: 101
+                  user_id: 1
+                  name: "Accra Apartment"
+                  address: "Osu, Accra, Ghana"
+                  latitude: 5.603717
+                  longitude: -0.186964
+                  timezone: "Africa/Accra"
+                  notes: "Single phase connection"
+                  created_at: "2025-12-08T10:00:00Z"
+                  updated_at: "2025-12-08T10:00:00Z"
         "404":
           description: Site not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Site not found"
+              example:
+                success: false
+                error: "Site not found"
+        "403":
+          description: Forbidden - Not site owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "You do not have access to this site"
+              example:
+                success: false
+                error: "You do not have access to this site"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authentication required. Please provide a valid access token."
+              example:
+                success: false
+                error: "Authentication required. Please provide a valid access token."
+
+  /sites/{site_id}/appliances:
+    post:
+      summary: Add appliance to site
+      description: Add an appliance with quantity and daily usage hours to a specific site
+      tags: [Sites]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Site ID
+          example: 101
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appliance_id, quantity, daily_usage_hours]
+              properties:
+                appliance_id:
+                  type: integer
+                  description: ID of the appliance to add
+                  example: 7
+                quantity:
+                  type: integer
+                  minimum: 1
+                  description: Number of appliances
+                  example: 2
+                daily_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  description: Daily usage hours (0-24)
+                  example: 8.5
+                notes:
+                  type: string
+                  nullable: true
+                  maxLength: 1000
+                  description: Optional notes about the appliance usage
+                  example: "Living room and bedroom fans"
+      responses:
+        "201":
+          description: Appliance added to site successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Appliance added to site successfully"
+                  data:
+                    $ref: "#/components/schemas/SiteAppliance"
+              example:
+                success: true
+                message: "Appliance added to site successfully"
+                data:
+                  id: 1
+                  user_id: 1
+                  site_id: 101
+                  appliance_id: 7
+                  quantity: 2
+                  daily_usage_hours: 8.5
+                  notes: "Living room and bedroom fans"
+                  created_at: "2025-12-10T10:00:00Z"
+                  updated_at: "2025-12-10T10:00:00Z"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Unauthenticated"
+              example:
+                success: false
+                error: "Unauthenticated"
+        "403":
+          description: Forbidden - User doesn't own the site
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "You do not have access to this site"
+              example:
+                success: false
+                error: "You do not have access to this site"
+        "404":
+          description: Site not found or access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Site not found or access denied"
+              example:
+                success: false
+                error: "Site not found or access denied"
+        "409":
+          description: Appliance already added to site
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Appliance already added to this site"
+              example:
+                success: false
+                error: "Appliance already added to this site"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+              example:
+                success: false
+                error: "Validation failed"
+                errors:
+                  appliance_id: ["Selected appliance does not exist"]
+                  quantity: ["Quantity must be at least 1"]
+                  daily_usage_hours: ["Daily usage hours cannot exceed 24"]
 
   # ---------------- ESTIMATION ----------------
   /estimations:

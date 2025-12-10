@@ -20,6 +20,10 @@ class SiteControllerTest extends TestCase
         $response = $this->actingAs($user)->getJson('/api/sites');
 
         $response->assertOk()
+            ->assertJson([
+                'success' => true,
+                'message' => 'Sites retrieved successfully',
+            ])
             ->assertJsonCount(3, 'data');
     }
 

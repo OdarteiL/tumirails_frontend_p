@@ -5,10 +5,12 @@ namespace App\Services;
 use App\Actions\Organisation\AcceptOrganisationInvitationAction;
 use App\Actions\Organisation\CreateOrganisationAction;
 use App\Actions\Organisation\InviteOrganisationMemberAction;
+use App\Actions\Organisation\RejectOrganisationInvitationAction;
 use App\Actions\Organisation\RemoveOrganisationMemberAction;
 use App\Actions\Organisation\UpdateOrganisationAction;
 use App\Actions\Organisation\UpdateOrganisationMemberAction;
 use App\Models\Organisation;
+use App\Models\OrganisationInvitation;
 use App\Models\OrganisationMember;
 use App\Models\User;
 
@@ -19,6 +21,7 @@ class OrganisationService
         private UpdateOrganisationAction $updateOrganisationAction,
         private InviteOrganisationMemberAction $inviteOrganisationMemberAction,
         private AcceptOrganisationInvitationAction $acceptOrganisationInvitationAction,
+        private RejectOrganisationInvitationAction $rejectOrganisationInvitationAction,
         private UpdateOrganisationMemberAction $updateOrganisationMemberAction,
         private RemoveOrganisationMemberAction $removeOrganisationMemberAction
     ) {}
@@ -64,6 +67,14 @@ class OrganisationService
     }
 
     /**
+     * Reject an organisation invitation.
+     */
+    public function rejectInvitation(string $token, User $user): OrganisationInvitation
+    {
+        return $this->rejectOrganisationInvitationAction->execute($token, $user);
+    }
+
+    /**
      * Update a member's role.
      */
     public function updateMember(OrganisationMember $member, array $data): OrganisationMember
@@ -88,7 +99,7 @@ class OrganisationService
             ->where('user_id', $user->id)
             ->first();
 
-        if (!$membership) {
+        if (! $membership) {
             return false;
         }
 

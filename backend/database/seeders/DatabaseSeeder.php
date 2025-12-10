@@ -15,11 +15,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create demo users
+        User::factory(3)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'first_name' => 'Demo',
+            'last_name' => 'User',
+            'email' => 'demo@tumi.com',
+            'role' => 'customer',
+        ]);
+
+        User::factory()->create([
+            'first_name' => 'Admin',
+            'last_name' => 'User',
+            'email' => 'admin@tumi.com',
+            'role' => 'admin',
+        ]);
+
+        // Seed sites and appliances
+        $this->call([
+            SiteSeeder::class,
+            CategorySeeder::class,
+            ApplianceSeeder::class,
         ]);
     }
 }

@@ -3,20 +3,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddApplianceToSiteRequest;
 use App\Http\Requests\CreateSiteRequest;
+use App\Http\Resources\SiteApplianceResource;
 use App\Http\Resources\SiteResource;
 use App\Models\Organisation;
 use App\Services\OrganisationService;
+use App\Services\SiteApplianceService;
 use App\Services\SiteService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class SiteController extends Controller
 {
     public function __construct(
         private readonly SiteService $siteService,
-        private readonly OrganisationService $organisationService
+        private readonly OrganisationService $organisationService,
+        private readonly SiteApplianceService $siteApplianceService
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -65,7 +68,7 @@ class SiteController extends Controller
         if (! $request->user()->belongsToOrganisation($organisation->id)) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have access to this organisation',
+                'error' => 'You do not have access to this organisation',
             ], 403);
         }
 
@@ -87,7 +90,7 @@ class SiteController extends Controller
         if (! $this->organisationService->userHasPermission($request->user(), $organisation, 'admin')) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have permission to create sites for this organisation',
+                'error' => 'You do not have permission to create sites for this organisation',
             ], 403);
         }
 
@@ -120,8 +123,80 @@ class SiteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException ? 404 : 403);
+        }
+    }
+
+    public function addAppliance(int $siteId, AddApplianceToSiteRequest $request): JsonResponse
+    {
+        try {
+            $siteAppliance = $this->siteApplianceService->addAppliance(
+                auth()->id(),
+                $siteId,
+                $request->validated('appliance_id'),
+                $request->validated('quantity'),
+                $request->validated('daily_usage_hours'),
+                $request->validated('notes')
+            );
+
+            return response()->json([
+                'success' => true,
+                'data' => new SiteApplianceResource($siteAppliance),
+                'message' => 'Appliance added to site successfully',
+            ], 201);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 409);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Site not found or access denied',
+            ], 404);
+        }
+    }
+
+    /**
+     * Add an appliance to an organisation site.
+     */
+    public function addApplianceToOrganisationSite(Organisation $organisation, int $siteId, AddApplianceToSiteRequest $request): JsonResponse
+    {
+        // Check if user has permission (owner or admin)
+        if (! $this->organisationService->userHasPermission($request->user(), $organisation, 'admin')) {
+            return response()->json([
+                'success' => false,
+                'error' => 'You do not have permission to add appliances to this organisation site',
+            ], 403);
+        }
+
+        try {
+            $siteAppliance = $this->siteApplianceService->addApplianceToOrganisationSite(
+                $request->user()->id,
+                $organisation->id,
+                $siteId,
+                $request->validated('appliance_id'),
+                $request->validated('quantity'),
+                $request->validated('daily_usage_hours'),
+                $request->validated('notes')
+            );
+
+            return response()->json([
+                'success' => true,
+                'data' => new SiteApplianceResource($siteAppliance),
+                'message' => 'Appliance added to site successfully',
+            ], 201);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 409);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Site not found or access denied',
+            ], 404);
         }
     }
 }

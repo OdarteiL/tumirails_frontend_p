@@ -19,11 +19,13 @@ class OrganisationInvitation extends Model
         'invited_by',
         'expires_at',
         'accepted_at',
+        'rejected_at',
     ];
 
     protected $casts = [
         'expires_at' => 'datetime',
         'accepted_at' => 'datetime',
+        'rejected_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -61,11 +63,19 @@ class OrganisationInvitation extends Model
     }
 
     /**
+     * Check if the invitation has been rejected.
+     */
+    public function isRejected(): bool
+    {
+        return $this->rejected_at !== null;
+    }
+
+    /**
      * Check if the invitation is valid.
      */
     public function isValid(): bool
     {
-        return !$this->isExpired() && !$this->isAccepted();
+        return ! $this->isExpired() && ! $this->isAccepted() && ! $this->isRejected();
     }
 
     /**

@@ -56,7 +56,7 @@ class OrganisationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 422);
         }
     }
@@ -67,10 +67,10 @@ class OrganisationController extends Controller
     public function show(Request $request, Organisation $organisation): JsonResponse
     {
         // Check if user belongs to organisation
-        if (!$request->user()->belongsToOrganisation($organisation->id)) {
+        if (! $request->user()->belongsToOrganisation($organisation->id)) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have access to this organisation',
+                'error' => 'You do not have access to this organisation',
             ], 403);
         }
 
@@ -89,10 +89,10 @@ class OrganisationController extends Controller
     public function update(UpdateOrganisationRequest $request, Organisation $organisation): JsonResponse
     {
         // Check if user has permission to edit
-        if (!$this->organisationService->userHasPermission($request->user(), $organisation, 'edit')) {
+        if (! $this->organisationService->userHasPermission($request->user(), $organisation, 'edit')) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have permission to edit this organisation',
+                'error' => 'You do not have permission to edit this organisation',
             ], 403);
         }
 
@@ -110,7 +110,7 @@ class OrganisationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 422);
         }
     }
@@ -121,10 +121,10 @@ class OrganisationController extends Controller
     public function destroy(Request $request, Organisation $organisation): JsonResponse
     {
         // Check if user has permission to delete
-        if (!$this->organisationService->userHasPermission($request->user(), $organisation, 'delete')) {
+        if (! $this->organisationService->userHasPermission($request->user(), $organisation, 'delete')) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have permission to delete this organisation',
+                'error' => 'You do not have permission to delete this organisation',
             ], 403);
         }
 
@@ -138,7 +138,7 @@ class OrganisationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 422);
         }
     }
@@ -149,10 +149,10 @@ class OrganisationController extends Controller
     public function members(Request $request, Organisation $organisation): JsonResponse
     {
         // Check if user belongs to organisation
-        if (!$request->user()->belongsToOrganisation($organisation->id)) {
+        if (! $request->user()->belongsToOrganisation($organisation->id)) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have access to this organisation',
+                'error' => 'You do not have access to this organisation',
             ], 403);
         }
 
@@ -171,10 +171,10 @@ class OrganisationController extends Controller
     public function inviteMember(InviteOrganisationMemberRequest $request, Organisation $organisation): JsonResponse
     {
         // Check if user has permission to manage members
-        if (!$this->organisationService->userHasPermission($request->user(), $organisation, 'manage_members')) {
+        if (! $this->organisationService->userHasPermission($request->user(), $organisation, 'manage_members')) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have permission to invite members',
+                'error' => 'You do not have permission to invite members',
             ], 403);
         }
 
@@ -193,7 +193,7 @@ class OrganisationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 422);
         }
     }
@@ -221,7 +221,34 @@ class OrganisationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
+     * Reject an organisation invitation.
+     */
+    public function rejectInvitation(Request $request): JsonResponse
+    {
+        $request->validate([
+            'token' => ['required', 'string'],
+        ]);
+
+        try {
+            $invitation = $this->organisationService->rejectInvitation(
+                $request->input('token'),
+                $request->user()
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Invitation rejected successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
             ], 422);
         }
     }
@@ -235,10 +262,10 @@ class OrganisationController extends Controller
         OrganisationMember $member
     ): JsonResponse {
         // Check if user has permission to manage members
-        if (!$this->organisationService->userHasPermission($request->user(), $organisation, 'manage_members')) {
+        if (! $this->organisationService->userHasPermission($request->user(), $organisation, 'manage_members')) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have permission to update members',
+                'error' => 'You do not have permission to update members',
             ], 403);
         }
 
@@ -246,7 +273,7 @@ class OrganisationController extends Controller
         if ($member->organisation_id !== $organisation->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Member does not belong to this organisation',
+                'error' => 'Member does not belong to this organisation',
             ], 404);
         }
 
@@ -261,7 +288,7 @@ class OrganisationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 422);
         }
     }
@@ -272,10 +299,10 @@ class OrganisationController extends Controller
     public function removeMember(Request $request, Organisation $organisation, OrganisationMember $member): JsonResponse
     {
         // Check if user has permission to manage members
-        if (!$this->organisationService->userHasPermission($request->user(), $organisation, 'manage_members')) {
+        if (! $this->organisationService->userHasPermission($request->user(), $organisation, 'manage_members')) {
             return response()->json([
                 'success' => false,
-                'message' => 'You do not have permission to remove members',
+                'error' => 'You do not have permission to remove members',
             ], 403);
         }
 
@@ -283,7 +310,7 @@ class OrganisationController extends Controller
         if ($member->organisation_id !== $organisation->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Member does not belong to this organisation',
+                'error' => 'Member does not belong to this organisation',
             ], 404);
         }
 
@@ -297,7 +324,7 @@ class OrganisationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 422);
         }
     }
