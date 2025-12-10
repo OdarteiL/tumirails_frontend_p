@@ -13,7 +13,8 @@ class SiteFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'owner_id' => User::factory(),
+            'owner_type' => User::class,
             'name' => fake()->company().' Site',
             'address' => fake()->address(),
             'latitude' => fake()->latitude(),

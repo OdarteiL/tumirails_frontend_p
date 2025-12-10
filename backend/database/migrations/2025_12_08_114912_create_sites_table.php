@@ -11,7 +11,7 @@ return new class() extends Migration
     {
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->morphs('owner'); // owner_id and owner_type for polymorphic relation
             $table->string('name');
             $table->text('address');
             $table->decimal('latitude', 10, 8);
