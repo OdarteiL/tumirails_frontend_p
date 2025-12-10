@@ -24,7 +24,10 @@ class GetUserSitesActionTest extends TestCase
     public function test_execute_returns_user_sites(): void
     {
         $user = User::factory()->create();
-        Site::factory()->count(3)->create(['user_id' => $user->id]);
+        Site::factory()->count(3)->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+        ]);
 
         $sites = $this->action->execute($user);
 
@@ -47,21 +50,39 @@ class GetUserSitesActionTest extends TestCase
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
 
-        Site::factory()->count(2)->create(['user_id' => $user->id]);
-        Site::factory()->count(3)->create(['user_id' => $otherUser->id]);
+        Site::factory()->count(2)->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+        ]);
+        Site::factory()->count(3)->create([
+            'owner_id' => $otherUser->id,
+            'owner_type' => User::class,
+        ]);
 
         $sites = $this->action->execute($user);
 
         $this->assertCount(2, $sites);
-        $this->assertTrue($sites->every(fn ($site) => $site->user_id === $user->id));
+        $this->assertTrue($sites->every(fn ($site) => $site->owner_id === $user->id));
     }
 
     public function test_execute_returns_sites_in_latest_order(): void
     {
         $user = User::factory()->create();
-        $firstSite = Site::factory()->create(['user_id' => $user->id, 'created_at' => now()->subDays(2)]);
-        $secondSite = Site::factory()->create(['user_id' => $user->id, 'created_at' => now()->subDay()]);
-        $thirdSite = Site::factory()->create(['user_id' => $user->id, 'created_at' => now()]);
+        $firstSite = Site::factory()->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+            'created_at' => now()->subDays(2),
+        ]);
+        $secondSite = Site::factory()->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+            'created_at' => now()->subDay(),
+        ]);
+        $thirdSite = Site::factory()->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+            'created_at' => now(),
+        ]);
 
         $sites = $this->action->execute($user);
 

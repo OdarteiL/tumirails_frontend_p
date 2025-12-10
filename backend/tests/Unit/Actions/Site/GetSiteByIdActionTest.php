@@ -23,7 +23,10 @@ class GetSiteByIdActionTest extends TestCase
     public function test_execute_returns_site_when_exists(): void
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create([
+            'owner_id' => $user->id,
+            'owner_type' => User::class,
+        ]);
 
         $result = $this->action->execute($site->id);
 
