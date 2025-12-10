@@ -3,7 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -50,8 +53,56 @@ class User extends Authenticatable
         return $name;
     }
 
-    public function sites(): HasMany
+    public function sites(): MorphMany
     {
-        return $this->hasMany(Site::class);
+        return $this->morphMany(Site::class, 'owner');
+    }
+
+    public function installerDetail(): HasOne
+    {
+        return $this->hasOne(InstallerDetail::class);
+    }
+
+    public function providerDetail(): HasOne
+    {
+        return $this->hasOne(ProviderDetail::class);
+    }
+
+    /**
+     * Get the organisation memberships for the user.
+     */
+    public function organisationMemberships(): HasMany
+    {
+        return $this->hasMany(OrganisationMember::class);
+    }
+
+    /**
+     * Get all organisations the user belongs to.
+     */
+    public function organisations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organisation::class, 'organisation_members')
+            ->withPivot('role', 'joined_at')
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if user belongs to an organisation.
+     */
+    public function belongsToOrganisation(int $organisationId): bool
+    {
+        return $this->organisations()->where('organisations.id', $organisationId)->exists();
+    }
+
+    /**
+     * Get user's role in a specific organisation.
+     */
+    public function roleInOrganisation(int $organisationId): ?string
+    {
+        $membership = $this->organisationMemberships()
+            ->where('organisation_id', $organisationId)
+            ->first();
+
+        return $membership?->role;
     }
 }
