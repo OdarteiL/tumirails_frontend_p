@@ -5,6 +5,8 @@ namespace Tests\Unit\Services;
 use App\Actions\Auth\GenerateAuthTokenAction;
 use App\Actions\Auth\GetAuthenticatedUserAction;
 use App\Actions\Auth\LoginUserAction;
+use App\Actions\Auth\RegisterInstallerAction;
+use App\Actions\Auth\RegisterProviderAction;
 use App\Actions\Auth\RegisterUserAction;
 use App\Actions\Auth\RevokeAuthTokenAction;
 use App\Models\User;
@@ -22,6 +24,10 @@ class AuthServiceTest extends TestCase
 
     private RegisterUserAction $registerUserAction;
 
+    private RegisterInstallerAction $registerInstallerAction;
+
+    private RegisterProviderAction $registerProviderAction;
+
     private LoginUserAction $loginUserAction;
 
     private GenerateAuthTokenAction $generateAuthTokenAction;
@@ -35,6 +41,8 @@ class AuthServiceTest extends TestCase
         parent::setUp();
 
         $this->registerUserAction = app(RegisterUserAction::class);
+        $this->registerInstallerAction = app(RegisterInstallerAction::class);
+        $this->registerProviderAction = app(RegisterProviderAction::class);
         $this->loginUserAction = app(LoginUserAction::class);
         $this->generateAuthTokenAction = app(GenerateAuthTokenAction::class);
         $this->revokeAuthTokenAction = app(RevokeAuthTokenAction::class);
@@ -42,6 +50,8 @@ class AuthServiceTest extends TestCase
 
         $this->service = new AuthService(
             $this->registerUserAction,
+            $this->registerInstallerAction,
+            $this->registerProviderAction,
             $this->loginUserAction,
             $this->generateAuthTokenAction,
             $this->revokeAuthTokenAction,

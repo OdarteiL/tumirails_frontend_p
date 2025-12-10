@@ -293,4 +293,292 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(401);
     }
+
+    /** @test */
+    public function register_installer_creates_user_and_installer_and_returns_token(): void
+    {
+        $data = [
+            'first_name' => 'John',
+            'last_name' => 'Installer',
+            'email' => 'john@installer.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'ABC Installations',
+            'license_number' => 'LIC-12345',
+            'service_areas' => ['Accra', 'Kumasi'],
+            'certifications' => ['Solar PV', 'Electrical'],
+            'years_experience' => 5,
+        ];
+
+        $response = $this->postJson('/api/auth/register/installer', $data);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'data' => [
+                    'user' => ['id', 'first_name', 'last_name', 'email', 'role', 'status'],
+                    'installer' => ['id', 'user_id', 'company_name', 'license_number', 'service_areas', 'certifications', 'years_experience', 'rating'],
+                    'access_token',
+                ],
+            ])
+            ->assertJson([
+                'success' => true,
+                'message' => 'Installer registration successful',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'john@installer.com',
+            'role' => 'installer',
+            'status' => 'active',
+        ]);
+
+        $this->assertDatabaseHas('installer_details', [
+            'company_name' => 'ABC Installations',
+            'license_number' => 'LIC-12345',
+        ]);
+    }
+
+    /** @test */
+    public function register_installer_validates_required_fields(): void
+    {
+        $response = $this->postJson('/api/auth/register/installer', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'first_name',
+                'last_name',
+                'email',
+                'password',
+                'license_number',
+                'service_areas',
+                'years_experience',
+            ]);
+    }
+
+    /** @test */
+    public function register_installer_validates_unique_license_number(): void
+    {
+        $existingUser = User::factory()->create(['role' => 'installer']);
+        $existingUser->installerDetail()->create([
+            'company_name' => 'Existing Company',
+            'license_number' => 'LIC-EXIST',
+            'service_areas' => ['Area'],
+            'years_experience' => 3,
+        ]);
+
+        $data = [
+            'first_name' => 'New',
+            'last_name' => 'Installer',
+            'email' => 'new@installer.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'New Company',
+            'license_number' => 'LIC-EXIST',
+            'service_areas' => ['Accra'],
+            'years_experience' => 2,
+        ];
+
+        $response = $this->postJson('/api/auth/register/installer', $data);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['license_number']);
+    }
+
+    /** @test */
+    public function register_installer_validates_service_areas_array(): void
+    {
+        $data = [
+            'first_name' => 'Test',
+            'last_name' => 'Installer',
+            'email' => 'test@installer.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'Test Company',
+            'license_number' => 'LIC-TEST',
+            'service_areas' => 'Not an array',
+            'years_experience' => 1,
+        ];
+
+        $response = $this->postJson('/api/auth/register/installer', $data);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['service_areas']);
+    }
+
+    /** @test */
+    public function register_provider_creates_user_and_provider_and_returns_token(): void
+    {
+        $data = [
+            'first_name' => 'Sarah',
+            'last_name' => 'Provider',
+            'email' => 'sarah@provider.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'Solar Providers Ltd',
+            'business_registration' => 'BRN-12345',
+            'service_areas' => ['Greater Accra', 'Ashanti'],
+            'certifications' => ['ISO 9001', 'Solar Alliance'],
+        ];
+
+        $response = $this->postJson('/api/auth/register/provider', $data);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'data' => [
+                    'user' => ['id', 'first_name', 'last_name', 'email', 'role', 'status'],
+                    'provider' => ['id', 'user_id', 'company_name', 'business_registration', 'service_areas', 'certifications', 'rating'],
+                    'access_token',
+                ],
+            ])
+            ->assertJson([
+                'success' => true,
+                'message' => 'Provider registration successful',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'sarah@provider.com',
+            'role' => 'provider',
+            'status' => 'active',
+        ]);
+
+        $this->assertDatabaseHas('provider_details', [
+            'company_name' => 'Solar Providers Ltd',
+            'business_registration' => 'BRN-12345',
+        ]);
+    }
+
+    /** @test */
+    public function register_provider_validates_required_fields(): void
+    {
+        $response = $this->postJson('/api/auth/register/provider', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'first_name',
+                'last_name',
+                'email',
+                'password',
+                'business_registration',
+                'service_areas',
+            ]);
+    }
+
+    /** @test */
+    public function register_provider_validates_unique_business_registration(): void
+    {
+        $existingUser = User::factory()->create(['role' => 'provider']);
+        $existingUser->providerDetail()->create([
+            'company_name' => 'Existing Provider',
+            'business_registration' => 'BRN-EXIST',
+            'service_areas' => ['Area'],
+        ]);
+
+        $data = [
+            'first_name' => 'New',
+            'last_name' => 'Provider',
+            'email' => 'new@provider.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'New Provider',
+            'business_registration' => 'BRN-EXIST',
+            'service_areas' => ['Accra'],
+        ];
+
+        $response = $this->postJson('/api/auth/register/provider', $data);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['business_registration']);
+    }
+
+    /** @test */
+    public function register_provider_validates_service_areas_array(): void
+    {
+        $data = [
+            'first_name' => 'Test',
+            'last_name' => 'Provider',
+            'email' => 'test@provider.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'Test Provider',
+            'business_registration' => 'BRN-TEST',
+            'service_areas' => 'Not an array',
+        ];
+
+        $response = $this->postJson('/api/auth/register/provider', $data);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['service_areas']);
+    }
+
+    /** @test */
+    public function installer_can_authenticate_after_registration(): void
+    {
+        $data = [
+            'first_name' => 'Auth',
+            'last_name' => 'Test',
+            'email' => 'auth@installer.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'Auth Company',
+            'license_number' => 'LIC-AUTH',
+            'service_areas' => ['Accra'],
+            'years_experience' => 1,
+        ];
+
+        $registerResponse = $this->postJson('/api/auth/register/installer', $data);
+        $registerResponse->assertStatus(201);
+
+        $token = $registerResponse->json('data.access_token');
+
+        $meResponse = $this->withHeader('Authorization', "Bearer {$token}")
+            ->getJson('/api/auth/me');
+
+        $meResponse->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'user' => [
+                        'email' => 'auth@installer.com',
+                        'role' => 'installer',
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function provider_can_authenticate_after_registration(): void
+    {
+        $data = [
+            'first_name' => 'Auth',
+            'last_name' => 'Test',
+            'email' => 'auth@provider.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'company_name' => 'Auth Provider',
+            'business_registration' => 'BRN-AUTH',
+            'service_areas' => ['Accra'],
+        ];
+
+        $registerResponse = $this->postJson('/api/auth/register/provider', $data);
+        $registerResponse->assertStatus(201);
+
+        $token = $registerResponse->json('data.access_token');
+
+        $meResponse = $this->withHeader('Authorization', "Bearer {$token}")
+            ->getJson('/api/auth/me');
+
+        $meResponse->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'user' => [
+                        'email' => 'auth@provider.com',
+                        'role' => 'provider',
+                    ],
+                ],
+            ]);
+    }
 }
