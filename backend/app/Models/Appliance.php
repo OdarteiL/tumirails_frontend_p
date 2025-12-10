@@ -7,31 +7,32 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Site extends Model
+class Appliance extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'name',
-        'address',
-        'latitude',
-        'longitude',
-        'timezone',
-        'notes',
+        'default_wattage',
+        'category_id',
     ];
 
     protected function casts(): array
     {
         return [
-            'latitude' => 'decimal:8',
-            'longitude' => 'decimal:8',
+            'default_wattage' => 'decimal:2',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function userAppliances(): HasMany

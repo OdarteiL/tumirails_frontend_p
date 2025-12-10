@@ -5,27 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Site extends Model
+class UserAppliance extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'name',
-        'address',
-        'latitude',
-        'longitude',
-        'timezone',
+        'site_id',
+        'appliance_id',
+        'quantity',
+        'daily_usage_hours',
         'notes',
     ];
 
     protected function casts(): array
     {
         return [
-            'latitude' => 'decimal:8',
-            'longitude' => 'decimal:8',
+            'daily_usage_hours' => 'decimal:2',
         ];
     }
 
@@ -34,8 +31,13 @@ class Site extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function userAppliances(): HasMany
+    public function site(): BelongsTo
     {
-        return $this->hasMany(UserAppliance::class);
+        return $this->belongsTo(Site::class);
+    }
+
+    public function appliance(): BelongsTo
+    {
+        return $this->belongsTo(Appliance::class);
     }
 }

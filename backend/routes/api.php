@@ -18,4 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('sites', SiteController::class)->only(['index', 'store', 'show']);
+    Route::post('sites/{site}/appliances', [SiteController::class, 'addAppliance']);
 });
