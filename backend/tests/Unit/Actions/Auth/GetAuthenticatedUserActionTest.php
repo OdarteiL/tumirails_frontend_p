@@ -11,7 +11,7 @@ class GetAuthenticatedUserActionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_the_authenticated_user(): void
     {
         $user = User::factory()->create([
@@ -30,7 +30,7 @@ class GetAuthenticatedUserActionTest extends TestCase
         $this->assertEquals('Doe', $result->last_name);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_user_with_all_attributes(): void
     {
         $user = User::factory()->create([
@@ -54,7 +54,7 @@ class GetAuthenticatedUserActionTest extends TestCase
         $this->assertEquals('active', $result->status);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_same_user_instance(): void
     {
         $user = User::factory()->create();

@@ -13,7 +13,7 @@ class OrganisationControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function index_returns_user_organisations(): void
     {
         $user = User::factory()->create();
@@ -50,7 +50,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonCount(2, 'data');
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function store_creates_installer_organisation(): void
     {
         $user = User::factory()->create();
@@ -89,7 +89,7 @@ class OrganisationControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function store_creates_provider_organisation(): void
     {
         $user = User::factory()->create();
@@ -115,7 +115,7 @@ class OrganisationControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function store_creates_customer_organisation(): void
     {
         $user = User::factory()->create();
@@ -134,7 +134,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonPath('data.type', 'customer');
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function store_validates_required_fields(): void
     {
         $user = User::factory()->create();
@@ -145,7 +145,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonValidationErrors(['name', 'type']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function store_validates_installer_specific_fields(): void
     {
         $user = User::factory()->create();
@@ -159,7 +159,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonValidationErrors(['license_number', 'service_areas', 'years_experience']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function store_validates_provider_specific_fields(): void
     {
         $user = User::factory()->create();
@@ -173,7 +173,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonValidationErrors(['business_registration', 'service_areas']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function show_returns_organisation_for_member(): void
     {
         $user = User::factory()->create();
@@ -193,7 +193,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonPath('data.id', $organisation->id);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function show_returns_forbidden_for_non_member(): void
     {
         $user = User::factory()->create();
@@ -205,7 +205,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonPath('success', false);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function update_updates_organisation_for_admin(): void
     {
         $user = User::factory()->create();
@@ -233,7 +233,7 @@ class OrganisationControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function update_returns_forbidden_for_non_admin(): void
     {
         $user = User::factory()->create();
@@ -254,7 +254,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonPath('success', false);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function destroy_deletes_organisation_for_owner(): void
     {
         $user = User::factory()->create();
@@ -277,7 +277,7 @@ class OrganisationControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function destroy_returns_forbidden_for_non_owner(): void
     {
         $user = User::factory()->create();
@@ -296,7 +296,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonPath('success', false);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function members_returns_organisation_members(): void
     {
         $user = User::factory()->create();
@@ -332,7 +332,7 @@ class OrganisationControllerTest extends TestCase
             ->assertJsonCount(3, 'data');
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function invite_sends_invitation_for_admin(): void
     {
         $user = User::factory()->create();
@@ -360,7 +360,7 @@ class OrganisationControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function invite_returns_forbidden_for_non_admin(): void
     {
         $user = User::factory()->create();
@@ -381,7 +381,7 @@ class OrganisationControllerTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function accept_invitation_adds_user_to_organisation(): void
     {
         $user = User::factory()->create();
@@ -406,7 +406,7 @@ class OrganisationControllerTest extends TestCase
         $this->assertTrue(in_array($response->status(), [200, 404, 422]));
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function remove_member_removes_user_for_admin(): void
     {
         $user = User::factory()->create();
@@ -437,7 +437,7 @@ class OrganisationControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function update_member_role_updates_role_for_owner(): void
     {
         $user = User::factory()->create();
@@ -472,7 +472,7 @@ class OrganisationControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function update_member_role_returns_forbidden_for_non_admin(): void
     {
         $user = User::factory()->create();
@@ -500,7 +500,7 @@ class OrganisationControllerTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function endpoints_require_authentication(): void
     {
         $organisation = Organisation::factory()->customer()->create();

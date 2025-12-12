@@ -12,7 +12,7 @@ class RegisterInstallerActionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_user_and_installer_with_required_fields(): void
     {
         $action = new RegisterInstallerAction();
@@ -44,7 +44,7 @@ class RegisterInstallerActionTest extends TestCase
         $this->assertEquals(0.00, (float) $result['installer']->rating);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_user_and_installer_with_optional_fields(): void
     {
         $action = new RegisterInstallerAction();
@@ -75,7 +75,7 @@ class RegisterInstallerActionTest extends TestCase
         $this->assertEquals(['Solar PV', 'Electrical Safety'], $result['installer']->certifications);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_persists_user_and_installer_to_database(): void
     {
         $action = new RegisterInstallerAction();
@@ -109,7 +109,7 @@ class RegisterInstallerActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_establishes_user_installer_relationship(): void
     {
         $action = new RegisterInstallerAction();

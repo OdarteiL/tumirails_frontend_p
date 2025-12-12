@@ -12,7 +12,7 @@ class CategoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_has_fillable_attributes()
     {
         $category = new Category([
@@ -26,7 +26,7 @@ class CategoryTest extends TestCase
         $this->assertEquals('Test notes', $category->notes);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_belongs_to_user()
     {
         $user = User::factory()->create();
@@ -39,7 +39,7 @@ class CategoryTest extends TestCase
         $this->assertEquals($user->id, $category->user->id);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_has_many_appliances()
     {
         $user = User::factory()->create();
@@ -69,7 +69,7 @@ class CategoryTest extends TestCase
         $this->assertTrue($category->appliances->contains($appliance2));
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_be_created_with_required_fields_only()
     {
         $user = User::factory()->create();
@@ -85,7 +85,7 @@ class CategoryTest extends TestCase
         $this->assertNull($category->notes);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_be_created_with_notes()
     {
         $user = User::factory()->create();
@@ -102,7 +102,7 @@ class CategoryTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_has_timestamps()
     {
         $user = User::factory()->create();
@@ -115,7 +115,7 @@ class CategoryTest extends TestCase
         $this->assertNotNull($category->updated_at);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function appliances_relationship_returns_empty_collection_when_no_appliances()
     {
         $user = User::factory()->create();

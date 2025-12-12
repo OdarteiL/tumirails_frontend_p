@@ -20,7 +20,7 @@ class RegisterUserActionTest extends TestCase
         $this->action = new RegisterUserAction();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_user_with_required_fields(): void
     {
         $data = [
@@ -41,7 +41,7 @@ class RegisterUserActionTest extends TestCase
         $this->assertEquals('active', $user->status);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_user_with_optional_fields(): void
     {
         $data = [
@@ -63,7 +63,7 @@ class RegisterUserActionTest extends TestCase
         $this->assertEquals('installer', $user->role);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_hashes_password(): void
     {
         $data = [
@@ -79,7 +79,7 @@ class RegisterUserActionTest extends TestCase
         $this->assertTrue(Hash::check('plaintextpassword', $user->password));
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_sets_default_role_to_customer(): void
     {
         $data = [
@@ -94,7 +94,7 @@ class RegisterUserActionTest extends TestCase
         $this->assertEquals('customer', $user->role);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_sets_status_to_active(): void
     {
         $data = [
@@ -109,7 +109,7 @@ class RegisterUserActionTest extends TestCase
         $this->assertEquals('active', $user->status);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_persists_user_to_database(): void
     {
         $data = [

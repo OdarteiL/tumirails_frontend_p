@@ -59,7 +59,7 @@ class AuthServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_creates_user_and_returns_token(): void
     {
         $data = [
@@ -79,7 +79,7 @@ class AuthServiceTest extends TestCase
         $this->assertEquals('john@example.com', $result['user']->email);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_uses_database_transaction(): void
     {
         DB::shouldReceive('transaction')
@@ -98,7 +98,7 @@ class AuthServiceTest extends TestCase
         $this->service->register($data);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_creates_user_with_all_fields(): void
     {
         $data = [
@@ -120,7 +120,7 @@ class AuthServiceTest extends TestCase
         $this->assertEquals('provider', $result['user']->role);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function login_returns_user_and_token_with_valid_credentials(): void
     {
         $user = User::factory()->create([
@@ -140,7 +140,7 @@ class AuthServiceTest extends TestCase
         $this->assertIsString($result['access_token']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function login_returns_null_with_invalid_credentials(): void
     {
         User::factory()->create([
@@ -156,7 +156,7 @@ class AuthServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function login_returns_null_when_user_not_found(): void
     {
         $result = $this->service->login([
@@ -167,7 +167,7 @@ class AuthServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function logout_revokes_user_token(): void
     {
         $user = User::factory()->create();
@@ -181,7 +181,7 @@ class AuthServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function get_authenticated_user_returns_user(): void
     {
         $user = User::factory()->create([

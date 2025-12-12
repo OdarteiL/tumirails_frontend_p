@@ -19,7 +19,7 @@ class GenerateAuthTokenActionTest extends TestCase
         $this->action = new GenerateAuthTokenAction();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_generates_token_for_user(): void
     {
         $user = User::factory()->create();
@@ -30,7 +30,7 @@ class GenerateAuthTokenActionTest extends TestCase
         $this->assertNotEmpty($token);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_personal_access_token_record(): void
     {
         $user = User::factory()->create();
@@ -44,7 +44,7 @@ class GenerateAuthTokenActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_uses_custom_token_name_when_provided(): void
     {
         $user = User::factory()->create();
@@ -57,7 +57,7 @@ class GenerateAuthTokenActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_generates_different_tokens_for_same_user(): void
     {
         $user = User::factory()->create();

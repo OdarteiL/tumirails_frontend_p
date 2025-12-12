@@ -19,7 +19,7 @@ class RevokeAuthTokenActionTest extends TestCase
         $this->action = new RevokeAuthTokenAction();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_revokes_current_access_token(): void
     {
         $user = User::factory()->create();
@@ -36,7 +36,7 @@ class RevokeAuthTokenActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_false_when_no_current_token(): void
     {
         $user = User::factory()->create();
@@ -46,7 +46,7 @@ class RevokeAuthTokenActionTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_only_revokes_current_token_not_all_tokens(): void
     {
         $user = User::factory()->create();

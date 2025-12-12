@@ -22,7 +22,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->action = new AcceptOrganisationInvitationAction();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_accepts_invitation_and_creates_member()
     {
         $user = User::factory()->create();
@@ -49,7 +49,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->assertNotNull($invitation->accepted_at);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_invalid_token()
     {
         $user = User::factory()->create();
@@ -58,7 +58,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->action->execute('invalid-token', $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_expired_invitation()
     {
         $user = User::factory()->create();
@@ -78,7 +78,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_already_accepted_invitation()
     {
         $user = User::factory()->create();
@@ -99,7 +99,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_already_rejected_invitation()
     {
         $user = User::factory()->create();
@@ -120,7 +120,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_if_user_is_already_member()
     {
         $user = User::factory()->create();
@@ -147,7 +147,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_mismatched_email()
     {
         $user = User::factory()->create(['email' => 'user@example.com']);
@@ -166,7 +166,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_loads_organisation_and_user_relations()
     {
         $user = User::factory()->create();
@@ -189,7 +189,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $this->assertEquals($user->id, $member->user->id);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_assigns_correct_role_from_invitation()
     {
         $user = User::factory()->create();
