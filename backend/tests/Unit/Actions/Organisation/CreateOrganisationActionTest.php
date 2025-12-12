@@ -21,7 +21,7 @@ class CreateOrganisationActionTest extends TestCase
         $this->action = new CreateOrganisationAction();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_installer_organisation_with_details(): void
     {
         $user = User::factory()->create();
@@ -62,7 +62,7 @@ class CreateOrganisationActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_provider_organisation_with_details(): void
     {
         $user = User::factory()->create();
@@ -88,7 +88,7 @@ class CreateOrganisationActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_customer_organisation_without_extra_details(): void
     {
         $user = User::factory()->create();
@@ -110,7 +110,7 @@ class CreateOrganisationActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_transfers_sites_when_requested(): void
     {
         $user = User::factory()->create();
@@ -139,7 +139,7 @@ class CreateOrganisationActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_does_not_transfer_sites_when_not_requested(): void
     {
         $user = User::factory()->create();
@@ -161,7 +161,7 @@ class CreateOrganisationActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_does_not_transfer_sites_when_field_is_null(): void
     {
         $user = User::factory()->create();

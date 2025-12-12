@@ -12,7 +12,7 @@ class RegisterProviderActionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_user_and_provider_with_required_fields(): void
     {
         $action = new RegisterProviderAction();
@@ -42,7 +42,7 @@ class RegisterProviderActionTest extends TestCase
         $this->assertEquals(0.00, (float) $result['provider']->rating);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_creates_user_and_provider_with_optional_fields(): void
     {
         $action = new RegisterProviderAction();
@@ -72,7 +72,7 @@ class RegisterProviderActionTest extends TestCase
         $this->assertEquals(['ISO 9001', 'Solar Alliance'], $result['provider']->certifications);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_persists_user_and_provider_to_database(): void
     {
         $action = new RegisterProviderAction();
@@ -105,7 +105,7 @@ class RegisterProviderActionTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_establishes_user_provider_relationship(): void
     {
         $action = new RegisterProviderAction();

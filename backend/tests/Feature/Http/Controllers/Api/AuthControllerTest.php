@@ -11,7 +11,7 @@ class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_creates_user_and_returns_token(): void
     {
         $data = [
@@ -52,7 +52,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_validates_required_fields(): void
     {
         $response = $this->postJson('/api/auth/register', []);
@@ -73,7 +73,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_validates_email_format(): void
     {
         $data = [
@@ -90,7 +90,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonPath('errors.email', fn ($errors) => count($errors) > 0);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_validates_unique_email(): void
     {
         User::factory()->create(['email' => 'existing@example.com']);
@@ -109,7 +109,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonPath('errors.email', fn ($errors) => count($errors) > 0);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_validates_password_confirmation(): void
     {
         $data = [
@@ -126,7 +126,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonPath('errors.password', fn ($errors) => count($errors) > 0);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_accepts_optional_fields(): void
     {
         $data = [
@@ -154,7 +154,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function login_authenticates_user_with_valid_credentials(): void
     {
         $user = User::factory()->create([
@@ -187,7 +187,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function login_fails_with_invalid_credentials(): void
     {
         $user = User::factory()->create([
@@ -207,7 +207,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function login_validates_required_fields(): void
     {
         $response = $this->postJson('/api/auth/login', []);
@@ -223,7 +223,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function logout_revokes_current_token(): void
     {
         $user = User::factory()->create();
@@ -238,7 +238,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function logout_requires_authentication(): void
     {
         $response = $this->postJson('/api/auth/logout');
@@ -246,7 +246,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function me_returns_authenticated_user(): void
     {
         $user = User::factory()->create([
@@ -286,7 +286,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function me_requires_authentication(): void
     {
         $response = $this->getJson('/api/auth/me');
@@ -294,7 +294,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_installer_creates_user_and_installer_and_returns_token(): void
     {
         $data = [
@@ -339,7 +339,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_installer_validates_required_fields(): void
     {
         $response = $this->postJson('/api/auth/register/installer', []);
@@ -356,7 +356,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_installer_validates_unique_license_number(): void
     {
         $existingUser = User::factory()->create(['role' => 'installer']);
@@ -385,7 +385,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonValidationErrors(['license_number']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_installer_validates_service_areas_array(): void
     {
         $data = [
@@ -406,7 +406,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonValidationErrors(['service_areas']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_provider_creates_user_and_provider_and_returns_token(): void
     {
         $data = [
@@ -450,7 +450,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_provider_validates_required_fields(): void
     {
         $response = $this->postJson('/api/auth/register/provider', []);
@@ -466,7 +466,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_provider_validates_unique_business_registration(): void
     {
         $existingUser = User::factory()->create(['role' => 'provider']);
@@ -493,7 +493,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonValidationErrors(['business_registration']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function register_provider_validates_service_areas_array(): void
     {
         $data = [
@@ -513,7 +513,7 @@ class AuthControllerTest extends TestCase
             ->assertJsonValidationErrors(['service_areas']);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function installer_can_authenticate_after_registration(): void
     {
         $data = [
@@ -548,7 +548,7 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function provider_can_authenticate_after_registration(): void
     {
         $data = [

@@ -11,7 +11,7 @@ class OrganisationProviderDetailTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_has_fillable_attributes()
     {
         $detail = new OrganisationProviderDetail([
@@ -29,7 +29,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertEquals(4.5, $detail->rating);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_belongs_to_organisation()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -43,7 +43,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertEquals($organisation->id, $detail->organisation->id);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_casts_service_areas_to_array()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -60,7 +60,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertContains('Nairobi', $detail->service_areas);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_casts_certifications_to_array()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -78,7 +78,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertContains('ISO9001', $detail->certifications);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_casts_rating_to_decimal()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -94,7 +94,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertEquals('4.57', $detail->rating);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_be_created_with_required_fields_only()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -112,7 +112,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertNull($detail->rating);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_has_timestamps()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -128,7 +128,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $detail->updated_at);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_update_service_areas()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -145,7 +145,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertContains('Kisumu', $detail->service_areas);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_update_certifications()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);
@@ -162,7 +162,7 @@ class OrganisationProviderDetailTest extends TestCase
         $this->assertContains('ISO14001', $detail->certifications);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_update_rating()
     {
         $organisation = Organisation::factory()->create(['type' => 'provider']);

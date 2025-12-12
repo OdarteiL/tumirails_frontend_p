@@ -21,7 +21,7 @@ class RejectOrganisationInvitationActionTest extends TestCase
         $this->action = new RejectOrganisationInvitationAction();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_rejects_invitation_successfully()
     {
         $user = User::factory()->create();
@@ -45,7 +45,7 @@ class RejectOrganisationInvitationActionTest extends TestCase
         $this->assertNotNull($invitation->rejected_at);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_invalid_token()
     {
         $user = User::factory()->create();
@@ -54,7 +54,7 @@ class RejectOrganisationInvitationActionTest extends TestCase
         $this->action->execute('invalid-token', $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_expired_invitation()
     {
         $user = User::factory()->create();
@@ -74,7 +74,7 @@ class RejectOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_already_accepted_invitation()
     {
         $user = User::factory()->create();
@@ -95,7 +95,7 @@ class RejectOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_already_rejected_invitation()
     {
         $user = User::factory()->create();
@@ -116,7 +116,7 @@ class RejectOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_throws_exception_for_mismatched_email()
     {
         $user = User::factory()->create(['email' => 'user@example.com']);
@@ -135,7 +135,7 @@ class RejectOrganisationInvitationActionTest extends TestCase
         $this->action->execute($invitation->token, $user);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_loads_organisation_relation()
     {
         $user = User::factory()->create();

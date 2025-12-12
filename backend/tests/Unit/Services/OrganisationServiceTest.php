@@ -37,7 +37,7 @@ class OrganisationServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function create_organisation_creates_customer_organisation(): void
     {
         $user = User::factory()->create();
@@ -55,7 +55,7 @@ class OrganisationServiceTest extends TestCase
         $this->assertEquals('Test Org', $organisation->name);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function update_organisation_updates_data(): void
     {
         $user = User::factory()->create();
@@ -70,7 +70,7 @@ class OrganisationServiceTest extends TestCase
         $this->assertEquals('New Name', $updated->name);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function delete_organisation_deletes_organisation(): void
     {
         $organisation = Organisation::factory()->customer()->create();
@@ -81,7 +81,7 @@ class OrganisationServiceTest extends TestCase
         $this->assertDatabaseMissing('organisations', ['id' => $organisationId]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function remove_member_removes_member_from_organisation(): void
     {
         $user = User::factory()->create();
@@ -99,7 +99,7 @@ class OrganisationServiceTest extends TestCase
         $this->assertDatabaseMissing('organisation_members', ['id' => $member->id]);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function user_has_permission_returns_true_for_owner(): void
     {
         $user = User::factory()->create();
@@ -116,7 +116,7 @@ class OrganisationServiceTest extends TestCase
         $this->assertTrue($this->service->userHasPermission($user, $organisation, 'admin'));
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function user_has_permission_returns_true_for_admin_checking_admin(): void
     {
         $user = User::factory()->create();
@@ -133,7 +133,7 @@ class OrganisationServiceTest extends TestCase
         $this->assertFalse($this->service->userHasPermission($user, $organisation, 'owner'));
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function user_has_permission_returns_false_for_non_member(): void
     {
         $user = User::factory()->create();

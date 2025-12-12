@@ -20,7 +20,7 @@ class LoginUserActionTest extends TestCase
         $this->action = new LoginUserAction();
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_user_with_valid_credentials(): void
     {
         $user = User::factory()->create([
@@ -38,7 +38,7 @@ class LoginUserActionTest extends TestCase
         $this->assertEquals('test@example.com', $result->email);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_null_with_invalid_email(): void
     {
         User::factory()->create([
@@ -54,7 +54,7 @@ class LoginUserActionTest extends TestCase
         $this->assertNull($result);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_null_with_invalid_password(): void
     {
         User::factory()->create([
@@ -70,7 +70,7 @@ class LoginUserActionTest extends TestCase
         $this->assertNull($result);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_null_when_user_does_not_exist(): void
     {
         $result = $this->action->execute([
