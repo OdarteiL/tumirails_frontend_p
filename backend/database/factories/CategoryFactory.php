@@ -13,6 +13,7 @@ class CategoryFactory extends Factory
             'name' => fake()->words(2, true),
             'user_id' => User::factory(),
             'notes' => fake()->optional()->sentence(),
+            'power_factor' => fake()->randomFloat(2, 0.80, 0.98),
         ];
     }
 }

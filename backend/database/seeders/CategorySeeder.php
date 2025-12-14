@@ -17,11 +17,11 @@ class CategorySeeder extends Seeder
         }
 
         $categories = [
-            ['name' => 'Lighting', 'notes' => 'Light bulbs, LED strips, etc.'],
-            ['name' => 'Kitchen Appliances', 'notes' => 'Refrigerators, microwaves, etc.'],
-            ['name' => 'Entertainment', 'notes' => 'TVs, sound systems, etc.'],
-            ['name' => 'Cooling & Heating', 'notes' => 'Air conditioners, fans, heaters'],
-            ['name' => 'Computing', 'notes' => 'Computers, laptops, printers'],
+            ['name' => 'Lighting', 'notes' => 'Light bulbs, LED strips, etc.', 'power_factor' => 0.95],
+            ['name' => 'Kitchen Appliances', 'notes' => 'Refrigerators, microwaves, etc.', 'power_factor' => 0.88],
+            ['name' => 'Entertainment', 'notes' => 'TVs, sound systems, etc.', 'power_factor' => 0.92],
+            ['name' => 'Cooling & Heating', 'notes' => 'Air conditioners, fans, heaters', 'power_factor' => 0.85],
+            ['name' => 'Computing', 'notes' => 'Computers, laptops, printers', 'power_factor' => 0.92],
         ];
 
         foreach ($categories as $category) {

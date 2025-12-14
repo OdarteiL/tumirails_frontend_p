@@ -74,6 +74,14 @@ class Organisation extends Model
     }
 
     /**
+     * Get estimations owned by the organisation.
+     */
+    public function estimations(): MorphMany
+    {
+        return $this->morphMany(Estimation::class, 'owner');
+    }
+
+    /**
      * Get the owner of the organisation.
      */
     public function owner()

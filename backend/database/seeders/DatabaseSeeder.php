@@ -38,5 +38,13 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ApplianceSeeder::class,
         ]);
+
+        // Seed tariff and estimation data
+        $this->call([
+            CountrySeeder::class,
+            TariffStructureSeeder::class,
+            SeasonalAdjustmentSeeder::class,
+            LocationMultiplierSeeder::class,
+        ]);
     }
 }
