@@ -37,4 +37,20 @@ class Country extends Model
     {
         return $this->hasMany(TariffStructure::class);
     }
+
+    /**
+     * Get the seasonal adjustments for the country.
+     */
+    public function seasonalAdjustments()
+    {
+        return $this->hasMany(SeasonalAdjustment::class);
+    }
+
+    /**
+     * Get the location multipliers for the country.
+     */
+    public function locationMultipliers()
+    {
+        return $this->hasMany(LocationMultiplier::class);
+    }
 }

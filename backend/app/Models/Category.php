@@ -15,6 +15,11 @@ class Category extends Model
         'name',
         'user_id',
         'notes',
+        'power_factor',
+    ];
+
+    protected $casts = [
+        'power_factor' => 'decimal:2',
     ];
 
     public function user(): BelongsTo

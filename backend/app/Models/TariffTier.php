@@ -35,6 +35,18 @@ class TariffTier extends Model
     ];
 
     /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (TariffTier $tier) {
+            if ($tier->max_kwh !== null && $tier->max_kwh <= $tier->min_kwh) {
+                throw new \InvalidArgumentException('max_kwh must be greater than min_kwh');
+            }
+        });
+    }
+
+    /**
      * Get the tariff structure that owns the tier.
      */
     public function tariffStructure()
