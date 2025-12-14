@@ -83,12 +83,12 @@ class TariffTier extends Model
      */
     public function calculateCost(float $kwh): float
     {
-        if (!$this->appliesTo($kwh)) {
+        if (! $this->appliesTo($kwh)) {
             return 0.0;
         }
 
         $tierKwh = $kwh - $this->min_kwh;
-        
+
         if ($this->max_kwh !== null) {
             $tierKwh = min($tierKwh, $this->max_kwh - $this->min_kwh);
         }

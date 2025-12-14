@@ -46,8 +46,6 @@ class EstimationResource extends JsonResource
 
     /**
      * Get the owner's display name.
-     *
-     * @return string
      */
     protected function getOwnerName(): string
     {

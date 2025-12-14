@@ -6,7 +6,6 @@ use App\Actions\Estimation\CalculateEstimationAction;
 use App\Actions\Estimation\StoreEstimationAction;
 use App\Models\Country;
 use App\Models\Estimation;
-use App\Models\LocationMultiplier;
 use App\Models\Organisation;
 use App\Models\SeasonalAdjustment;
 use App\Models\Site;
@@ -14,7 +13,6 @@ use App\Models\TariffStructure;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class EstimationService
 {
@@ -26,10 +24,8 @@ class EstimationService
     /**
      * Create a new estimation for a site.
      *
-     * @param int $siteId
-     * @param User|Organisation $owner
-     * @param User $createdBy
-     * @return Estimation
+     * @param  User|Organisation  $owner
+     *
      * @throws \Exception
      */
     public function createEstimation(int $siteId, Model $owner, User $createdBy): Estimation
@@ -62,7 +58,7 @@ class EstimationService
             })
             ->first();
 
-        if (!$tariffStructure) {
+        if (! $tariffStructure) {
             throw new \Exception("No active tariff structure found for country: {$country->name}");
         }
 
@@ -96,9 +92,6 @@ class EstimationService
     /**
      * Recalculate an existing estimation.
      *
-     * @param int $estimationId
-     * @param User $user
-     * @return Estimation
      * @throws \Exception
      */
     public function updateEstimation(int $estimationId, User $user): Estimation
@@ -119,9 +112,6 @@ class EstimationService
     /**
      * Get a single estimation with permission check.
      *
-     * @param int $estimationId
-     * @param User $user
-     * @return Estimation
      * @throws \Exception
      */
     public function getEstimation(int $estimationId, User $user): Estimation
@@ -132,7 +122,7 @@ class EstimationService
             'tariffStructure',
             'creator',
             'previousVersion',
-            'nextVersion'
+            'nextVersion',
         ])->findOrFail($estimationId);
 
         // Verify user has permission to view
@@ -144,8 +134,7 @@ class EstimationService
     /**
      * List estimations for an owner.
      *
-     * @param User|Organisation $owner
-     * @return Collection
+     * @param  User|Organisation  $owner
      */
     public function listEstimations(Model $owner): Collection
     {
@@ -159,9 +148,6 @@ class EstimationService
     /**
      * Verify organisation permission for a user.
      *
-     * @param Organisation $organisation
-     * @param User $user
-     * @return void
      * @throws \Exception
      */
     protected function verifyOrganisationPermission(Organisation $organisation, User $user): void
@@ -170,12 +156,12 @@ class EstimationService
             ->where('user_id', $user->id)
             ->first();
 
-        if (!$member) {
+        if (! $member) {
             throw new \Exception('User is not a member of this organisation.');
         }
 
         // Check if user has admin or owner role
-        if (!in_array($member->role, ['owner', 'admin'])) {
+        if (! in_array($member->role, ['owner', 'admin'])) {
             throw new \Exception('User does not have permission to create estimations for this organisation.');
         }
     }
@@ -183,10 +169,8 @@ class EstimationService
     /**
      * Verify user has access to an estimation.
      *
-     * @param Estimation $estimation
-     * @param User $user
-     * @param bool $requireWrite Whether write access is required
-     * @return void
+     * @param  bool  $requireWrite  Whether write access is required
+     *
      * @throws \Exception
      */
     protected function verifyEstimationAccess(Estimation $estimation, User $user, bool $requireWrite = false): void
@@ -198,6 +182,7 @@ class EstimationService
             if ($owner->id !== $user->id) {
                 throw new \Exception('Unauthorized access to estimation.');
             }
+
             return;
         }
 
@@ -207,12 +192,12 @@ class EstimationService
                 ->where('user_id', $user->id)
                 ->first();
 
-            if (!$member) {
+            if (! $member) {
                 throw new \Exception('User is not a member of the organisation that owns this estimation.');
             }
 
             // For write operations, require admin/owner role
-            if ($requireWrite && !in_array($member->role, ['owner', 'admin'])) {
+            if ($requireWrite && ! in_array($member->role, ['owner', 'admin'])) {
                 throw new \Exception('User does not have permission to modify this estimation.');
             }
 

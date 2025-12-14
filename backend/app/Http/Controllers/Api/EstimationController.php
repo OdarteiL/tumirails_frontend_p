@@ -22,9 +22,6 @@ class EstimationController extends Controller
     /**
      * Create a new estimation for a site.
      * Determines owner from the site's ownership.
-     *
-     * @param CreateEstimationRequest $request
-     * @return JsonResponse
      */
     public function store(CreateEstimationRequest $request): JsonResponse
     {
@@ -57,10 +54,6 @@ class EstimationController extends Controller
 
     /**
      * Get a single estimation with permission check.
-     *
-     * @param Request $request
-     * @param Estimation $estimation
-     * @return JsonResponse
      */
     public function show(Request $request, Estimation $estimation): JsonResponse
     {
@@ -85,9 +78,6 @@ class EstimationController extends Controller
 
     /**
      * List all estimations for the authenticated user.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -103,15 +93,11 @@ class EstimationController extends Controller
     /**
      * List all estimations for an organisation.
      * Members can view.
-     *
-     * @param Request $request
-     * @param Organisation $organisation
-     * @return JsonResponse
      */
     public function organisationIndex(Request $request, Organisation $organisation): JsonResponse
     {
         // Check if user belongs to organisation
-        if (!$request->user()->belongsToOrganisation($organisation->id)) {
+        if (! $request->user()->belongsToOrganisation($organisation->id)) {
             return response()->json([
                 'success' => false,
                 'error' => 'You do not have access to this organisation',
@@ -130,10 +116,6 @@ class EstimationController extends Controller
     /**
      * Recalculate an estimation.
      * Admin/owner only.
-     *
-     * @param UpdateEstimationRequest $request
-     * @param Estimation $estimation
-     * @return JsonResponse
      */
     public function update(UpdateEstimationRequest $request, Estimation $estimation): JsonResponse
     {
@@ -159,10 +141,6 @@ class EstimationController extends Controller
     /**
      * Soft delete an estimation.
      * Admin/owner only.
-     *
-     * @param Request $request
-     * @param Estimation $estimation
-     * @return JsonResponse
      */
     public function destroy(Request $request, Estimation $estimation): JsonResponse
     {

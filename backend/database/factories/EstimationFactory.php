@@ -19,7 +19,7 @@ class EstimationFactory extends Factory
         $dailyKwh = $this->faker->randomFloat(2, 5, 50);
         $monthlyKwh = $dailyKwh * 30;
         $ratePerKwh = $this->faker->randomFloat(4, 0.10, 0.50);
-        
+
         return [
             'owner_id' => \App\Models\User::factory(),
             'owner_type' => \App\Models\User::class,
@@ -72,5 +72,4 @@ class EstimationFactory extends Factory
             'version' => $version,
         ]);
     }
-
 }

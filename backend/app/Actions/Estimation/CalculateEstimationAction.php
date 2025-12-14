@@ -12,10 +12,6 @@ class CalculateEstimationAction
     /**
      * Execute the estimation calculation.
      *
-     * @param Site $site
-     * @param TariffStructure $tariffStructure
-     * @param SeasonalAdjustment|null $seasonalAdjustment
-     * @param LocationMultiplier|null $locationMultiplier
      * @return array Calculation results with breakdown
      */
     public function execute(
@@ -42,18 +38,18 @@ class CalculateEstimationAction
         foreach ($siteAppliances as $siteAppliance) {
             $appliance = $siteAppliance->appliance;
             $category = $appliance->category;
-            
+
             // Get power factor from category
             $powerFactor = $category->power_factor ?? 0.90;
-            
+
             // Calculate watts for this appliance
             $watts = $appliance->default_wattage * $siteAppliance->quantity;
             $totalWatts += $watts;
-            
+
             // Calculate daily kWh: (watts * quantity * hours * power_factor) / 1000
             $applianceDailyKwh = ($appliance->default_wattage * $siteAppliance->quantity * $siteAppliance->daily_usage_hours * $powerFactor) / 1000;
             $dailyKwh += $applianceDailyKwh;
-            
+
             $appliancesBreakdown[] = [
                 'id' => $appliance->id,
                 'name' => $appliance->name,
@@ -83,7 +79,7 @@ class CalculateEstimationAction
         // Calculate cost per appliance for breakdown
         foreach ($appliancesBreakdown as &$breakdown) {
             $applianceMonthlyKwh = $breakdown['daily_kwh'] * 30 * $seasonalMultiplier * $locationMultiplierValue;
-            
+
             // Avoid division by zero
             if ($finalMonthlyKwh > 0) {
                 $breakdown['monthly_cost'] = round(
@@ -122,16 +118,13 @@ class CalculateEstimationAction
 
     /**
      * Calculate cost using tiered pricing structure.
-     *
-     * @param float $kwh
-     * @param TariffStructure $tariffStructure
-     * @return float
      */
     protected function calculateTieredCost(float $kwh, TariffStructure $tariffStructure): float
     {
         // For flat rate, use first tier's rate
         if ($tariffStructure->type === 'flat') {
             $firstTier = $tariffStructure->tariffTiers()->ordered()->first();
+
             return $firstTier ? $kwh * $firstTier->rate_per_kwh : 0;
         }
 
@@ -147,7 +140,7 @@ class CalculateEstimationAction
 
             // Calculate kWh in this tier
             $tierKwh = 0;
-            
+
             if ($tier->max_kwh === null) {
                 // Unlimited tier - use all remaining
                 $tierKwh = $remainingKwh;
@@ -155,14 +148,14 @@ class CalculateEstimationAction
                 // Calculate usage in this tier range
                 $tierMin = $tier->min_kwh;
                 $tierMax = $tier->max_kwh;
-                
+
                 // Tier capacity
                 $tierCapacity = $tierMax - $tierMin;
-                
+
                 // Use minimum of remaining kWh or tier capacity
                 $tierKwh = min($remainingKwh, $tierCapacity);
             }
-            
+
             $totalCost += $tierKwh * $tier->rate_per_kwh;
             $remainingKwh -= $tierKwh;
         }
@@ -173,8 +166,7 @@ class CalculateEstimationAction
     /**
      * Calculate average power factor across all appliances.
      *
-     * @param \Illuminate\Support\Collection $siteAppliances
-     * @return float
+     * @param  \Illuminate\Support\Collection  $siteAppliances
      */
     protected function getAveragePowerFactor($siteAppliances): float
     {
@@ -196,11 +188,6 @@ class CalculateEstimationAction
 
     /**
      * Return empty estimation for sites with no appliances.
-     *
-     * @param TariffStructure $tariffStructure
-     * @param SeasonalAdjustment|null $seasonalAdjustment
-     * @param LocationMultiplier|null $locationMultiplier
-     * @return array
      */
     protected function emptyEstimation(
         TariffStructure $tariffStructure,

@@ -27,7 +27,7 @@ class TariffStructureFactory extends Factory
                 'Commercial Tariff',
                 'Industrial Tariff',
                 'Agricultural Tariff',
-            ]) . ' ' . fake()->year(),
+            ]).' '.fake()->year(),
             'type' => fake()->randomElement(['tiered', 'flat', 'time_of_use']),
             'is_active' => fake()->boolean(80),
             'effective_date' => $effectiveDate,

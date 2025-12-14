@@ -13,11 +13,8 @@ class StoreEstimationAction
     /**
      * Store or update an estimation with versioning logic.
      *
-     * @param User|Model $owner The owner of the estimation (User or Organisation)
-     * @param Site $site
-     * @param array $calculationResults Results from CalculateEstimationAction
-     * @param User $createdBy
-     * @return Estimation
+     * @param  User|Model  $owner  The owner of the estimation (User or Organisation)
+     * @param  array  $calculationResults  Results from CalculateEstimationAction
      */
     public function execute(
         Model $owner,
@@ -38,7 +35,7 @@ class StoreEstimationAction
 
             // Determine if we need a new version
             $needsNewVersion = false;
-            
+
             if ($existingEstimation) {
                 // Compare appliances snapshot to detect changes
                 $needsNewVersion = $this->appliancesChanged(
@@ -47,10 +44,10 @@ class StoreEstimationAction
                 );
             }
 
-            if (!$existingEstimation || $needsNewVersion) {
+            if (! $existingEstimation || $needsNewVersion) {
                 // Create new estimation (or new version)
                 $version = $existingEstimation ? $existingEstimation->version + 1 : 1;
-                
+
                 return Estimation::create([
                     'owner_id' => $owner->id,
                     'owner_type' => get_class($owner),
@@ -89,10 +86,6 @@ class StoreEstimationAction
 
     /**
      * Check if appliances have changed by comparing snapshots.
-     *
-     * @param array $oldSnapshot
-     * @param array $newSnapshot
-     * @return bool
      */
     protected function appliancesChanged(array $oldSnapshot, array $newSnapshot): bool
     {
@@ -109,7 +102,7 @@ class StoreEstimationAction
         foreach ($oldAppliances as $index => $oldAppliance) {
             $newAppliance = $newAppliances[$index] ?? null;
 
-            if (!$newAppliance) {
+            if (! $newAppliance) {
                 return true;
             }
 

@@ -60,7 +60,7 @@ class LocationMultiplier extends Model
 
         // Fall back to region-only multiplier
         $multiplier = $query->whereNull('city')->first();
-        
+
         return $multiplier ? (float) $multiplier->multiplier : null;
     }
 

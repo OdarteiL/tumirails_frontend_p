@@ -12,7 +12,6 @@ use App\Models\Site;
 use App\Models\SiteAppliance;
 use App\Models\TariffStructure;
 use App\Models\TariffTier;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,14 +20,16 @@ class CalculateEstimationActionTest extends TestCase
     use RefreshDatabase;
 
     private CalculateEstimationAction $action;
+
     private Country $country;
+
     private TariffStructure $tariffStructure;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->action = new CalculateEstimationAction();
-        
+
         // Create base test data
         $this->country = Country::factory()->create([
             'name' => 'Ghana',
@@ -109,16 +110,16 @@ class CalculateEstimationActionTest extends TestCase
         // Daily kWh = (150W * 1 qty * 24h * 0.85 PF) / 1000 = 3.06 kWh
         $this->assertEquals(150.00, $result['total_watts']);
         $this->assertEquals(3.06, $result['daily_kwh']);
-        
+
         // Monthly kWh = 3.06 * 30 = 91.8 kWh
         $this->assertEquals(91.80, $result['monthly_kwh']);
-        
+
         // Cost calculation (tiered):
         // 0-50 kWh: 50 * 0.9978 = 49.89
         // 51-91.8 kWh: 41.8 * 1.2359 = 51.66
         // Total: 101.55
         $this->assertEquals(101.55, round($result['estimated_monthly_cost'], 2));
-        
+
         // Verify metadata
         $this->assertEquals(0.85, $result['power_factor_applied']);
         $this->assertEquals(1.0, $result['seasonal_multiplier']);
@@ -134,7 +135,7 @@ class CalculateEstimationActionTest extends TestCase
             'name' => 'Cooling',
             'power_factor' => 0.85,
         ]);
-        
+
         $lightingCategory = Category::factory()->create([
             'name' => 'Lighting',
             'power_factor' => 0.95,
@@ -155,7 +156,7 @@ class CalculateEstimationActionTest extends TestCase
 
         // Create site with appliances
         $site = Site::factory()->create();
-        
+
         SiteAppliance::factory()->create([
             'site_id' => $site->id,
             'appliance_id' => $refrigerator->id,
@@ -177,17 +178,17 @@ class CalculateEstimationActionTest extends TestCase
         // LED Bulbs: (15 * 10 * 6 * 0.95) / 1000 = 0.855 kWh/day
         // Total daily: 6.975 kWh
         $this->assertEquals(6.98, round($result['daily_kwh'], 2));
-        
+
         // Monthly: 6.975 * 30 = 209.25 kWh
         $this->assertEquals(209.25, $result['monthly_kwh']);
-        
+
         // Verify appliances breakdown
         $this->assertCount(2, $result['appliances_breakdown']);
-        
+
         $breakdown = collect($result['appliances_breakdown']);
         $refrigeratorBreakdown = $breakdown->firstWhere('name', 'Refrigerator');
         $ledBreakdown = $breakdown->firstWhere('name', 'LED Bulb');
-        
+
         $this->assertEquals(0.85, $refrigeratorBreakdown['power_factor']);
         $this->assertEquals(0.95, $ledBreakdown['power_factor']);
         $this->assertEquals(6.12, $refrigeratorBreakdown['daily_kwh']);
@@ -257,11 +258,11 @@ class CalculateEstimationActionTest extends TestCase
         // Daily: (100 * 1 * 10 * 0.90) / 1000 = 0.9 kWh
         // Monthly before seasonal: 0.9 * 30 = 27 kWh
         $this->assertEquals(27.00, $result['monthly_kwh']);
-        
+
         // After seasonal: 27 * 1.15 = 31.05 kWh
         $this->assertEquals(31.05, $result['adjusted_monthly_kwh']);
         $this->assertEquals(1.15, $result['seasonal_multiplier']);
-        
+
         // Cost on 31.05 kWh: 31.05 * 0.9978 = 30.99
         $this->assertEqualsWithDelta(30.99, $result['estimated_monthly_cost'], 0.02);
     }
@@ -403,7 +404,7 @@ class CalculateEstimationActionTest extends TestCase
         $result = $this->action->execute($site, $this->tariffStructure, $seasonalAdjustment, $locationMultiplier);
 
         $metadata = $result['calculation_metadata'];
-        
+
         $this->assertEquals($this->tariffStructure->id, $metadata['tariff_structure_id']);
         $this->assertEquals('Ghana ECG Residential', $metadata['tariff_structure_name']);
         $this->assertEquals('tiered', $metadata['tariff_type']);
@@ -441,13 +442,13 @@ class CalculateEstimationActionTest extends TestCase
         // All results should be identical (excluding metadata timestamps)
         $this->assertEquals($result1['total_watts'], $result2['total_watts']);
         $this->assertEquals($result1['total_watts'], $result3['total_watts']);
-        
+
         $this->assertEquals($result1['daily_kwh'], $result2['daily_kwh']);
         $this->assertEquals($result1['daily_kwh'], $result3['daily_kwh']);
-        
+
         $this->assertEquals($result1['monthly_kwh'], $result2['monthly_kwh']);
         $this->assertEquals($result1['monthly_kwh'], $result3['monthly_kwh']);
-        
+
         $this->assertEquals($result1['estimated_monthly_cost'], $result2['estimated_monthly_cost']);
         $this->assertEquals($result1['estimated_monthly_cost'], $result3['estimated_monthly_cost']);
     }
@@ -460,7 +461,7 @@ class CalculateEstimationActionTest extends TestCase
             'name' => 'Cooling',
             'power_factor' => 0.85,
         ]);
-        
+
         $lightingCategory = Category::factory()->create([
             'name' => 'Lighting',
             'power_factor' => 0.95,
@@ -480,7 +481,7 @@ class CalculateEstimationActionTest extends TestCase
         ]);
 
         $site = Site::factory()->create();
-        
+
         SiteAppliance::factory()->create([
             'site_id' => $site->id,
             'appliance_id' => $coolingAppliance->id,

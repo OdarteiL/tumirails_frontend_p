@@ -21,7 +21,9 @@ class EstimationControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Country $country;
+
     private TariffStructure $tariffStructure;
 
     protected function setUp(): void
@@ -130,7 +132,7 @@ class EstimationControllerTest extends TestCase
     public function get_estimations_id_returns_estimation(): void
     {
         $site = $this->createSiteWithAppliances($this->user);
-        
+
         // Create estimation
         $createResponse = $this->actingAs($this->user)->postJson('/api/estimations', [
             'site_id' => $site->id,
@@ -201,7 +203,7 @@ class EstimationControllerTest extends TestCase
         ]);
 
         $site = $this->createSiteWithAppliances($organisation);
-        
+
         // Create estimation
         $this->actingAs($this->user)->postJson('/api/estimations', ['site_id' => $site->id]);
 
@@ -225,7 +227,7 @@ class EstimationControllerTest extends TestCase
     public function put_estimations_id_recalculates(): void
     {
         $site = $this->createSiteWithAppliances($this->user);
-        
+
         // Create initial estimation
         $createResponse = $this->actingAs($this->user)->postJson('/api/estimations', [
             'site_id' => $site->id,
@@ -255,7 +257,7 @@ class EstimationControllerTest extends TestCase
     public function delete_estimations_id_soft_deletes(): void
     {
         $site = $this->createSiteWithAppliances($this->user);
-        
+
         // Create estimation
         $createResponse = $this->actingAs($this->user)->postJson('/api/estimations', [
             'site_id' => $site->id,
@@ -300,7 +302,7 @@ class EstimationControllerTest extends TestCase
     {
         $otherUser = User::factory()->create();
         $site = $this->createSiteWithAppliances($otherUser);
-        
+
         // Create estimation as other user
         $createResponse = $this->actingAs($otherUser)->postJson('/api/estimations', [
             'site_id' => $site->id,
@@ -328,7 +330,7 @@ class EstimationControllerTest extends TestCase
     public function response_structure_matches_estimation_resource(): void
     {
         $site = $this->createSiteWithAppliances($this->user);
-        
+
         $response = $this->actingAs($this->user)->postJson('/api/estimations', [
             'site_id' => $site->id,
         ]);
@@ -355,10 +357,10 @@ class EstimationControllerTest extends TestCase
         $this->assertArrayHasKey('id', $data['owner']);
         $this->assertArrayHasKey('type', $data['owner']);
         $this->assertArrayHasKey('name', $data['owner']);
-        
+
         $this->assertArrayHasKey('id', $data['site']);
         $this->assertArrayHasKey('name', $data['site']);
-        
+
         $this->assertArrayHasKey('id', $data['tariff_structure']);
         $this->assertArrayHasKey('name', $data['tariff_structure']);
         $this->assertArrayHasKey('type', $data['tariff_structure']);
@@ -435,7 +437,7 @@ class EstimationControllerTest extends TestCase
     public function non_admin_cannot_access_organisation_estimations(): void
     {
         $organisation = Organisation::factory()->create();
-        
+
         // User is not a member
         $response = $this->actingAs($this->user)
             ->getJson("/api/organisations/{$organisation->id}/estimations");
@@ -459,7 +461,7 @@ class EstimationControllerTest extends TestCase
     public function organisation_customer_cannot_update_estimation(): void
     {
         $organisation = Organisation::factory()->create();
-        
+
         // Create admin
         $admin = User::factory()->create();
         $organisation->members()->create([
@@ -478,7 +480,7 @@ class EstimationControllerTest extends TestCase
         ]);
 
         $site = $this->createSiteWithAppliances($organisation);
-        
+
         // Admin creates estimation
         $createResponse = $this->actingAs($admin)->postJson('/api/estimations', [
             'site_id' => $site->id,

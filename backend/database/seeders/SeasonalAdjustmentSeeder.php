@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Country;
 use App\Models\SeasonalAdjustment;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SeasonalAdjustmentSeeder extends Seeder
@@ -17,8 +16,9 @@ class SeasonalAdjustmentSeeder extends Seeder
         // Get Ghana country
         $ghana = Country::where('code', 'GH')->first();
 
-        if (!$ghana) {
+        if (! $ghana) {
             $this->command->error('Ghana country not found. Please run CountrySeeder first.');
+
             return;
         }
 

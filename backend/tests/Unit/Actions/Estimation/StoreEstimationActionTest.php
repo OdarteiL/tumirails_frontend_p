@@ -3,7 +3,6 @@
 namespace Tests\Unit\Actions\Estimation;
 
 use App\Actions\Estimation\StoreEstimationAction;
-use App\Models\Category;
 use App\Models\Country;
 use App\Models\Estimation;
 use App\Models\Organisation;
@@ -19,9 +18,13 @@ class StoreEstimationActionTest extends TestCase
     use RefreshDatabase;
 
     private StoreEstimationAction $action;
+
     private User $user;
+
     private Site $site;
+
     private TariffStructure $tariffStructure;
+
     private array $baseCalculationResults;
 
     protected function setUp(): void
@@ -30,7 +33,7 @@ class StoreEstimationActionTest extends TestCase
 
         $this->action = new StoreEstimationAction();
         $this->user = User::factory()->create();
-        
+
         // Create site owned by user
         $this->site = Site::factory()->create([
             'owner_id' => $this->user->id,
@@ -127,7 +130,7 @@ class StoreEstimationActionTest extends TestCase
         $recalculatedResults['seasonal_multiplier'] = 1.15; // Changed multiplier
         $recalculatedResults['adjusted_monthly_kwh'] = 105.57; // 91.8 * 1.15
         $recalculatedResults['estimated_monthly_cost'] = 116.78; // Recalculated cost
-        
+
         // Important: Keep the appliances_breakdown with EXACT same id, quantity, daily_usage_hours
         // This simulates recalculation without appliance changes
         $recalculatedResults['appliances_breakdown'][0]['monthly_cost'] = 116.78;
@@ -144,7 +147,7 @@ class StoreEstimationActionTest extends TestCase
         $this->assertEquals($initialId, $updatedEstimation->id);
         $this->assertEquals(1, $updatedEstimation->version);
         $this->assertNull($updatedEstimation->previous_estimation_id);
-        
+
         // Values should be updated
         $this->assertEquals(1.15, $updatedEstimation->seasonal_multiplier);
         $this->assertEquals(105.57, $updatedEstimation->monthly_kwh);
@@ -191,10 +194,10 @@ class StoreEstimationActionTest extends TestCase
 
         // Should be a new estimation (different id)
         $this->assertNotEquals($initialEstimation->id, $newVersionEstimation->id);
-        
+
         // Should have version 2
         $this->assertEquals(2, $newVersionEstimation->version);
-        
+
         // Should link to previous version
         $this->assertEquals($initialEstimation->id, $newVersionEstimation->previous_estimation_id);
 
@@ -246,7 +249,7 @@ class StoreEstimationActionTest extends TestCase
         // Create version 2
         $modifiedResults = $this->baseCalculationResults;
         $modifiedResults['appliances_breakdown'][0]['quantity'] = 2;
-        
+
         $v2 = $this->action->execute(
             $this->user,
             $this->site,
@@ -272,7 +275,7 @@ class StoreEstimationActionTest extends TestCase
 
         $this->assertIsArray($estimation->appliances_snapshot);
         $this->assertCount(1, $estimation->appliances_snapshot);
-        
+
         $snapshot = $estimation->appliances_snapshot[0];
         $this->assertEquals(1, $snapshot['id']);
         $this->assertEquals('Refrigerator', $snapshot['name']);
@@ -296,7 +299,7 @@ class StoreEstimationActionTest extends TestCase
         );
 
         $this->assertIsArray($estimation->calculation_metadata);
-        
+
         $metadata = $estimation->calculation_metadata;
         $this->assertEquals($this->tariffStructure->id, $metadata['tariff_structure_id']);
         $this->assertEquals($this->tariffStructure->name, $metadata['tariff_structure_name']);
@@ -387,7 +390,7 @@ class StoreEstimationActionTest extends TestCase
     {
         // Create organisation
         $organisation = Organisation::factory()->create();
-        
+
         // Create site owned by organisation
         $orgSite = Site::factory()->create([
             'owner_id' => $organisation->id,

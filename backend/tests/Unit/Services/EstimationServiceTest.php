@@ -8,7 +8,6 @@ use App\Models\Appliance;
 use App\Models\Category;
 use App\Models\Country;
 use App\Models\Estimation;
-use App\Models\LocationMultiplier;
 use App\Models\Organisation;
 use App\Models\SeasonalAdjustment;
 use App\Models\Site;
@@ -25,8 +24,11 @@ class EstimationServiceTest extends TestCase
     use RefreshDatabase;
 
     private EstimationService $service;
+
     private User $user;
+
     private Country $country;
+
     private TariffStructure $tariffStructure;
 
     protected function setUp(): void
@@ -391,7 +393,7 @@ class EstimationServiceTest extends TestCase
     public function member_cannot_update_organisation_estimation(): void
     {
         $organisation = Organisation::factory()->create();
-        
+
         // Create admin
         $admin = User::factory()->create();
         $organisation->members()->create([

@@ -65,7 +65,7 @@ class SeasonalAdjustment extends Model
      */
     public function getCurrentMultiplier(): ?float
     {
-        if (!$this->is_active || !$this->isCurrentSeason()) {
+        if (! $this->is_active || ! $this->isCurrentSeason()) {
             return null;
         }
 
@@ -91,15 +91,15 @@ class SeasonalAdjustment extends Model
             $q->where(function ($sq) use ($month) {
                 // Same year season
                 $sq->where('start_month', '<=', 'end_month')
-                   ->where('start_month', '<=', $month)
-                   ->where('end_month', '>=', $month);
+                    ->where('start_month', '<=', $month)
+                    ->where('end_month', '>=', $month);
             })->orWhere(function ($sq) use ($month) {
                 // Cross-year season
                 $sq->where('start_month', '>', 'end_month')
-                   ->where(function ($ssq) use ($month) {
-                       $ssq->where('start_month', '<=', $month)
-                          ->orWhere('end_month', '>=', $month);
-                   });
+                    ->where(function ($ssq) use ($month) {
+                        $ssq->where('start_month', '<=', $month)
+                            ->orWhere('end_month', '>=', $month);
+                    });
             });
         });
     }
