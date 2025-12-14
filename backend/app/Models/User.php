@@ -74,6 +74,14 @@ class User extends Authenticatable
         return $this->morphMany(SiteAppliance::class, 'added_by');
     }
 
+    /**
+     * Get estimations owned by the user.
+     */
+    public function estimations(): MorphMany
+    {
+        return $this->morphMany(Estimation::class, 'owner');
+    }
+
     public function installerDetail(): HasOne
     {
         return $this->hasOne(InstallerDetail::class);

@@ -61,4 +61,12 @@ class Site extends Model
     {
         return $this->hasMany(SiteAppliance::class);
     }
+
+    /**
+     * Get all estimations for this site.
+     */
+    public function estimations(): HasMany
+    {
+        return $this->hasMany(Estimation::class);
+    }
 }
