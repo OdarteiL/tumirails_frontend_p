@@ -83,10 +83,16 @@ class CalculateEstimationAction
         // Calculate cost per appliance for breakdown
         foreach ($appliancesBreakdown as &$breakdown) {
             $applianceMonthlyKwh = $breakdown['daily_kwh'] * 30 * $seasonalMultiplier * $locationMultiplierValue;
-            $breakdown['monthly_cost'] = round(
-                ($applianceMonthlyKwh / $finalMonthlyKwh) * $cost,
-                2
-            );
+            
+            // Avoid division by zero
+            if ($finalMonthlyKwh > 0) {
+                $breakdown['monthly_cost'] = round(
+                    ($applianceMonthlyKwh / $finalMonthlyKwh) * $cost,
+                    2
+                );
+            } else {
+                $breakdown['monthly_cost'] = 0;
+            }
         }
 
         return [
@@ -142,27 +148,23 @@ class CalculateEstimationAction
             // Calculate kWh in this tier
             $tierKwh = 0;
             
-            if ($tier->appliesTo($kwh)) {
-                if ($tier->max_kwh === null) {
-                    // Unlimited tier - use all remaining
-                    $tierKwh = $remainingKwh;
-                } else {
-                    // Calculate usage in this tier range
-                    $tierMin = $tier->min_kwh;
-                    $tierMax = $tier->max_kwh;
-                    
-                    if ($kwh <= $tierMax) {
-                        // Usage ends in this tier
-                        $tierKwh = $kwh - $tierMin;
-                    } else {
-                        // Usage spans this tier completely
-                        $tierKwh = $tierMax - $tierMin;
-                    }
-                }
+            if ($tier->max_kwh === null) {
+                // Unlimited tier - use all remaining
+                $tierKwh = $remainingKwh;
+            } else {
+                // Calculate usage in this tier range
+                $tierMin = $tier->min_kwh;
+                $tierMax = $tier->max_kwh;
                 
-                $totalCost += $tierKwh * $tier->rate_per_kwh;
-                $remainingKwh -= $tierKwh;
+                // Tier capacity
+                $tierCapacity = $tierMax - $tierMin;
+                
+                // Use minimum of remaining kWh or tier capacity
+                $tierKwh = min($remainingKwh, $tierCapacity);
             }
+            
+            $totalCost += $tierKwh * $tier->rate_per_kwh;
+            $remainingKwh -= $tierKwh;
         }
 
         return $totalCost;
