@@ -479,31 +479,185 @@ components:
     Estimation:
       type: object
       properties:
-        id: integer
-        site_id: integer
-        total_kw: number
-        daily_kwh: number
-        monthly_cost_est: number
-        currency: string
-        input_payload: object
-        status:
+        id:
+          type: integer
+        site:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        owner:
+          type: object
+          properties:
+            id:
+              type: integer
+            type:
+              type: string
+              enum: [User, Organisation]
+            name:
+              type: string
+        version:
+          type: integer
+          description: "Version number for estimation history tracking"
+        previous_estimation_id:
+          type: integer
+          nullable: true
+          description: "ID of previous version if this is an update"
+        total_watts:
           type: string
-          enum: [draft, completed]
+          description: "Total watts formatted to 2 decimal places"
+        daily_kwh:
+          type: string
+          description: "Daily kilowatt-hours formatted to 2 decimal places"
+        monthly_kwh:
+          type: string
+          description: "Monthly kilowatt-hours formatted to 2 decimal places"
+        estimated_monthly_cost:
+          type: string
+          description: "Estimated monthly cost formatted to 2 decimal places"
+        tariff_structure:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            type:
+              type: string
+              enum: [tiered, flat, time_of_use]
+        power_factor_applied:
+          type: string
+          nullable: true
+          description: "Average power factor applied formatted to 2 decimal places"
+        seasonal_multiplier:
+          type: string
+          nullable: true
+          description: "Seasonal adjustment multiplier formatted to 2 decimal places"
+        appliances_breakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              category:
+                type: string
+              watts:
+                type: number
+              quantity:
+                type: integer
+              daily_usage_hours:
+                type: number
+              power_factor:
+                type: number
+              daily_kwh:
+                type: number
+              monthly_cost:
+                type: number
+        calculation_metadata:
+          type: object
+          properties:
+            tariff_structure_id:
+              type: integer
+            tariff_structure_name:
+              type: string
+            tariff_type:
+              type: string
+            seasonal_adjustment_id:
+              type: integer
+              nullable: true
+            seasonal_adjustment_name:
+              type: string
+              nullable: true
+            location_multiplier_id:
+              type: integer
+              nullable: true
+            location_region:
+              type: string
+              nullable: true
+            location_city:
+              type: string
+              nullable: true
+            calculated_at:
+              type: string
+              format: date-time
+            appliance_count:
+              type: integer
+        created_by:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required: [id, site, owner, version, total_watts, daily_kwh, monthly_kwh, estimated_monthly_cost]
       example:
         id: 301
-        site_id: 101
-        total_kw: 2.3
-        daily_kwh: 5.2
-        monthly_cost_est: 270.5
-        currency: "GHS"
-        input_payload:
-          appliances:
-            - id: 7
-              quantity: 3
-            - id: 12
-              quantity: 2
-          meter_image: "https://s3.tumi-energy.com/meters/meter1.jpg"
-        status: completed
+        site:
+          id: 101
+          name: "Accra Apartment"
+        owner:
+          id: 1
+          type: "User"
+          name: "Ama Mensah"
+        version: 2
+        previous_estimation_id: 300
+        total_watts: "5000.00"
+        daily_kwh: "108.00"
+        monthly_kwh: "3726.00"
+        estimated_monthly_cost: "3890.45"
+        tariff_structure:
+          id: 1
+          name: "Ghana ECG Residential"
+          type: "tiered"
+        power_factor_applied: "0.90"
+        seasonal_multiplier: "1.15"
+        appliances_breakdown:
+          - id: 7
+            name: "Refrigerator"
+            category: "Cooling & Heating"
+            watts: 150
+            quantity: 2
+            daily_usage_hours: 24
+            power_factor: 0.85
+            daily_kwh: 6.12
+            monthly_cost: 183.42
+          - id: 12
+            name: "LED Bulb"
+            category: "Lighting"
+            watts: 15
+            quantity: 10
+            daily_usage_hours: 6
+            power_factor: 0.95
+            daily_kwh: 0.86
+            monthly_cost: 25.80
+        calculation_metadata:
+          tariff_structure_id: 1
+          tariff_structure_name: "Ghana ECG Residential"
+          tariff_type: "tiered"
+          seasonal_adjustment_id: 1
+          seasonal_adjustment_name: "Dry Season"
+          location_multiplier_id: null
+          location_region: null
+          location_city: null
+          calculated_at: "2025-12-14T10:30:00Z"
+          appliance_count: 2
+        created_by:
+          id: 1
+          name: "Ama Mensah"
+        created_at: "2025-12-14T10:30:00Z"
+        updated_at: "2025-12-14T10:30:00Z"
 
     # ---------------------- RECOMMENDED HARDWARE ----------------------
     RecommendedHardware:
@@ -2277,27 +2431,354 @@ paths:
                   quantity: ["Quantity must be at least 1"]
                   daily_usage_hours: ["Daily usage hours cannot exceed 24"]
 
-  # ---------------- ESTIMATION ----------------
+  # ---------------- ESTIMATIONS ----------------
   /estimations:
     post:
-      summary: Create energy estimation
+      summary: Create energy estimation for a site
+      description: >
+        Creates a new estimation for a site. The owner is automatically determined from the site.
+        Calculates energy consumption based on site appliances, applies power factors, seasonal adjustments,
+        and location multipliers. Uses active tariff structure for cost calculation.
       tags: [Estimations]
+      security:
+        - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
-              required: [site_id, input_payload]
+              required: [site_id]
               properties:
-                site_id: integer
-                input_payload: object
+                site_id:
+                  type: integer
+                  description: "ID of the site to create estimation for"
+            example:
+              site_id: 101
       responses:
         "201":
-          description: Estimation created
+          description: Estimation created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Estimation"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/Estimation"
+              example:
+                success: true
+                message: "Estimation created successfully"
+                data:
+                  id: 301
+                  site:
+                    id: 101
+                    name: "Accra Apartment"
+                  owner:
+                    id: 1
+                    type: "User"
+                    name: "Ama Mensah"
+                  version: 1
+                  total_watts: "5000.00"
+                  daily_kwh: "108.00"
+                  monthly_kwh: "3726.00"
+                  estimated_monthly_cost: "3890.45"
+        "400":
+          description: Bad request (site not found, no active tariff, etc.)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: "No active tariff structure found for country: Ghana"
+        "403":
+          description: Unauthorized (user doesn't have permission to create estimation for this site)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: "Site does not belong to the specified owner"
+    
+    get:
+      summary: List all estimations for authenticated user
+      description: Returns all estimations owned by the authenticated user
+      tags: [Estimations]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of user's estimations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Estimation"
+              example:
+                success: true
+                message: "Estimations retrieved successfully"
+                data:
+                  - id: 301
+                    site:
+                      id: 101
+                      name: "Accra Apartment"
+                    version: 2
+                    estimated_monthly_cost: "3890.45"
+                  - id: 302
+                    site:
+                      id: 102
+                      name: "Kumasi Office"
+                    version: 1
+                    estimated_monthly_cost: "5200.00"
+
+  /estimations/{estimation}:
+    get:
+      summary: Get a single estimation by ID
+      description: Retrieves detailed estimation data with permission check
+      tags: [Estimations]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: estimation
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "Estimation ID"
+      responses:
+        "200":
+          description: Estimation retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/Estimation"
+              example:
+                success: true
+                message: "Estimation retrieved successfully"
+                data:
+                  id: 301
+                  site:
+                    id: 101
+                    name: "Accra Apartment"
+                  version: 2
+                  estimated_monthly_cost: "3890.45"
+        "403":
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: "Unauthorized access to estimation"
+        "404":
+          description: Estimation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: "Estimation not found"
+    
+    put:
+      summary: Recalculate an estimation
+      description: >
+        Recalculates an existing estimation with current tariffs and adjustments.
+        Creates a new version if appliances have changed since last calculation.
+        Requires admin/owner permission for organisation-owned estimations.
+      tags: [Estimations]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: estimation
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "Estimation ID"
+      responses:
+        "200":
+          description: Estimation recalculated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/Estimation"
+              example:
+                success: true
+                message: "Estimation recalculated successfully"
+                data:
+                  id: 302
+                  version: 3
+                  previous_estimation_id: 301
+                  estimated_monthly_cost: "4100.00"
+        "403":
+          description: Unauthorized (insufficient permissions)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: "User does not have permission to modify this estimation"
+    
+    delete:
+      summary: Soft delete an estimation
+      description: >
+        Soft deletes an estimation (can be restored later).
+        Requires admin/owner permission for organisation-owned estimations.
+      tags: [Estimations]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: estimation
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "Estimation ID"
+      responses:
+        "200":
+          description: Estimation deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+              example:
+                success: true
+                message: "Estimation deleted successfully"
+        "403":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: "User does not have permission to modify this estimation"
+
+  /organisations/{organisation}/estimations:
+    get:
+      summary: List all estimations for an organisation
+      description: >
+        Returns all estimations owned by an organisation.
+        Any member of the organisation can view estimations.
+      tags: [Estimations, Organisations]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: organisation
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "Organisation ID"
+      responses:
+        "200":
+          description: Organisation estimations retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Estimation"
+              example:
+                success: true
+                message: "Organisation estimations retrieved successfully"
+                data:
+                  - id: 401
+                    site:
+                      id: 201
+                      name: "Office Building Accra"
+                    owner:
+                      id: 10
+                      type: "Organisation"
+                      name: "Solar Tech Ghana Ltd"
+                    version: 1
+                    estimated_monthly_cost: "12500.00"
+        "403":
+          description: User not a member of organisation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: "You do not have access to this organisation"
 
   /estimations/{id}/recommendations:
     get:
