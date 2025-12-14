@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EstimationController;
 use App\Http\Controllers\Api\OrganisationController;
 use App\Http\Controllers\Api\SiteController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('sites', SiteController::class)->only(['index', 'store', 'show']);
 
+    // Estimation routes
+    Route::apiResource('estimations', EstimationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+
     // Organisation routes
     Route::apiResource('organisations', OrganisationController::class);
     Route::prefix('organisations')->group(function () {
@@ -37,6 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Organisation site appliances
         Route::post('/{organisation}/sites/{siteId}/appliances', [SiteController::class, 'addApplianceToOrganisationSite']);
+
+        // Organisation estimations
+        Route::get('/{organisation}/estimations', [EstimationController::class, 'organisationIndex']);
     });
     Route::post('/invitations/accept', [OrganisationController::class, 'acceptInvitation']);
     Route::post('/invitations/reject', [OrganisationController::class, 'rejectInvitation']);
