@@ -115,9 +115,9 @@ class StoreEstimationAction
 
             // Check critical fields that indicate appliance changes
             if (
-                $oldAppliance['id'] !== $newAppliance['id'] ||
-                $oldAppliance['quantity'] !== $newAppliance['quantity'] ||
-                $oldAppliance['daily_usage_hours'] !== $newAppliance['daily_usage_hours']
+                $oldAppliance['id'] != $newAppliance['id'] ||
+                $oldAppliance['quantity'] != $newAppliance['quantity'] ||
+                $oldAppliance['daily_usage_hours'] != $newAppliance['daily_usage_hours']
             ) {
                 return true;
             }
