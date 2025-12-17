@@ -57,7 +57,7 @@ class UpdateApplianceRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Ensure metadata is an array if provided
-        if ($this->has('metadata') && !is_array($this->metadata)) {
+        if ($this->has('metadata') && ! is_array($this->metadata)) {
             $this->merge([
                 'metadata' => json_decode($this->metadata, true) ?? [],
             ]);

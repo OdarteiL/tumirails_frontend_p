@@ -3461,38 +3461,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  # ---------------- APPLIANCES ----------------
-  /appliances:
-    get:
-      summary: List all appliances
-      tags: [Appliances]
-      responses:
-        "200":
-          description: Appliance list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Appliance"
-
-  /appliances/{id}:
-    get:
-      summary: Get an appliance by ID
-      tags: [Appliances]
-      parameters:
-        - name: id
-          in: path
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Appliance details
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Appliance"
-
 tags:
   - name: Auth
     description: User authentication and authorization endpoints

@@ -7,8 +7,8 @@ use App\Http\Requests\StoreApplianceRequest;
 use App\Http\Requests\UpdateApplianceRequest;
 use App\Http\Resources\ApplianceResource;
 use App\Models\Appliance;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ApplianceController extends Controller
 {
@@ -18,7 +18,7 @@ class ApplianceController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $query = Appliance::query()
             ->with('category')
             ->visibleTo($user->id, get_class($user));
@@ -30,7 +30,7 @@ class ApplianceController extends Controller
 
         // Search by name
         if ($request->has('search')) {
-            $query->where('name', 'ILIKE', '%' . $request->search . '%');
+            $query->where('name', 'ILIKE', '%'.$request->search.'%');
         }
 
         $appliances = $query->paginate(15);
@@ -83,7 +83,7 @@ class ApplianceController extends Controller
         $user = $request->user();
 
         // Check if appliance is public OR owned by user
-        if (!$appliance->is_public) {
+        if (! $appliance->is_public) {
             if ($appliance->owner_id !== $user->id || $appliance->owner_type !== get_class($user)) {
                 return response()->json([
                     'success' => false,
@@ -106,7 +106,7 @@ class ApplianceController extends Controller
     public function update(UpdateApplianceRequest $request, Appliance $appliance): JsonResponse
     {
         // Authorization is handled in UpdateApplianceRequest
-        
+
         $appliance->update($request->only([
             'name',
             'category_id',

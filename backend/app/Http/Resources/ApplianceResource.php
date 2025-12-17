@@ -42,10 +42,11 @@ class ApplianceResource extends JsonResource
                     if ($this->relationLoaded('owner')) {
                         return [
                             'id' => $this->owner->id,
-                            'name' => $this->owner->first_name . ' ' . $this->owner->last_name,
+                            'name' => $this->owner->first_name.' '.$this->owner->last_name,
                             'type' => class_basename($this->owner_type),
                         ];
                     }
+
                     return [
                         'id' => $this->owner_id,
                         'type' => class_basename($this->owner_type),
