@@ -7,10 +7,15 @@ use App\Http\Requests\Admin\StoreApplianceRequest;
 use App\Http\Requests\Admin\UpdateApplianceRequest;
 use App\Http\Resources\ApplianceResource;
 use App\Models\Appliance;
+use App\Services\ApplianceService;
 use Illuminate\Http\JsonResponse;
 
 class ApplianceController extends Controller
 {
+    public function __construct(
+        private ApplianceService $applianceService
+    ) {}
+
     /**
      * Store a newly created public catalog appliance.
      */
@@ -18,17 +23,12 @@ class ApplianceController extends Controller
     {
         $admin = $request->user();
 
-        $appliance = Appliance::create([
-            'owner_id' => $admin->id,
-            'owner_type' => get_class($admin),
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'default_wattage' => $request->default_wattage,
-            'default_usage_hours' => $request->default_usage_hours,
-            'metadata' => $request->metadata,
-            'is_public' => $request->is_public ?? true, // Default to public for admin
-            'is_active' => true,
-        ]);
+        $appliance = $this->applianceService->createAppliance(
+            ownerId: $admin->id,
+            ownerType: get_class($admin),
+            data: $request->validated(),
+            isPublic: $request->validated('is_public', true)
+        );
 
         $appliance->load('category');
 
@@ -44,16 +44,10 @@ class ApplianceController extends Controller
      */
     public function update(UpdateApplianceRequest $request, Appliance $appliance): JsonResponse
     {
-        $appliance->update($request->only([
-            'name',
-            'category_id',
-            'default_wattage',
-            'default_usage_hours',
-            'metadata',
-            'is_public', // Admins can change visibility
-        ]));
-
-        $appliance->load('category');
+        $appliance = $this->applianceService->updateAppliance(
+            $appliance,
+            $request->validated()
+        );
 
         return response()->json([
             'success' => true,
@@ -67,8 +61,7 @@ class ApplianceController extends Controller
      */
     public function destroy(Appliance $appliance): JsonResponse
     {
-        // Soft delete by setting is_active to false
-        $appliance->update(['is_active' => false]);
+        $this->applianceService->deleteAppliance($appliance);
 
         return response()->json([
             'success' => true,

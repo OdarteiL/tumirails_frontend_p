@@ -118,6 +118,12 @@ jobs:
         working-directory: backend
         run: php artisan migrate --force
 
+      - name: Seed database for feature tests
+        working-directory: backend
+        run: |
+          php artisan db:seed --class=Database\\Seeders\\CategorySeeder --force
+          php artisan db:seed --class=Database\\Seeders\\ApplianceSeeder --force
+
       - name: Verify migrations can run fresh
         working-directory: backend
         run: php artisan migrate:fresh --seed --force
@@ -130,9 +136,17 @@ jobs:
         working-directory: backend
         run: php artisan migrate:status
 
-      - name: Run PHPUnit tests
+      - name: Run Unit Tests
         working-directory: backend
-        run: php artisan test --coverage --min=80
+        run: php artisan test --testsuite=Unit
+
+      - name: Run Feature Tests (with seeded data)
+        working-directory: backend
+        run: |
+          php artisan migrate:fresh --force
+          php artisan db:seed --class=Database\\Seeders\\CategorySeeder --force
+          php artisan db:seed --class=Database\\Seeders\\ApplianceSeeder --force
+          php artisan test --testsuite=Feature --coverage --min=80
 
       - name: Upload coverage reports
         if: always()

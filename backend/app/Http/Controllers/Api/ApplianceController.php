@@ -7,11 +7,16 @@ use App\Http\Requests\StoreApplianceRequest;
 use App\Http\Requests\UpdateApplianceRequest;
 use App\Http\Resources\ApplianceResource;
 use App\Models\Appliance;
+use App\Services\ApplianceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ApplianceController extends Controller
 {
+    public function __construct(
+        private ApplianceService $applianceService
+    ) {}
+
     /**
      * Display a listing of appliances (public + user's private).
      */
@@ -19,21 +24,13 @@ class ApplianceController extends Controller
     {
         $user = $request->user();
 
-        $query = Appliance::query()
-            ->with('category')
-            ->visibleTo($user->id, get_class($user));
-
-        // Filter by category
-        if ($request->has('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
-
-        // Search by name
-        if ($request->has('search')) {
-            $query->where('name', 'ILIKE', '%'.$request->search.'%');
-        }
-
-        $appliances = $query->paginate(15);
+        $appliances = $this->applianceService->getVisibleAppliances(
+            userId: $user->id,
+            userType: get_class($user),
+            categoryId: $request->integer('category_id') ?: null,
+            search: $request->string('search')->toString() ?: null,
+            perPage: 15
+        );
 
         return response()->json([
             'success' => true,
@@ -54,17 +51,12 @@ class ApplianceController extends Controller
     {
         $user = $request->user();
 
-        $appliance = Appliance::create([
-            'owner_id' => $user->id,
-            'owner_type' => get_class($user),
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'default_wattage' => $request->default_wattage,
-            'default_usage_hours' => $request->default_usage_hours,
-            'metadata' => $request->metadata,
-            'is_public' => false, // User appliances are always private
-            'is_active' => true,
-        ]);
+        $appliance = $this->applianceService->createAppliance(
+            ownerId: $user->id,
+            ownerType: get_class($user),
+            data: $request->validated(),
+            isPublic: false
+        );
 
         $appliance->load('category');
 
@@ -82,14 +74,11 @@ class ApplianceController extends Controller
     {
         $user = $request->user();
 
-        // Check if appliance is public OR owned by user
-        if (! $appliance->is_public) {
-            if ($appliance->owner_id !== $user->id || $appliance->owner_type !== get_class($user)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'You do not have permission to view this appliance',
-                ], 403);
-            }
+        if (! $this->applianceService->canView($appliance, $user->id, get_class($user))) {
+            return response()->json([
+                'success' => false,
+                'error' => 'You do not have permission to view this appliance',
+            ], 403);
         }
 
         $appliance->load('category');
@@ -105,17 +94,10 @@ class ApplianceController extends Controller
      */
     public function update(UpdateApplianceRequest $request, Appliance $appliance): JsonResponse
     {
-        // Authorization is handled in UpdateApplianceRequest
-
-        $appliance->update($request->only([
-            'name',
-            'category_id',
-            'default_wattage',
-            'default_usage_hours',
-            'metadata',
-        ]));
-
-        $appliance->load('category');
+        $appliance = $this->applianceService->updateAppliance(
+            $appliance,
+            $request->validated()
+        );
 
         return response()->json([
             'success' => true,
@@ -131,16 +113,14 @@ class ApplianceController extends Controller
     {
         $user = $request->user();
 
-        // Check ownership
-        if ($appliance->owner_id !== $user->id || $appliance->owner_type !== get_class($user)) {
+        if (! $this->applianceService->isOwner($appliance, $user->id, get_class($user))) {
             return response()->json([
                 'success' => false,
                 'error' => 'You do not have permission to delete this appliance',
             ], 403);
         }
 
-        // Soft delete by setting is_active to false
-        $appliance->update(['is_active' => false]);
+        $this->applianceService->deleteAppliance($appliance);
 
         return response()->json([
             'success' => true,
