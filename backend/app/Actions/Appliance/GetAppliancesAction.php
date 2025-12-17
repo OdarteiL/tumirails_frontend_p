@@ -24,7 +24,7 @@ class GetAppliancesAction
         }
 
         if ($search !== null && $search !== '') {
-            $query->where('name', 'ILIKE', '%'.$search.'%');
+            $query->where('name', 'LIKE', '%'.$search.'%');
         }
 
         return $query->paginate($perPage);
