@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return '/login'; // Fallback for web routes
         });
+
+        // Register custom middleware aliases
+        $middleware->alias([
+            'isAdmin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Handle unauthenticated users for API requests

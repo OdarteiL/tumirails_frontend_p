@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\ApplianceController as AdminApplianceController;
+use App\Http\Controllers\Api\ApplianceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EstimationController;
 use App\Http\Controllers\Api\OrganisationController;
@@ -20,6 +22,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
     });
+
+    // Admin appliance routes (must come before user routes)
+    Route::middleware('isAdmin')->prefix('admin')->group(function () {
+        Route::post('/appliances', [AdminApplianceController::class, 'store']);
+        Route::put('/appliances/{appliance}', [AdminApplianceController::class, 'update']);
+        Route::delete('/appliances/{appliance}', [AdminApplianceController::class, 'destroy']);
+    });
+
+    // User appliance routes
+    Route::apiResource('appliances', ApplianceController::class);
 
     Route::apiResource('sites', SiteController::class)->only(['index', 'store', 'show']);
 

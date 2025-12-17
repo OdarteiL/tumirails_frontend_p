@@ -420,15 +420,73 @@ components:
     Appliance:
       type: object
       properties:
-        id: integer
-        name: string
-        default_wattage: number
-        category: string
+        id:
+          type: integer
+        name:
+          type: string
+        default_wattage:
+          type: number
+          format: double
+        default_usage_hours:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+          maximum: 24
+        metadata:
+          type: object
+          nullable: true
+          properties:
+            efficiency_rating:
+              type: string
+              nullable: true
+            notes:
+              type: string
+              nullable: true
+        is_public:
+          type: boolean
+        category:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        owner:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            type:
+              type: string
+              enum: [User, Organisation]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
       example:
         id: 7
         name: "Ceiling Fan"
-        default_wattage: 75
-        category: "Cooling"
+        default_wattage: 75.00
+        default_usage_hours: 8.00
+        metadata:
+          efficiency_rating: "A"
+          notes: "Standard ceiling fan"
+        is_public: true
+        category:
+          id: 4
+          name: "Cooling & Heating"
+        owner:
+          id: 5
+          name: "Admin User"
+          type: "User"
+        created_at: "2025-12-10T10:00:00Z"
+        updated_at: "2025-12-10T10:00:00Z"
 
     # ---------------------- SITE APPLIANCE ----------------------
     SiteAppliance:
@@ -1996,6 +2054,575 @@ paths:
                     type: string
                     example: "This appliance is already added to the site."
 
+  # ---------------- APPLIANCES ----------------
+  /appliances:
+    get:
+      summary: List appliances
+      description: Get public appliances and current user's private custom appliances
+      tags: [Appliances]
+      parameters:
+        - in: query
+          name: category_id
+          schema:
+            type: integer
+          description: Filter by category ID
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search by appliance name
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+      responses:
+        "200":
+          description: List of appliances
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Appliance"
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 2
+                      per_page:
+                        type: integer
+                        example: 15
+                      total:
+                        type: integer
+                        example: 20
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+
+    post:
+      summary: Create custom appliance
+      description: Create a new private custom appliance for the authenticated user
+      tags: [Appliances]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, category_id, default_wattage]
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  example: "My Custom Air Conditioner"
+                category_id:
+                  type: integer
+                  example: 4
+                default_wattage:
+                  type: number
+                  format: double
+                  minimum: 0
+                  example: 1200
+                default_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  nullable: true
+                  example: 10
+                metadata:
+                  type: object
+                  nullable: true
+                  properties:
+                    efficiency_rating:
+                      type: string
+                      maxLength: 10
+                      nullable: true
+                      example: "B"
+                    notes:
+                      type: string
+                      maxLength: 500
+                      nullable: true
+                      example: "Custom split unit AC"
+      responses:
+        "201":
+          description: Appliance created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Appliance"
+                  message:
+                    type: string
+                    example: "Appliance created successfully"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+  /appliances/{id}:
+    get:
+      summary: Get appliance details
+      description: Get details of a specific appliance (must be public or owned by user)
+      tags: [Appliances]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Appliance ID
+      responses:
+        "200":
+          description: Appliance details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Appliance"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+        "403":
+          description: Forbidden - Cannot view private appliance of another user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "You do not have permission to view this appliance"
+        "404":
+          description: Appliance not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+    put:
+      summary: Update custom appliance
+      description: Update an appliance owned by the authenticated user (cannot change is_public)
+      tags: [Appliances]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Appliance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  example: "Updated Appliance Name"
+                category_id:
+                  type: integer
+                  example: 4
+                default_wattage:
+                  type: number
+                  format: double
+                  minimum: 0
+                  example: 1500
+                default_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  nullable: true
+                  example: 12
+                metadata:
+                  type: object
+                  nullable: true
+                  properties:
+                    efficiency_rating:
+                      type: string
+                      maxLength: 10
+                      nullable: true
+                      example: "A"
+                    notes:
+                      type: string
+                      maxLength: 500
+                      nullable: true
+                      example: "Updated notes"
+      responses:
+        "200":
+          description: Appliance updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Appliance"
+                  message:
+                    type: string
+                    example: "Appliance updated successfully"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+        "403":
+          description: Forbidden - Cannot update appliance owned by another user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "404":
+          description: Appliance not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+    delete:
+      summary: Delete custom appliance
+      description: Soft delete an appliance owned by the authenticated user (sets is_active to false)
+      tags: [Appliances]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Appliance ID
+      responses:
+        "200":
+          description: Appliance deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Appliance deleted successfully"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+        "403":
+          description: Forbidden - Cannot delete appliance owned by another user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "404":
+          description: Appliance not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+  /admin/appliances:
+    post:
+      summary: Create public appliance (Admin only)
+      description: Create a new public catalog appliance (requires admin role)
+      tags: [Admin - Appliances]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, category_id, default_wattage]
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  example: "Refrigerator (Commercial)"
+                category_id:
+                  type: integer
+                  example: 2
+                default_wattage:
+                  type: number
+                  format: double
+                  minimum: 0
+                  example: 300
+                default_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  nullable: true
+                  example: 24
+                is_public:
+                  type: boolean
+                  nullable: true
+                  default: true
+                  example: true
+                metadata:
+                  type: object
+                  nullable: true
+                  properties:
+                    efficiency_rating:
+                      type: string
+                      maxLength: 10
+                      nullable: true
+                      example: "A+"
+                    notes:
+                      type: string
+                      maxLength: 500
+                      nullable: true
+                      example: "Commercial grade refrigerator"
+      responses:
+        "201":
+          description: Appliance created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Appliance"
+                  message:
+                    type: string
+                    example: "Appliance created successfully"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+        "403":
+          description: Forbidden - Admin access required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Admin access required"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+  /admin/appliances/{id}:
+    put:
+      summary: Update any appliance (Admin only)
+      description: Update any appliance including visibility (requires admin role)
+      tags: [Admin - Appliances]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Appliance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  example: "Updated Appliance"
+                category_id:
+                  type: integer
+                  example: 3
+                default_wattage:
+                  type: number
+                  format: double
+                  minimum: 0
+                  example: 250
+                default_usage_hours:
+                  type: number
+                  format: double
+                  minimum: 0
+                  maximum: 24
+                  nullable: true
+                  example: 18
+                is_public:
+                  type: boolean
+                  nullable: true
+                  example: true
+                metadata:
+                  type: object
+                  nullable: true
+                  properties:
+                    efficiency_rating:
+                      type: string
+                      maxLength: 10
+                      nullable: true
+                      example: "A"
+                    notes:
+                      type: string
+                      maxLength: 500
+                      nullable: true
+                      example: "Updated description"
+      responses:
+        "200":
+          description: Appliance updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Appliance"
+                  message:
+                    type: string
+                    example: "Appliance updated successfully"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+        "403":
+          description: Forbidden - Admin access required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Admin access required"
+        "404":
+          description: Appliance not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+    delete:
+      summary: Delete any appliance (Admin only)
+      description: Soft delete any appliance (requires admin role)
+      tags: [Admin - Appliances]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Appliance ID
+      responses:
+        "200":
+          description: Appliance deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Appliance deleted successfully"
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthenticatedError"
+        "403":
+          description: Forbidden - Admin access required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Admin access required"
+        "404":
+          description: Appliance not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
   # ---------------- SITES ----------------
   /sites:
     get:
@@ -2865,3 +3492,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Appliance"
+
+tags:
+  - name: Auth
+    description: User authentication and authorization endpoints
+  - name: Authentication
+    description: User authentication operations
+  - name: Organisations
+    description: Organization management endpoints
+  - name: Sites
+    description: Site management endpoints
+  - name: Appliances
+    description: Appliance catalog and custom appliance management for users
+  - name: Admin - Appliances
+    description: Administrative endpoints for managing appliances (catalog items)
+  - name: Estimations
+    description: Energy estimation and calculation endpoints
+  - name: Payments
+    description: Payment processing endpoints
