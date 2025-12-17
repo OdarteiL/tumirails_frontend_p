@@ -96,7 +96,7 @@ class Appliance extends Model
     public function scopeOwnedBy(Builder $query, int $ownerId, string $ownerType = User::class): void
     {
         $query->where('owner_id', $ownerId)
-              ->where('owner_type', $ownerType);
+            ->where('owner_type', $ownerType);
     }
 
     /**
@@ -106,10 +106,10 @@ class Appliance extends Model
     {
         $query->where(function ($q) use ($ownerId, $ownerType) {
             $q->where('is_public', true)
-              ->orWhere(function ($subQ) use ($ownerId, $ownerType) {
-                  $subQ->where('owner_id', $ownerId)
-                       ->where('owner_type', $ownerType);
-              });
+                ->orWhere(function ($subQ) use ($ownerId, $ownerType) {
+                    $subQ->where('owner_id', $ownerId)
+                        ->where('owner_type', $ownerType);
+                });
         });
     }
 

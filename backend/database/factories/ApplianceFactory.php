@@ -14,7 +14,7 @@ class ApplianceFactory extends Factory
     public function definition(): array
     {
         $efficiencyRatings = ['A+', 'A', 'B', 'C', 'D'];
-        
+
         return [
             'owner_id' => User::factory(),
             'owner_type' => User::class,
@@ -38,7 +38,7 @@ class ApplianceFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $admin = User::where('role', 'admin')->first() ?? User::factory()->create(['role' => 'admin']);
-            
+
             return [
                 'is_public' => true,
                 'owner_id' => $admin->id,
@@ -54,7 +54,7 @@ class ApplianceFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $user = User::factory()->create();
-            
+
             return [
                 'is_public' => false,
                 'owner_id' => $user->id,

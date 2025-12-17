@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+return new class() extends Migration
 {
     /**
      * Run the migrations.
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->json('metadata')->nullable()->after('default_usage_hours');
             $table->boolean('is_public')->default(false)->after('metadata');
             $table->boolean('is_active')->default(true)->after('is_public');
-            
+
             $table->index(['is_public', 'is_active']);
         });
 

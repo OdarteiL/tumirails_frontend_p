@@ -12,8 +12,8 @@ class ApplianceSeeder extends Seeder
     {
         // Get admin user
         $admin = \App\Models\User::where('role', 'admin')->first();
-        
-        if (!$admin) {
+
+        if (! $admin) {
             return;
         }
 
