@@ -32,11 +32,16 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // Seed sites and appliances
+        // Seed foundation data in dependency order
         $this->call([
-            SiteSeeder::class,
+            // 1. Categories must be seeded first (required by Appliances)
             CategorySeeder::class,
+
+            // 2. Appliances depend on Categories
             ApplianceSeeder::class,
+
+            // 3. Sites (no dependencies)
+            SiteSeeder::class,
         ]);
 
         // Seed tariff and estimation data

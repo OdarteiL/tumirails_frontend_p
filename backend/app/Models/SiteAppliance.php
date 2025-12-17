@@ -31,6 +31,22 @@ class SiteAppliance extends Model
     }
 
     /**
+     * Boot the model and add event listeners.
+     */
+    protected static function booted(): void
+    {
+        // When creating a SiteAppliance, use appliance's default_usage_hours if not provided
+        static::creating(function (SiteAppliance $siteAppliance) {
+            if ($siteAppliance->daily_usage_hours === null && $siteAppliance->appliance_id) {
+                $appliance = Appliance::find($siteAppliance->appliance_id);
+                if ($appliance && $appliance->default_usage_hours !== null) {
+                    $siteAppliance->daily_usage_hours = $appliance->default_usage_hours;
+                }
+            }
+        });
+    }
+
+    /**
      * Get the entity (User or Organisation member) who added the appliance.
      */
     public function addedBy(): MorphTo
