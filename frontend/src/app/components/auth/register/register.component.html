@@ -1,0 +1,86 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50">
+    <div class="card register-card">
+        <div class="text-center mb-4">
+            <h2 class="register-title">
+                Create your account
+            </h2>
+        </div>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="name-grid">
+                <div class="form-group mb-0">
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input id="first_name" type="text" formControlName="first_name" class="form-input"
+                        [class.border-red-600]="registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched" />
+                </div>
+                <div class="form-group mb-0">
+                    <label for="last_name" class="form-label">Last Name</label>
+                    <input id="last_name" type="text" formControlName="last_name" class="form-input"
+                        [class.border-red-600]="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="other_names" class="form-label">Other Names (Optional)</label>
+                <input id="other_names" type="text" formControlName="other_names" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" formControlName="email" class="form-input"
+                    [class.border-red-600]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" />
+            </div>
+
+            <div class="form-group">
+                <label for="phone" class="form-label">Phone (Optional)</label>
+                <input id="phone" type="tel" formControlName="phone" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label for="address" class="form-label">Address (Optional)</label>
+                <textarea id="address" formControlName="address" class="form-input" rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" type="password" formControlName="password" class="form-input"
+                    [class.border-red-600]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" />
+                <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+                    class="error">
+                    Password must be at least 8 characters
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password_confirmation" class="form-label">Confirm Password</label>
+                <input id="password_confirmation" type="password" formControlName="password_confirmation"
+                    class="form-input"
+                    [class.border-red-600]="registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched" />
+                <div *ngIf="registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched"
+                    class="error">
+                    Please confirm your password
+                </div>
+                <div *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('password_confirmation')?.touched"
+                    class="error">
+                    Passwords do not match
+                </div>
+            </div>
+
+            <div *ngIf="errorMessage()" class="error text-center mb-4">
+                {{ errorMessage() }}
+            </div>
+
+            <button type="submit" [disabled]="registerForm.invalid || isLoading()" class="btn btn-primary register-btn">
+                {{ isLoading() ? 'Creating account...' : 'Create account' }}
+            </button>
+
+            <div class="text-center mt-4">
+                <p class="signin-prompt">
+                    Already have an account?
+                    <a routerLink="/login" class="signin-link">
+                        Sign in
+                    </a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
