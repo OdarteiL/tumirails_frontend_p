@@ -46,8 +46,8 @@
         <div class="lg:hidden">
             <button class="text-gray-500 hover:text-[var(--color-primary)] focus:outline-none p-2"
                 (click)="toggleMenu()" aria-label="Toggle menu">
-                <i-lucide [img]="Menu" class="my-icon" *ngIf="!isMenuOpen"></i-lucide>
-                <i-lucide [img]="X" class="my-icon" *ngIf="isMenuOpen"></i-lucide>
+                <i-lucide [img]="Menu" *ngIf="!isMenuOpen"></i-lucide>
+                <i-lucide [img]="X" *ngIf="isMenuOpen"></i-lucide>
             </button>
         </div>
 
@@ -68,10 +68,7 @@
             <span class="text-xl font-bold text-[var(--color-primary)] font-secondary">Menu</span>
             <button (click)="toggleMenu()" class="text-gray-500 hover:text-[var(--color-primary)] p-2"
                 aria-label="Close menu">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
+                <i-lucide [img]="X"></i-lucide>
             </button>
         </div>
 

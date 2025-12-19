@@ -24,6 +24,7 @@ Use this file as context whenever requesting AI assistance for frontend work.
 
 ## ICON Library
 - Use lucide icons library.
+- Use svg icons only when lucide does not have the icon.
 - Refer to https://lucide.dev/guide/packages/lucide-angular documentation for usage.
 
 ## API usage
