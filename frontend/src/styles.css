@@ -27,6 +27,8 @@ body {
   /* Softer text color than #333 */
   background-color: #fcfcfc;
   -webkit-font-smoothing: antialiased;
+  padding-top: 80px;
+  /* Account for fixed navbar height (h-20 = 5rem = 80px) */
 }
 
 h1,
