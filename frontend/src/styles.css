@@ -1,7 +1,10 @@
 /* Google Fonts Import Moved to index.html */
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
+/* CSS Custom Properties */
+:root {
   --color-primary: #006994;
   --color-secondary: #032230;
 
