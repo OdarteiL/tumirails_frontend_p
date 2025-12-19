@@ -22,6 +22,10 @@ Use this file as context whenever requesting AI assistance for frontend work.
 - Type safety: Use TypeScript strictly; define interfaces for all data models
 - Ensure no hardcoding of essential variables such as URLs, etc
 
+## ICON Library
+- Use lucide icons library.
+- Refer to https://lucide.dev/guide/packages/lucide-angular documentation for usage.
+
 ## API usage
 - All HTTP calls through centralized HTTP service; include auth token via interceptors; map server errors to UI-friendly messages
 - Keep OpenAPI as the contract; generate TypeScript interfaces from schema
