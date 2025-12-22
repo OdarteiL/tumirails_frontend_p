@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ApplianceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EstimationController;
 use App\Http\Controllers\Api\OrganisationController;
+use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\SiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Estimation routes
     Route::apiResource('estimations', EstimationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::get('estimations/{estimation}/recommendations', [RecommendationController::class, 'index']);
 
     // Organisation routes
     Route::apiResource('organisations', OrganisationController::class);

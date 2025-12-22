@@ -1,0 +1,136 @@
+<nav class="bg-white border-b border-gray-200 shadow-md fixed top-0 left-0 right-0 z-50">
+    <div class="container mx-auto px-6 h-20 flex justify-between items-center">
+
+        <!-- Logo -->
+        <a routerLink="/" class="flex items-center gap-2 group">
+            <div class="w-10 h-10 bg-[var(--color-primary)] rounded-lg flex items-center justify-center text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            <span class="text-2xl font-bold text-[var(--color-primary)] font-secondary tracking-tight">Tumirails</span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex items-center gap-8">
+            <a routerLink="/" routerLinkActive="text-[var(--color-primary)] font-semibold"
+                [routerLinkActiveOptions]="{exact: true}"
+                class="text-gray-600 hover:text-[var(--color-primary)] transition-colors font-medium text-[15px]">Home</a>
+            <a routerLink="/about" routerLinkActive="text-[var(--color-primary)] font-semibold"
+                class="text-gray-600 hover:text-[var(--color-primary)] transition-colors font-medium text-[15px]">About
+                Us</a>
+            <a routerLink="/how-it-works" routerLinkActive="text-[var(--color-primary)] font-semibold"
+                class="text-gray-600 hover:text-[var(--color-primary)] transition-colors font-medium text-[15px]">How It
+                Works</a>
+            <a routerLink="/consumers" routerLinkActive="text-[var(--color-primary)] font-semibold"
+                class="text-gray-600 hover:text-[var(--color-primary)] transition-colors font-medium text-[15px]">Consumers</a>
+            <a routerLink="/estimator" routerLinkActive="text-[var(--color-primary)] font-semibold"
+                class="text-gray-600 hover:text-[var(--color-primary)] transition-colors font-medium text-[15px]">Estimator</a>
+            <a routerLink="/installers" routerLinkActive="text-[var(--color-primary)] font-semibold"
+                class="text-gray-600 hover:text-[var(--color-primary)] transition-colors font-medium text-[15px]">Installers
+                & Vendors</a>
+            <a routerLink="/contact" routerLinkActive="text-[var(--color-primary)] font-semibold"
+                class="text-gray-600 hover:text-[var(--color-primary)] transition-colors font-medium text-[15px]">Contact
+                & FAQ</a>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="hidden lg:flex items-center gap-4">
+            <a routerLink="/login" class="btn btn-secondary btn-sm h-10">Sign In</a>
+            <a routerLink="/register" class="btn btn-primary btn-sm h-10">Sign Up</a>
+        </div>
+
+        <!-- Mobile Hamburger Button -->
+        <div class="lg:hidden">
+            <button class="text-gray-500 hover:text-[var(--color-primary)] focus:outline-none p-2"
+                (click)="toggleMenu()" aria-label="Toggle menu">
+                <i-lucide [img]="Menu" *ngIf="!isMenuOpen"></i-lucide>
+                <i-lucide [img]="X" *ngIf="isMenuOpen"></i-lucide>
+            </button>
+        </div>
+
+    </div>
+</nav>
+
+<!-- Mobile Menu Drawer -->
+<div *ngIf="isMenuOpen" class="fixed inset-0 z-40 lg:hidden" (click)="toggleMenu()">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+
+    <!-- Drawer -->
+    <div class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-2xl transform transition-transform"
+        (click)="$event.stopPropagation()">
+
+        <!-- Drawer Header -->
+        <div class="h-20 px-6 flex items-center justify-between border-b border-gray-200">
+            <span class="text-xl font-bold text-[var(--color-primary)] font-secondary">Menu</span>
+            <button (click)="toggleMenu()" class="text-gray-500 hover:text-[var(--color-primary)] p-2"
+                aria-label="Close menu">
+                <i-lucide [img]="X"></i-lucide>
+            </button>
+        </div>
+
+        <!-- Drawer Content -->
+        <div class="flex flex-col h-[calc(100%-5rem)] overflow-y-auto text-center justify-around">
+            <!-- Navigation Links -->
+            <div class="flex flex-col gap-3">
+                <a routerLink="/"
+                    routerLinkActive="bg-[var(--color-primary)] bg-opacity-10 text-[var(--color-primary)] font-semibold"
+                    [routerLinkActiveOptions]="{exact: true}" (click)="toggleMenu()"
+                    class="px-6 py-4 text-center text-gray-700 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-colors border-b border-gray-100">
+                    Home
+                </a>
+                <a routerLink="/about"
+                    routerLinkActive="bg-[var(--color-primary)] bg-opacity-10 text-[var(--color-primary)] font-semibold"
+                    (click)="toggleMenu()"
+                    class="px-6 py-4 text-gray-700 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-colors border-b border-gray-100">
+                    About Us
+                </a>
+                <a routerLink="/how-it-works"
+                    routerLinkActive="bg-[var(--color-primary)] bg-opacity-10 text-[var(--color-primary)] font-semibold"
+                    (click)="toggleMenu()"
+                    class="px-6 py-4 text-gray-700 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-colors border-b border-gray-100">
+                    How It Works
+                </a>
+                <a routerLink="/consumers"
+                    routerLinkActive="bg-[var(--color-primary)] bg-opacity-10 text-[var(--color-primary)] font-semibold"
+                    (click)="toggleMenu()"
+                    class="px-6 py-4 text-gray-700 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-colors border-b border-gray-100">
+                    Consumers
+                </a>
+                <a routerLink="/estimator"
+                    routerLinkActive="bg-[var(--color-primary)] bg-opacity-10 text-[var(--color-primary)] font-semibold"
+                    (click)="toggleMenu()"
+                    class="px-6 py-4 text-gray-700 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-colors border-b border-gray-100">
+                    Estimator
+                </a>
+                <a routerLink="/installers"
+                    routerLinkActive="bg-[var(--color-primary)] bg-opacity-10 text-[var(--color-primary)] font-semibold"
+                    (click)="toggleMenu()"
+                    class="px-6 py-4 text-gray-700 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-colors border-b border-gray-100">
+                    Installers & Vendors
+                </a>
+                <a routerLink="/contact"
+                    routerLinkActive="bg-[var(--color-primary)] bg-opacity-10 text-[var(--color-primary)] font-semibold"
+                    (click)="toggleMenu()"
+                    class="px-6 py-4 text-gray-700 hover:bg-gray-50 hover:text-[var(--color-primary)] transition-colors border-b border-gray-100">
+                    Contact & FAQ
+                </a>
+            </div>
+
+            <!-- Auth Buttons -->
+            <div class="mt-auto p-6 flex flex-col gap-3">
+                <a routerLink="/login" (click)="toggleMenu()"
+                    class="btn btn-secondary w-full h-12 flex items-center justify-center">
+                    Sign In
+                </a>
+                <a routerLink="/register" (click)="toggleMenu()"
+                    class="btn btn-primary w-full h-12 flex items-center justify-center">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
