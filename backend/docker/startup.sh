@@ -24,5 +24,21 @@ php artisan migrate --force
 
 echo "Migrations completed successfully!"
 
+# Optionally seed demo data on startup when SEED_ON_STARTUP=true
+if [ "${SEED_ON_STARTUP:-false}" = "true" ]; then
+    SEEDED_FILE="$(pwd)/storage/app/.seeded"
+    if [ -f "$SEEDED_FILE" ]; then
+        echo "Database already seeded (found .seeded). Skipping demo seeding."
+    else
+        echo "Seeding demo data on startup..."
+        php artisan db:seed --class=DatabaseSeeder --force
+        php artisan app:seed-demo --force
+        # create flag file to avoid reseeding
+        mkdir -p storage/app
+        touch "$SEEDED_FILE"
+        echo "Demo data seeded."
+    fi
+fi
+
 # Start supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

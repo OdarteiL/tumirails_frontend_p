@@ -2,10 +2,8 @@ openapi: 3.1.0
 info:
   title: Tumi Configurator API
   version: 1.0.0
-  description: >
-    Backend API for Tumi Configurator built with Laravel.
-    It supports energy estimation, hardware recommendation,
-    installer assignment, milestone-based payments, and verification.
+  description: |
+    Backend API for Tumi Configurator built with Laravel. It supports energy estimation, hardware recommendation, installer assignment, milestone-based payments, and verification.
 
 servers:
   - url: https://api.tumi-energy.com/v1
@@ -48,10 +46,18 @@ components:
           nullable: true
         role:
           type: string
-          enum: [customer, installer, provider, admin, verifier]
+          enum:
+            - customer
+            - installer
+            - provider
+            - admin
+            - verifier
         status:
           type: string
-          enum: [active, inactive, suspended]
+          enum:
+            - active
+            - inactive
+            - suspended
         profile_image_url:
           type: string
           nullable: true
@@ -63,17 +69,17 @@ components:
           format: date-time
       example:
         id: 1
-        first_name: "Ama"
-        last_name: "Mensah"
-        other_names: "Abena"
-        email: "ama@example.com"
-        phone: "+233500000000"
-        address: "Osu, Accra"
-        role: "customer"
-        status: "active"
-        profile_image_url: "https://s3.amazonaws.com/tumi/profile1.png"
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        first_name: Ama
+        last_name: Mensah
+        other_names: Abena
+        email: ama@example.com
+        phone: '+233500000000'
+        address: Osu, Accra
+        role: customer
+        status: active
+        profile_image_url: https://s3.amazonaws.com/tumi/profile1.png
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     # ---------------------- INSTALLER DETAIL ----------------------
     InstallerDetail:
@@ -86,7 +92,7 @@ components:
         company_name:
           type: string
           nullable: true
-          description: "Company name for company installers, null for individuals"
+          description: Company name for company installers, null for individuals
         license_number:
           type: string
         service_areas:
@@ -114,14 +120,20 @@ components:
       example:
         id: 1
         user_id: 10
-        company_name: "ABC Installations Ltd"
-        license_number: "LIC-GH-2024-001"
-        service_areas: ["Greater Accra", "Ashanti", "Western"]
-        certifications: ["Solar PV Installation", "Electrical Safety", "NABCEP Certified"]
+        company_name: ABC Installations Ltd
+        license_number: LIC-GH-2024-001
+        service_areas:
+          - Greater Accra
+          - Ashanti
+          - Western
+        certifications:
+          - Solar PV Installation
+          - Electrical Safety
+          - NABCEP Certified
         years_experience: 8
         rating: 4.75
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     # ---------------------- PROVIDER DETAIL ----------------------
     ProviderDetail:
@@ -134,7 +146,7 @@ components:
         company_name:
           type: string
           nullable: true
-          description: "Company name for company providers, null for individuals"
+          description: Company name for company providers, null for individuals
         business_registration:
           type: string
         service_areas:
@@ -160,13 +172,19 @@ components:
       example:
         id: 1
         user_id: 15
-        company_name: "Solar Providers Ghana Ltd"
-        business_registration: "BRN-GH-2024-5678"
-        service_areas: ["Greater Accra", "Central", "Eastern"]
-        certifications: ["ISO 9001:2015", "Solar Alliance Member", "Ghana Standards Authority"]
+        company_name: Solar Providers Ghana Ltd
+        business_registration: BRN-GH-2024-5678
+        service_areas:
+          - Greater Accra
+          - Central
+          - Eastern
+        certifications:
+          - ISO 9001:2015
+          - Solar Alliance Member
+          - Ghana Standards Authority
         rating: 4.85
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     # ---------------------- ORGANISATION ----------------------
     Organisation:
@@ -178,7 +196,10 @@ components:
           type: string
         type:
           type: string
-          enum: [installer, provider, customer]
+          enum:
+            - installer
+            - provider
+            - customer
         description:
           type: string
           nullable: true
@@ -189,16 +210,16 @@ components:
           type: string
           format: date-time
         installer_detail:
-          $ref: "#/components/schemas/OrganisationInstallerDetail"
+          $ref: '#/components/schemas/OrganisationInstallerDetail'
         provider_detail:
-          $ref: "#/components/schemas/OrganisationProviderDetail"
+          $ref: '#/components/schemas/OrganisationProviderDetail'
       example:
         id: 1
-        name: "Solar Installations Co."
-        type: "installer"
-        description: "Professional solar installation company"
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        name: Solar Installations Co.
+        type: installer
+        description: Professional solar installation company
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     OrganisationInstallerDetail:
       type: object
@@ -234,13 +255,18 @@ components:
       example:
         id: 1
         organisation_id: 1
-        license_number: "ORG-LIC-GH-2024-001"
-        service_areas: ["Greater Accra", "Ashanti", "Western"]
-        certifications: ["ISO 9001:2015", "Solar PV Installation"]
+        license_number: ORG-LIC-GH-2024-001
+        service_areas:
+          - Greater Accra
+          - Ashanti
+          - Western
+        certifications:
+          - ISO 9001:2015
+          - Solar PV Installation
         years_experience: 10
         rating: 4.8
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     OrganisationProviderDetail:
       type: object
@@ -274,12 +300,16 @@ components:
       example:
         id: 1
         organisation_id: 2
-        business_registration: "ORG-BRN-GH-2024-001"
-        service_areas: ["Greater Accra", "Central"]
-        certifications: ["ISO 9001:2015", "Ghana Standards Authority"]
+        business_registration: ORG-BRN-GH-2024-001
+        service_areas:
+          - Greater Accra
+          - Central
+        certifications:
+          - ISO 9001:2015
+          - Ghana Standards Authority
         rating: 4.9
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     OrganisationMember:
       type: object
@@ -292,7 +322,12 @@ components:
           type: integer
         role:
           type: string
-          enum: [owner, admin, installer, provider, customer]
+          enum:
+            - owner
+            - admin
+            - installer
+            - provider
+            - customer
         joined_at:
           type: string
           format: date-time
@@ -303,15 +338,15 @@ components:
           type: string
           format: date-time
         user:
-          $ref: "#/components/schemas/User"
+          $ref: '#/components/schemas/User'
       example:
         id: 1
         organisation_id: 1
         user_id: 5
-        role: "admin"
-        joined_at: "2025-01-10T08:00:00Z"
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        role: admin
+        joined_at: '2025-01-10T08:00:00Z'
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     OrganisationInvitation:
       type: object
@@ -325,10 +360,18 @@ components:
           format: email
         role:
           type: string
-          enum: [admin, installer, provider, customer]
+          enum:
+            - admin
+            - installer
+            - provider
+            - customer
         status:
           type: string
-          enum: [pending, accepted, rejected, expired]
+          enum:
+            - pending
+            - accepted
+            - rejected
+            - expired
         token:
           type: string
         expires_at:
@@ -343,13 +386,13 @@ components:
       example:
         id: 1
         organisation_id: 1
-        email: "newmember@example.com"
-        role: "installer"
-        status: "pending"
-        token: "inv_abc123xyz789"
-        expires_at: "2025-01-17T08:00:00Z"
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        email: newmember@example.com
+        role: installer
+        status: pending
+        token: inv_abc123xyz789
+        expires_at: '2025-01-17T08:00:00Z'
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     # ---------------------- SITE ----------------------
     Site:
@@ -361,7 +404,9 @@ components:
           type: integer
         owner_type:
           type: string
-          enum: [User, Organisation]
+          enum:
+            - User
+            - Organisation
         name:
           type: string
         address:
@@ -371,16 +416,16 @@ components:
           format: double
           minimum: -90
           maximum: 90
-          description: "Latitude coordinate (must be between -90 and 90)"
+          description: Latitude coordinate (must be between -90 and 90)
         longitude:
           type: number
           format: double
           minimum: -180
           maximum: 180
-          description: "Longitude coordinate (must be between -180 and 180)"
+          description: Longitude coordinate (must be between -180 and 180)
         timezone:
           type: string
-          description: "Valid timezone identifier (e.g., Africa/Accra, America/New_York)"
+          description: Valid timezone identifier (e.g., Africa/Accra, America/New_York)
         notes:
           type: string
           nullable: true
@@ -390,19 +435,27 @@ components:
         updated_at:
           type: string
           format: date-time
-      required: [id, owner_id, owner_type, name, address, latitude, longitude, timezone]
+      required:
+        - id
+        - owner_id
+        - owner_type
+        - name
+        - address
+        - latitude
+        - longitude
+        - timezone
       example:
         id: 101
         owner_id: 1
-        owner_type: "User"
-        name: "Accra Apartment"
-        address: "Osu, Accra"
+        owner_type: User
+        name: Accra Apartment
+        address: Osu, Accra
         longitude: -0.186964
         latitude: 5.603717
-        timezone: "Africa/Accra"
-        notes: "Single phase connection"
-        created_at: "2025-01-10T08:00:00Z"
-        updated_at: "2025-01-10T08:00:00Z"
+        timezone: Africa/Accra
+        notes: Single phase connection
+        created_at: '2025-01-10T08:00:00Z'
+        updated_at: '2025-01-10T08:00:00Z'
 
     # ---------------------- IMAGE ----------------------
     Image:
@@ -414,7 +467,7 @@ components:
       example:
         id: 501
         url: https://s3.tumi-energy.com/sites/site1-1.jpg
-        caption: "Front view of building"
+        caption: Front view of building
 
     # ---------------------- APPLIANCE ----------------------
     Appliance:
@@ -462,7 +515,9 @@ components:
               type: string
             type:
               type: string
-              enum: [User, Organisation]
+              enum:
+                - User
+                - Organisation
         created_at:
           type: string
           format: date-time
@@ -471,22 +526,22 @@ components:
           format: date-time
       example:
         id: 7
-        name: "Ceiling Fan"
-        default_wattage: 75.00
-        default_usage_hours: 8.00
+        name: Ceiling Fan
+        default_wattage: 75
+        default_usage_hours: 8
         metadata:
-          efficiency_rating: "A"
-          notes: "Standard ceiling fan"
+          efficiency_rating: A
+          notes: Standard ceiling fan
         is_public: true
         category:
           id: 4
-          name: "Cooling & Heating"
+          name: Cooling & Heating
         owner:
           id: 5
-          name: "Admin User"
-          type: "User"
-        created_at: "2025-12-10T10:00:00Z"
-        updated_at: "2025-12-10T10:00:00Z"
+          name: Admin User
+          type: User
+        created_at: '2025-12-10T10:00:00Z'
+        updated_at: '2025-12-10T10:00:00Z'
 
     # ---------------------- SITE APPLIANCE ----------------------
     SiteAppliance:
@@ -498,7 +553,9 @@ components:
           type: integer
         owner_type:
           type: string
-          enum: [User, Organisation]
+          enum:
+            - User
+            - Organisation
         site_id:
           type: integer
         appliance_id:
@@ -520,18 +577,25 @@ components:
         updated_at:
           type: string
           format: date-time
-      required: [id, owner_id, owner_type, site_id, appliance_id, quantity, daily_usage_hours]
+      required:
+        - id
+        - owner_id
+        - owner_type
+        - site_id
+        - appliance_id
+        - quantity
+        - daily_usage_hours
       example:
         id: 1
         owner_id: 1
-        owner_type: "User"
+        owner_type: User
         site_id: 101
         appliance_id: 7
         quantity: 2
         daily_usage_hours: 8.5
-        notes: "Living room and bedroom fans"
-        created_at: "2025-12-10T10:00:00Z"
-        updated_at: "2025-12-10T10:00:00Z"
+        notes: Living room and bedroom fans
+        created_at: '2025-12-10T10:00:00Z'
+        updated_at: '2025-12-10T10:00:00Z'
 
     # ---------------------- ESTIMATION ----------------------
     Estimation:
@@ -553,28 +617,30 @@ components:
               type: integer
             type:
               type: string
-              enum: [User, Organisation]
+              enum:
+                - User
+                - Organisation
             name:
               type: string
         version:
           type: integer
-          description: "Version number for estimation history tracking"
+          description: Version number for estimation history tracking
         previous_estimation_id:
           type: integer
           nullable: true
-          description: "ID of previous version if this is an update"
+          description: ID of previous version if this is an update
         total_watts:
           type: string
-          description: "Total watts formatted to 2 decimal places"
+          description: Total watts formatted to 2 decimal places
         daily_kwh:
           type: string
-          description: "Daily kilowatt-hours formatted to 2 decimal places"
+          description: Daily kilowatt-hours formatted to 2 decimal places
         monthly_kwh:
           type: string
-          description: "Monthly kilowatt-hours formatted to 2 decimal places"
+          description: Monthly kilowatt-hours formatted to 2 decimal places
         estimated_monthly_cost:
           type: string
-          description: "Estimated monthly cost formatted to 2 decimal places"
+          description: Estimated monthly cost formatted to 2 decimal places
         tariff_structure:
           type: object
           nullable: true
@@ -585,15 +651,18 @@ components:
               type: string
             type:
               type: string
-              enum: [tiered, flat, time_of_use]
+              enum:
+                - tiered
+                - flat
+                - time_of_use
         power_factor_applied:
           type: string
           nullable: true
-          description: "Average power factor applied formatted to 2 decimal places"
+          description: Average power factor applied formatted to 2 decimal places
         seasonal_multiplier:
           type: string
           nullable: true
-          description: "Seasonal adjustment multiplier formatted to 2 decimal places"
+          description: Seasonal adjustment multiplier formatted to 2 decimal places
         appliances_breakdown:
           type: array
           items:
@@ -659,32 +728,40 @@ components:
         updated_at:
           type: string
           format: date-time
-      required: [id, site, owner, version, total_watts, daily_kwh, monthly_kwh, estimated_monthly_cost]
+      required:
+        - id
+        - site
+        - owner
+        - version
+        - total_watts
+        - daily_kwh
+        - monthly_kwh
+        - estimated_monthly_cost
       example:
         id: 301
         site:
           id: 101
-          name: "Accra Apartment"
+          name: Accra Apartment
         owner:
           id: 1
-          type: "User"
-          name: "Ama Mensah"
+          type: User
+          name: Ama Mensah
         version: 2
         previous_estimation_id: 300
-        total_watts: "5000.00"
-        daily_kwh: "108.00"
-        monthly_kwh: "3726.00"
-        estimated_monthly_cost: "3890.45"
+        total_watts: '5000.00'
+        daily_kwh: '108.00'
+        monthly_kwh: '3726.00'
+        estimated_monthly_cost: '3890.45'
         tariff_structure:
           id: 1
-          name: "Ghana ECG Residential"
-          type: "tiered"
-        power_factor_applied: "0.90"
-        seasonal_multiplier: "1.15"
+          name: Ghana ECG Residential
+          type: tiered
+        power_factor_applied: '0.90'
+        seasonal_multiplier: '1.15'
         appliances_breakdown:
           - id: 7
-            name: "Refrigerator"
-            category: "Cooling & Heating"
+            name: Refrigerator
+            category: Cooling & Heating
             watts: 150
             quantity: 2
             daily_usage_hours: 24
@@ -692,30 +769,30 @@ components:
             daily_kwh: 6.12
             monthly_cost: 183.42
           - id: 12
-            name: "LED Bulb"
-            category: "Lighting"
+            name: LED Bulb
+            category: Lighting
             watts: 15
             quantity: 10
             daily_usage_hours: 6
             power_factor: 0.95
             daily_kwh: 0.86
-            monthly_cost: 25.80
+            monthly_cost: 25.8
         calculation_metadata:
           tariff_structure_id: 1
-          tariff_structure_name: "Ghana ECG Residential"
-          tariff_type: "tiered"
+          tariff_structure_name: Ghana ECG Residential
+          tariff_type: tiered
           seasonal_adjustment_id: 1
-          seasonal_adjustment_name: "Dry Season"
+          seasonal_adjustment_name: Dry Season
           location_multiplier_id: null
           location_region: null
           location_city: null
-          calculated_at: "2025-12-14T10:30:00Z"
+          calculated_at: '2025-12-14T10:30:00Z'
           appliance_count: 2
         created_by:
           id: 1
-          name: "Ama Mensah"
-        created_at: "2025-12-14T10:30:00Z"
-        updated_at: "2025-12-14T10:30:00Z"
+          name: Ama Mensah
+        created_at: '2025-12-14T10:30:00Z'
+        updated_at: '2025-12-14T10:30:00Z'
 
     # ---------------------- RECOMMENDED HARDWARE ----------------------
     RecommendedHardware:
@@ -732,8 +809,8 @@ components:
         estimation_id: 301
         hardware_id: 4001
         quantity: 2
-        total_cost: 1800.00
-        currency: "GHS"
+        total_cost: 1800
+        currency: GHS
 
     # ---------------------- PAYMENT ----------------------
     Payment:
@@ -744,18 +821,26 @@ components:
         amount: number
         payment_method:
           type: string
-          enum: [momo, card, bank, transfer]
+          enum:
+            - momo
+            - card
+            - bank
+            - transfer
         status:
           type: string
-          enum: [pending, success, failed, refunded]
+          enum:
+            - pending
+            - success
+            - failed
+            - refunded
         transaction_ref: string
       example:
         id: 701
         project_id: 601
-        amount: 1200.00
+        amount: 1200
         payment_method: momo
         status: success
-        transaction_ref: "TXN-123456789"
+        transaction_ref: TXN-123456789
 
     ErrorResponse:
       type: object
@@ -773,16 +858,18 @@ components:
               type: string
       example:
         success: false
-        message: "Validation failed"
+        message: Validation failed
         errors:
-          email: ["This email is already registered"]
+          email:
+            - This email is already registered
 
 paths:
   # ---------------- AUTH ----------------
   /auth/register:
     post:
       summary: Register a new user
-      tags: [Auth]
+      tags:
+        - Auth
       security: []
       requestBody:
         required: true
@@ -790,47 +877,56 @@ paths:
           application/json:
             schema:
               type: object
-              required: [first_name, last_name, email, password, password_confirmation]
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+                - password_confirmation
               properties:
                 first_name:
                   type: string
-                  example: "Ama"
+                  example: Ama
                 last_name:
                   type: string
-                  example: "Mensah"
+                  example: Mensah
                 other_names:
                   type: string
                   nullable: true
-                  example: "Abena"
+                  example: Abena
                 email:
                   type: string
                   format: email
-                  example: "ama.mensah@example.com"
+                  example: ama.mensah@example.com
                 password:
                   type: string
                   format: password
                   minLength: 8
-                  example: "SecurePass123"
+                  example: SecurePass123
                 password_confirmation:
                   type: string
                   format: password
                   minLength: 8
-                  example: "SecurePass123"
+                  example: SecurePass123
                 phone:
                   type: string
                   nullable: true
-                  example: "+233500000000"
+                  example: '+233500000000'
                 address:
                   type: string
                   nullable: true
-                  example: "Osu, Accra"
+                  example: Osu, Accra
                 role:
                   type: string
-                  enum: [customer, installer, provider, admin]
+                  enum:
+                    - customer
+                    - installer
+                    - provider
+                    - admin
                   nullable: true
-                  example: "customer"
+                  example: customer
       responses:
-        "201":
+        '201':
           description: User registered successfully
           content:
             application/json:
@@ -842,33 +938,33 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Registration successful"
+                    example: Registration successful
                   data:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       access_token:
                         type: string
-                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+                        example: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
               example:
                 success: true
-                message: "Registration successful"
+                message: Registration successful
                 data:
                   user:
                     id: 1
-                    first_name: "Ama"
-                    last_name: "Mensah"
-                    other_names: "Abena"
-                    email: "ama.mensah@example.com"
-                    phone: "+233500000000"
-                    address: "Osu, Accra"
-                    role: "customer"
-                    status: "active"
-                    created_at: "2025-12-07T10:30:00Z"
-                    updated_at: "2025-12-07T10:30:00Z"
-                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
-        "422":
+                    first_name: Ama
+                    last_name: Mensah
+                    other_names: Abena
+                    email: ama.mensah@example.com
+                    phone: '+233500000000'
+                    address: Osu, Accra
+                    role: customer
+                    status: active
+                    created_at: '2025-12-07T10:30:00Z'
+                    updated_at: '2025-12-07T10:30:00Z'
+                  access_token: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+        '422':
           description: Validation error
           content:
             application/json:
@@ -880,7 +976,7 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Validation failed"
+                    example: Validation failed
                   errors:
                     type: object
                     additionalProperties:
@@ -889,23 +985,26 @@ paths:
                         type: string
               example:
                 success: false
-                error: "Validation failed"
+                error: Validation failed
                 errors:
-                  email: ["This email is already registered"]
-                  password: ["Password confirmation does not match"]
+                  email:
+                    - This email is already registered
+                  password:
+                    - Password confirmation does not match
 
   /auth/register/installer:
     post:
       summary: Register a new installer
       description: |
         Register a user with installer role and professional details.
-        
+
         **Supports both individuals and companies:**
         - Individual installers: Omit company_name or set to null
         - Company installers: Provide company_name
-        
+
         All installers must have a valid license_number and specify their service_areas.
-      tags: [Auth]
+      tags:
+        - Auth
       security: []
       requestBody:
         required: true
@@ -913,67 +1012,81 @@ paths:
           application/json:
             schema:
               type: object
-              required: [first_name, last_name, email, password, password_confirmation, license_number, service_areas, years_experience]
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+                - password_confirmation
+                - license_number
+                - service_areas
+                - years_experience
               properties:
                 first_name:
                   type: string
-                  example: "John"
+                  example: John
                 last_name:
                   type: string
-                  example: "Installer"
+                  example: Installer
                 other_names:
                   type: string
                   nullable: true
-                  example: "David"
+                  example: David
                 email:
                   type: string
                   format: email
-                  example: "john.installer@example.com"
+                  example: john.installer@example.com
                 password:
                   type: string
                   format: password
                   minLength: 8
-                  example: "SecurePass123"
+                  example: SecurePass123
                 password_confirmation:
                   type: string
                   format: password
                   minLength: 8
-                  example: "SecurePass123"
+                  example: SecurePass123
                 phone:
                   type: string
                   nullable: true
-                  example: "+233501234567"
+                  example: '+233501234567'
                 address:
                   type: string
                   nullable: true
-                  example: "Tema, Greater Accra"
+                  example: Tema, Greater Accra
                 company_name:
                   type: string
                   nullable: true
-                  example: "ABC Installations Ltd"
-                  description: "Company name (optional - for companies) or null for individual installers"
+                  example: ABC Installations Ltd
+                  description: Company name (optional - for companies) or null for individual
+                    installers
                 license_number:
                   type: string
-                  example: "LIC-GH-2024-001"
+                  example: LIC-GH-2024-001
                 service_areas:
                   type: array
                   items:
                     type: string
                   minItems: 1
-                  example: ["Greater Accra", "Ashanti", "Western"]
+                  example:
+                    - Greater Accra
+                    - Ashanti
+                    - Western
                 certifications:
                   type: array
                   items:
                     type: string
                   nullable: true
-                  example: ["Solar PV Installation", "Electrical Safety"]
+                  example:
+                    - Solar PV Installation
+                    - Electrical Safety
                 years_experience:
                   type: integer
                   minimum: 0
                   maximum: 100
                   example: 8
       responses:
-        "201":
+        '201':
           description: Installer registered successfully
           content:
             application/json:
@@ -985,46 +1098,51 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Installer registration successful"
+                    example: Installer registration successful
                   data:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       installer:
-                        $ref: "#/components/schemas/InstallerDetail"
+                        $ref: '#/components/schemas/InstallerDetail'
                       access_token:
                         type: string
-                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+                        example: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
               example:
                 success: true
-                message: "Installer registration successful"
+                message: Installer registration successful
                 data:
                   user:
                     id: 10
-                    first_name: "John"
-                    last_name: "Installer"
-                    other_names: "David"
-                    email: "john.installer@example.com"
-                    phone: "+233501234567"
-                    address: "Tema, Greater Accra"
-                    role: "installer"
-                    status: "active"
-                    created_at: "2025-12-10T10:30:00Z"
-                    updated_at: "2025-12-10T10:30:00Z"
+                    first_name: John
+                    last_name: Installer
+                    other_names: David
+                    email: john.installer@example.com
+                    phone: '+233501234567'
+                    address: Tema, Greater Accra
+                    role: installer
+                    status: active
+                    created_at: '2025-12-10T10:30:00Z'
+                    updated_at: '2025-12-10T10:30:00Z'
                   installer:
                     id: 1
                     user_id: 10
-                    company_name: "ABC Installations Ltd"
-                    license_number: "LIC-GH-2024-001"
-                    service_areas: ["Greater Accra", "Ashanti", "Western"]
-                    certifications: ["Solar PV Installation", "Electrical Safety"]
+                    company_name: ABC Installations Ltd
+                    license_number: LIC-GH-2024-001
+                    service_areas:
+                      - Greater Accra
+                      - Ashanti
+                      - Western
+                    certifications:
+                      - Solar PV Installation
+                      - Electrical Safety
                     years_experience: 8
-                    rating: 0.00
-                    created_at: "2025-12-10T10:30:00Z"
-                    updated_at: "2025-12-10T10:30:00Z"
-                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
-        "422":
+                    rating: 0
+                    created_at: '2025-12-10T10:30:00Z'
+                    updated_at: '2025-12-10T10:30:00Z'
+                  access_token: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+        '422':
           description: Validation error
           content:
             application/json:
@@ -1036,7 +1154,7 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Validation failed"
+                    example: Validation failed
                   errors:
                     type: object
                     additionalProperties:
@@ -1045,24 +1163,28 @@ paths:
                         type: string
               example:
                 success: false
-                error: "Validation failed"
+                error: Validation failed
                 errors:
-                  email: ["This email is already registered"]
-                  license_number: ["This license number is already in use"]
-                  service_areas: ["The service areas field is required"]
+                  email:
+                    - This email is already registered
+                  license_number:
+                    - This license number is already in use
+                  service_areas:
+                    - The service areas field is required
 
   /auth/register/provider:
     post:
       summary: Register a new provider
       description: |
         Register a user with provider role and business details.
-        
+
         **Supports both individuals and companies:**
         - Individual providers: Omit company_name or set to null
         - Company providers: Provide company_name
-        
+
         All providers must have a valid business_registration and specify their service_areas.
-      tags: [Auth]
+      tags:
+        - Auth
       security: []
       requestBody:
         required: true
@@ -1070,62 +1192,75 @@ paths:
           application/json:
             schema:
               type: object
-              required: [first_name, last_name, email, password, password_confirmation, business_registration, service_areas]
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+                - password_confirmation
+                - business_registration
+                - service_areas
               properties:
                 first_name:
                   type: string
-                  example: "Sarah"
+                  example: Sarah
                 last_name:
                   type: string
-                  example: "Provider"
+                  example: Provider
                 other_names:
                   type: string
                   nullable: true
-                  example: "Jane"
+                  example: Jane
                 email:
                   type: string
                   format: email
-                  example: "sarah.provider@example.com"
+                  example: sarah.provider@example.com
                 password:
                   type: string
                   format: password
                   minLength: 8
-                  example: "SecurePass123"
+                  example: SecurePass123
                 password_confirmation:
                   type: string
                   format: password
                   minLength: 8
-                  example: "SecurePass123"
+                  example: SecurePass123
                 phone:
                   type: string
                   nullable: true
-                  example: "+233507654321"
+                  example: '+233507654321'
                 address:
                   type: string
                   nullable: true
-                  example: "Kumasi, Ashanti"
+                  example: Kumasi, Ashanti
                 company_name:
                   type: string
                   nullable: true
-                  example: "Solar Providers Ghana Ltd"
-                  description: "Company name (optional - for companies) or null for individual providers"
+                  example: Solar Providers Ghana Ltd
+                  description: Company name (optional - for companies) or null for individual
+                    providers
                 business_registration:
                   type: string
-                  example: "BRN-GH-2024-5678"
+                  example: BRN-GH-2024-5678
                 service_areas:
                   type: array
                   items:
                     type: string
                   minItems: 1
-                  example: ["Greater Accra", "Central", "Eastern"]
+                  example:
+                    - Greater Accra
+                    - Central
+                    - Eastern
                 certifications:
                   type: array
                   items:
                     type: string
                   nullable: true
-                  example: ["ISO 9001:2015", "Solar Alliance Member"]
+                  example:
+                    - ISO 9001:2015
+                    - Solar Alliance Member
       responses:
-        "201":
+        '201':
           description: Provider registered successfully
           content:
             application/json:
@@ -1137,45 +1272,50 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Provider registration successful"
+                    example: Provider registration successful
                   data:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       provider:
-                        $ref: "#/components/schemas/ProviderDetail"
+                        $ref: '#/components/schemas/ProviderDetail'
                       access_token:
                         type: string
-                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+                        example: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
               example:
                 success: true
-                message: "Provider registration successful"
+                message: Provider registration successful
                 data:
                   user:
                     id: 15
-                    first_name: "Sarah"
-                    last_name: "Provider"
-                    other_names: "Jane"
-                    email: "sarah.provider@example.com"
-                    phone: "+233507654321"
-                    address: "Kumasi, Ashanti"
-                    role: "provider"
-                    status: "active"
-                    created_at: "2025-12-10T11:00:00Z"
-                    updated_at: "2025-12-10T11:00:00Z"
+                    first_name: Sarah
+                    last_name: Provider
+                    other_names: Jane
+                    email: sarah.provider@example.com
+                    phone: '+233507654321'
+                    address: Kumasi, Ashanti
+                    role: provider
+                    status: active
+                    created_at: '2025-12-10T11:00:00Z'
+                    updated_at: '2025-12-10T11:00:00Z'
                   provider:
                     id: 1
                     user_id: 15
-                    company_name: "Solar Providers Ghana Ltd"
-                    business_registration: "BRN-GH-2024-5678"
-                    service_areas: ["Greater Accra", "Central", "Eastern"]
-                    certifications: ["ISO 9001:2015", "Solar Alliance Member"]
-                    rating: 0.00
-                    created_at: "2025-12-10T11:00:00Z"
-                    updated_at: "2025-12-10T11:00:00Z"
-                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
-        "422":
+                    company_name: Solar Providers Ghana Ltd
+                    business_registration: BRN-GH-2024-5678
+                    service_areas:
+                      - Greater Accra
+                      - Central
+                      - Eastern
+                    certifications:
+                      - ISO 9001:2015
+                      - Solar Alliance Member
+                    rating: 0
+                    created_at: '2025-12-10T11:00:00Z'
+                    updated_at: '2025-12-10T11:00:00Z'
+                  access_token: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+        '422':
           description: Validation error
           content:
             application/json:
@@ -1187,7 +1327,7 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Validation failed"
+                    example: Validation failed
                   errors:
                     type: object
                     additionalProperties:
@@ -1196,27 +1336,33 @@ paths:
                         type: string
               example:
                 success: false
-                error: "Validation failed"
+                error: Validation failed
                 errors:
-                  email: ["This email is already registered"]
-                  business_registration: ["This business registration number is already in use"]
-                  service_areas: ["The service areas field is required"]
+                  email:
+                    - This email is already registered
+                  business_registration:
+                    - This business registration number is already in use
+                  service_areas:
+                    - The service areas field is required
 
   /auth/login:
     post:
       summary: Login user and receive JWT
-      tags: [Auth]
+      tags:
+        - Auth
       requestBody:
         content:
           application/json:
             schema:
               type: object
-              required: [email, password]
+              required:
+                - email
+                - password
               properties:
                 email: string
                 password: string
       responses:
-        "200":
+        '200':
           description: Successful login
           content:
             application/json:
@@ -1228,28 +1374,28 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Login successful"
+                    example: Login successful
                   data:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       access_token:
                         type: string
-                        example: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+                        example: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
               example:
                 success: true
-                message: "Login successful"
+                message: Login successful
                 data:
                   user:
                     id: 1
-                    first_name: "Ama"
-                    last_name: "Mensah"
-                    email: "ama@example.com"
-                    role: "customer"
-                    status: "active"
-                  access_token: "1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
-        "401":
+                    first_name: Ama
+                    last_name: Mensah
+                    email: ama@example.com
+                    role: customer
+                    status: active
+                  access_token: 1|abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+        '401':
           description: Invalid credentials
           content:
             application/json:
@@ -1261,20 +1407,21 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Invalid credentials"
+                    example: Invalid credentials
               example:
                 success: false
-                error: "Invalid credentials"
+                error: Invalid credentials
 
   /auth/me:
     get:
       summary: Get authenticated user details
       description: Returns the profile information of the currently authenticated user
-      tags: [Authentication]
+      tags:
+        - Authentication
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: User details retrieved successfully
           content:
             application/json:
@@ -1286,29 +1433,29 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "User retrieved successfully"
+                    example: User retrieved successfully
                   data:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
               example:
                 success: true
-                message: "User retrieved successfully"
+                message: User retrieved successfully
                 data:
                   user:
                     id: 1
-                    first_name: "Ama"
-                    last_name: "Mensah"
-                    other_names: "Abena"
-                    email: "ama@example.com"
-                    phone: "+233500000000"
-                    address: "Osu, Accra"
-                    role: "customer"
-                    status: "active"
-                    created_at: "2025-01-10T08:00:00Z"
-                    updated_at: "2025-01-10T08:00:00Z"
-        "401":
+                    first_name: Ama
+                    last_name: Mensah
+                    other_names: Abena
+                    email: ama@example.com
+                    phone: '+233500000000'
+                    address: Osu, Accra
+                    role: customer
+                    status: active
+                    created_at: '2025-01-10T08:00:00Z'
+                    updated_at: '2025-01-10T08:00:00Z'
+        '401':
           description: Unauthenticated
           content:
             application/json:
@@ -1320,20 +1467,21 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Unauthenticated"
+                    example: Unauthenticated
               example:
                 success: false
-                error: "Unauthenticated"
+                error: Unauthenticated
 
   /auth/logout:
     post:
       summary: Logout user
       description: Revoke the current access token
-      tags: [Authentication]
+      tags:
+        - Authentication
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: User logged out successfully
           content:
             application/json:
@@ -1345,11 +1493,11 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Successfully logged out"
+                    example: Successfully logged out
               example:
                 success: true
-                message: "Successfully logged out"
-        "401":
+                message: Successfully logged out
+        '401':
           description: Unauthenticated
           content:
             application/json:
@@ -1361,19 +1509,20 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Unauthenticated"
+                    example: Unauthenticated
               example:
                 success: false
-                error: "Unauthenticated"
+                error: Unauthenticated
 
   # ---------------- ORGANISATIONS ----------------
   /organisations:
     get:
       summary: List all organisations for authenticated user
       description: Returns all organisations where the user is a member
-      tags: [Organisations]
+      tags:
+        - Organisations
       responses:
-        "200":
+        '200':
           description: List of organisations
           content:
             application/json:
@@ -1385,81 +1534,90 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Organisations retrieved successfully"
+                    example: Organisations retrieved successfully
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Organisation"
-        "401":
+                      $ref: '#/components/schemas/Organisation'
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
     post:
       summary: Create a new organisation
       description: |
         Create an organisation with optional site transfer.
-        
+
         **Organisation Types:**
         - installer: Requires license_number, service_areas, years_experience
         - provider: Requires business_registration, service_areas
         - customer: Only requires name and description
-        
+
         **Site Transfer:**
         Set transfer_sites to true to migrate user's existing sites to the new organisation.
-      tags: [Organisations]
+      tags:
+        - Organisations
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [name, type]
+              required:
+                - name
+                - type
               properties:
                 name:
                   type: string
-                  example: "Solar Installations Co."
+                  example: Solar Installations Co.
                 type:
                   type: string
-                  enum: [installer, provider, customer]
-                  example: "installer"
+                  enum:
+                    - installer
+                    - provider
+                    - customer
+                  example: installer
                 description:
                   type: string
                   nullable: true
-                  example: "Professional solar installation company"
+                  example: Professional solar installation company
                 transfer_sites:
                   type: boolean
                   nullable: true
                   example: true
-                  description: "Transfer user's existing sites to organisation"
+                  description: Transfer user's existing sites to organisation
                 license_number:
                   type: string
-                  example: "ORG-LIC-GH-2024-001"
-                  description: "Required for installer type"
+                  example: ORG-LIC-GH-2024-001
+                  description: Required for installer type
                 business_registration:
                   type: string
-                  example: "ORG-BRN-GH-2024-001"
-                  description: "Required for provider type"
+                  example: ORG-BRN-GH-2024-001
+                  description: Required for provider type
                 service_areas:
                   type: array
                   items:
                     type: string
-                  example: ["Greater Accra", "Ashanti"]
-                  description: "Required for installer and provider types"
+                  example:
+                    - Greater Accra
+                    - Ashanti
+                  description: Required for installer and provider types
                 certifications:
                   type: array
                   items:
                     type: string
                   nullable: true
-                  example: ["ISO 9001:2015"]
+                  example:
+                    - ISO 9001:2015
                 years_experience:
                   type: integer
                   example: 10
-                  description: "Required for installer type"
+                  description: Required for installer type
       responses:
-        "201":
+        '201':
           description: Organisation created successfully
           content:
             application/json:
@@ -1471,21 +1629,22 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Organisation created successfully"
+                    example: Organisation created successfully
                   data:
-                    $ref: "#/components/schemas/Organisation"
-        "422":
+                    $ref: '#/components/schemas/Organisation'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /organisations/{id}:
     get:
       summary: Get organisation details
       description: Get detailed information about a specific organisation
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: id
           in: path
@@ -1493,7 +1652,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: Organisation details
           content:
             application/json:
@@ -1505,26 +1664,27 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Organisation retrieved successfully"
+                    example: Organisation retrieved successfully
                   data:
-                    $ref: "#/components/schemas/Organisation"
-        "403":
+                    $ref: '#/components/schemas/Organisation'
+        '403':
           description: Forbidden - Not a member
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "404":
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
           description: Organisation not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
     put:
       summary: Update organisation
       description: Update organisation details (requires admin or owner permission)
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: id
           in: path
@@ -1544,7 +1704,7 @@ paths:
                   type: string
                   nullable: true
       responses:
-        "200":
+        '200':
           description: Organisation updated successfully
           content:
             application/json:
@@ -1556,20 +1716,21 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Organisation updated successfully"
+                    example: Organisation updated successfully
                   data:
-                    $ref: "#/components/schemas/Organisation"
-        "403":
+                    $ref: '#/components/schemas/Organisation'
+        '403':
           description: Forbidden - Insufficient permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
     delete:
       summary: Delete organisation
       description: Delete organisation (requires owner permission)
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: id
           in: path
@@ -1577,7 +1738,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: Organisation deleted successfully
           content:
             application/json:
@@ -1589,19 +1750,20 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Organisation deleted successfully"
-        "403":
+                    example: Organisation deleted successfully
+        '403':
           description: Forbidden - Not the owner
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /organisations/{id}/members:
     get:
       summary: Get organisation members
       description: List all members of an organisation
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: id
           in: path
@@ -1609,7 +1771,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: List of members
           content:
             application/json:
@@ -1621,17 +1783,18 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Members retrieved successfully"
+                    example: Members retrieved successfully
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/OrganisationMember"
+                      $ref: '#/components/schemas/OrganisationMember'
 
   /organisations/{id}/invite:
     post:
       summary: Invite user to organisation
       description: Send invitation to join organisation (requires admin or owner permission)
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: id
           in: path
@@ -1644,18 +1807,24 @@ paths:
           application/json:
             schema:
               type: object
-              required: [email, role]
+              required:
+                - email
+                - role
               properties:
                 email:
                   type: string
                   format: email
-                  example: "newmember@example.com"
+                  example: newmember@example.com
                 role:
                   type: string
-                  enum: [admin, installer, provider, customer]
-                  example: "installer"
+                  enum:
+                    - admin
+                    - installer
+                    - provider
+                    - customer
+                  example: installer
       responses:
-        "201":
+        '201':
           description: Invitation sent successfully
           content:
             application/json:
@@ -1667,15 +1836,16 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Invitation sent successfully"
+                    example: Invitation sent successfully
                   data:
-                    $ref: "#/components/schemas/OrganisationInvitation"
+                    $ref: '#/components/schemas/OrganisationInvitation'
 
   /organisations/invitations/{token}/accept:
     post:
       summary: Accept organisation invitation
       description: Accept an invitation to join an organisation
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: token
           in: path
@@ -1683,7 +1853,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Invitation accepted successfully
           content:
             application/json:
@@ -1695,15 +1865,16 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Invitation accepted successfully"
+                    example: Invitation accepted successfully
                   data:
-                    $ref: "#/components/schemas/OrganisationMember"
+                    $ref: '#/components/schemas/OrganisationMember'
 
   /organisations/invitations/{token}/reject:
     post:
       summary: Reject organisation invitation
       description: Reject an invitation to join an organisation
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: token
           in: path
@@ -1711,7 +1882,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Invitation rejected successfully
           content:
             application/json:
@@ -1723,8 +1894,8 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Invitation rejected successfully"
-        "422":
+                    example: Invitation rejected successfully
+        '422':
           description: Validation error or invalid invitation
           content:
             application/json:
@@ -1736,13 +1907,14 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Invalid or expired invitation token."
+                    example: Invalid or expired invitation token.
 
   /organisations/{id}/members/{memberId}:
     delete:
       summary: Remove member from organisation
       description: Remove a member from organisation (requires admin or owner permission)
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: id
           in: path
@@ -1755,7 +1927,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: Member removed successfully
           content:
             application/json:
@@ -1767,12 +1939,13 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Member removed successfully"
+                    example: Member removed successfully
 
     patch:
       summary: Update member role
       description: Update a member's role in organisation (requires owner permission)
-      tags: [Organisations]
+      tags:
+        - Organisations
       parameters:
         - name: id
           in: path
@@ -1790,14 +1963,20 @@ paths:
           application/json:
             schema:
               type: object
-              required: [role]
+              required:
+                - role
               properties:
                 role:
                   type: string
-                  enum: [owner, admin, installer, provider, customer]
-                  example: "admin"
+                  enum:
+                    - owner
+                    - admin
+                    - installer
+                    - provider
+                    - customer
+                  example: admin
       responses:
-        "200":
+        '200':
           description: Member role updated successfully
           content:
             application/json:
@@ -1809,15 +1988,17 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Member role updated successfully"
+                    example: Member role updated successfully
                   data:
-                    $ref: "#/components/schemas/OrganisationMember"
+                    $ref: '#/components/schemas/OrganisationMember'
 
   /organisations/{id}/sites:
     get:
       summary: List organisation sites
       description: Get all sites owned by the organisation (requires membership)
-      tags: [Organisations, Sites]
+      tags:
+        - Organisations
+        - Sites
       parameters:
         - name: id
           in: path
@@ -1825,7 +2006,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: List of organisation sites
           content:
             application/json:
@@ -1837,22 +2018,25 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Organisation sites retrieved successfully"
+                    example: Organisation sites retrieved successfully
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Site"
-        "403":
+                      $ref: '#/components/schemas/Site'
+        '403':
           description: Forbidden - Not a member
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
     post:
       summary: Create organisation site
-      description: Create a new site for the organisation (requires admin or owner permission)
-      tags: [Organisations, Sites]
+      description: Create a new site for the organisation (requires admin or owner
+        permission)
+      tags:
+        - Organisations
+        - Sites
       parameters:
         - name: id
           in: path
@@ -1865,14 +2049,19 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name, address, latitude, longitude, timezone]
+              required:
+                - name
+                - address
+                - latitude
+                - longitude
+                - timezone
               properties:
                 name:
                   type: string
-                  example: "Accra Office"
+                  example: Accra Office
                 address:
                   type: string
-                  example: "123 Independence Ave, Accra"
+                  example: 123 Independence Ave, Accra
                 latitude:
                   type: number
                   minimum: -90
@@ -1885,13 +2074,13 @@ paths:
                   example: -0.186964
                 timezone:
                   type: string
-                  example: "Africa/Accra"
+                  example: Africa/Accra
                 notes:
                   type: string
                   nullable: true
-                  example: "Main office location"
+                  example: Main office location
       responses:
-        "201":
+        '201':
           description: Site created successfully
           content:
             application/json:
@@ -1903,21 +2092,23 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Site created successfully"
+                    example: Site created successfully
                   data:
-                    $ref: "#/components/schemas/Site"
-        "403":
+                    $ref: '#/components/schemas/Site'
+        '403':
           description: Forbidden - Insufficient permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /organisations/{id}/sites/{siteId}:
     get:
       summary: Get organisation site details
       description: Get details of a specific organisation site (requires membership)
-      tags: [Organisations, Sites]
+      tags:
+        - Organisations
+        - Sites
       parameters:
         - name: id
           in: path
@@ -1930,7 +2121,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: Site details
           content:
             application/json:
@@ -1942,21 +2133,25 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Site retrieved successfully"
+                    example: Site retrieved successfully
                   data:
-                    $ref: "#/components/schemas/Site"
-        "403":
+                    $ref: '#/components/schemas/Site'
+        '403':
           description: Forbidden - Not a member or site belongs to different organisation
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /organisations/{id}/sites/{siteId}/appliances:
     post:
       summary: Add appliance to organisation site
-      description: Add an appliance to an organisation site (requires admin or owner permission)
-      tags: [Organisations, Sites, Appliances]
+      description: Add an appliance to an organisation site (requires admin or owner
+        permission)
+      tags:
+        - Organisations
+        - Sites
+        - Appliances
       parameters:
         - name: id
           in: path
@@ -1999,7 +2194,7 @@ paths:
                   nullable: true
                   description: Additional notes about the appliance usage
       responses:
-        "201":
+        '201':
           description: Appliance added successfully
           content:
             application/json:
@@ -2011,10 +2206,10 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Appliance added to site successfully"
+                    example: Appliance added to site successfully
                   data:
-                    $ref: "#/components/schemas/SiteAppliance"
-        "403":
+                    $ref: '#/components/schemas/SiteAppliance'
+        '403':
           description: Forbidden - Not authorized to add appliances
           content:
             application/json:
@@ -2026,8 +2221,8 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "You do not have permission to add appliances to this organisation site"
-        "404":
+                    example: You do not have permission to add appliances to this organisation site
+        '404':
           description: Site not found
           content:
             application/json:
@@ -2039,8 +2234,8 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Site not found or access denied"
-        "409":
+                    example: Site not found or access denied
+        '409':
           description: Conflict - Appliance already exists
           content:
             application/json:
@@ -2052,14 +2247,15 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "This appliance is already added to the site."
+                    example: This appliance is already added to the site.
 
   # ---------------- APPLIANCES ----------------
   /appliances:
     get:
       summary: List appliances
       description: Get public appliances and current user's private custom appliances
-      tags: [Appliances]
+      tags:
+        - Appliances
       parameters:
         - in: query
           name: category_id
@@ -2078,7 +2274,7 @@ paths:
             default: 1
           description: Page number for pagination
       responses:
-        "200":
+        '200':
           description: List of appliances
           content:
             application/json:
@@ -2091,7 +2287,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Appliance"
+                      $ref: '#/components/schemas/Appliance'
                   meta:
                     type: object
                     properties:
@@ -2107,29 +2303,33 @@ paths:
                       total:
                         type: integer
                         example: 20
-        "401":
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
+                $ref: '#/components/schemas/UnauthenticatedError'
 
     post:
       summary: Create custom appliance
       description: Create a new private custom appliance for the authenticated user
-      tags: [Appliances]
+      tags:
+        - Appliances
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [name, category_id, default_wattage]
+              required:
+                - name
+                - category_id
+                - default_wattage
               properties:
                 name:
                   type: string
                   maxLength: 255
-                  example: "My Custom Air Conditioner"
+                  example: My Custom Air Conditioner
                 category_id:
                   type: integer
                   example: 4
@@ -2153,14 +2353,14 @@ paths:
                       type: string
                       maxLength: 10
                       nullable: true
-                      example: "B"
+                      example: B
                     notes:
                       type: string
                       maxLength: 500
                       nullable: true
-                      example: "Custom split unit AC"
+                      example: Custom split unit AC
       responses:
-        "201":
+        '201':
           description: Appliance created successfully
           content:
             application/json:
@@ -2171,28 +2371,29 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: "#/components/schemas/Appliance"
+                    $ref: '#/components/schemas/Appliance'
                   message:
                     type: string
-                    example: "Appliance created successfully"
-        "401":
+                    example: Appliance created successfully
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
-        "422":
+                $ref: '#/components/schemas/UnauthenticatedError'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationError"
+                $ref: '#/components/schemas/ValidationError'
 
   /appliances/{id}:
     get:
       summary: Get appliance details
       description: Get details of a specific appliance (must be public or owned by user)
-      tags: [Appliances]
+      tags:
+        - Appliances
       parameters:
         - in: path
           name: id
@@ -2201,7 +2402,7 @@ paths:
             type: integer
           description: Appliance ID
       responses:
-        "200":
+        '200':
           description: Appliance details
           content:
             application/json:
@@ -2212,14 +2413,14 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: "#/components/schemas/Appliance"
-        "401":
+                    $ref: '#/components/schemas/Appliance'
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
-        "403":
+                $ref: '#/components/schemas/UnauthenticatedError'
+        '403':
           description: Forbidden - Cannot view private appliance of another user
           content:
             application/json:
@@ -2231,18 +2432,20 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "You do not have permission to view this appliance"
-        "404":
+                    example: You do not have permission to view this appliance
+        '404':
           description: Appliance not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NotFoundError"
+                $ref: '#/components/schemas/NotFoundError'
 
     put:
       summary: Update custom appliance
-      description: Update an appliance owned by the authenticated user (cannot change is_public)
-      tags: [Appliances]
+      description: Update an appliance owned by the authenticated user (cannot change
+        is_public)
+      tags:
+        - Appliances
       parameters:
         - in: path
           name: id
@@ -2260,7 +2463,7 @@ paths:
                 name:
                   type: string
                   maxLength: 255
-                  example: "Updated Appliance Name"
+                  example: Updated Appliance Name
                 category_id:
                   type: integer
                   example: 4
@@ -2284,14 +2487,14 @@ paths:
                       type: string
                       maxLength: 10
                       nullable: true
-                      example: "A"
+                      example: A
                     notes:
                       type: string
                       maxLength: 500
                       nullable: true
-                      example: "Updated notes"
+                      example: Updated notes
       responses:
-        "200":
+        '200':
           description: Appliance updated successfully
           content:
             application/json:
@@ -2302,39 +2505,41 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: "#/components/schemas/Appliance"
+                    $ref: '#/components/schemas/Appliance'
                   message:
                     type: string
-                    example: "Appliance updated successfully"
-        "401":
+                    example: Appliance updated successfully
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
-        "403":
+                $ref: '#/components/schemas/UnauthenticatedError'
+        '403':
           description: Forbidden - Cannot update appliance owned by another user
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenError"
-        "404":
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
           description: Appliance not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NotFoundError"
-        "422":
+                $ref: '#/components/schemas/NotFoundError'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationError"
+                $ref: '#/components/schemas/ValidationError'
 
     delete:
       summary: Delete custom appliance
-      description: Soft delete an appliance owned by the authenticated user (sets is_active to false)
-      tags: [Appliances]
+      description: Soft delete an appliance owned by the authenticated user (sets
+        is_active to false)
+      tags:
+        - Appliances
       parameters:
         - in: path
           name: id
@@ -2343,7 +2548,7 @@ paths:
             type: integer
           description: Appliance ID
       responses:
-        "200":
+        '200':
           description: Appliance deleted successfully
           content:
             application/json:
@@ -2355,43 +2560,47 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Appliance deleted successfully"
-        "401":
+                    example: Appliance deleted successfully
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
-        "403":
+                $ref: '#/components/schemas/UnauthenticatedError'
+        '403':
           description: Forbidden - Cannot delete appliance owned by another user
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenError"
-        "404":
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
           description: Appliance not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NotFoundError"
+                $ref: '#/components/schemas/NotFoundError'
 
   /admin/appliances:
     post:
       summary: Create public appliance (Admin only)
       description: Create a new public catalog appliance (requires admin role)
-      tags: [Admin - Appliances]
+      tags:
+        - Admin - Appliances
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [name, category_id, default_wattage]
+              required:
+                - name
+                - category_id
+                - default_wattage
               properties:
                 name:
                   type: string
                   maxLength: 255
-                  example: "Refrigerator (Commercial)"
+                  example: Refrigerator (Commercial)
                 category_id:
                   type: integer
                   example: 2
@@ -2420,14 +2629,14 @@ paths:
                       type: string
                       maxLength: 10
                       nullable: true
-                      example: "A+"
+                      example: A+
                     notes:
                       type: string
                       maxLength: 500
                       nullable: true
-                      example: "Commercial grade refrigerator"
+                      example: Commercial grade refrigerator
       responses:
-        "201":
+        '201':
           description: Appliance created successfully
           content:
             application/json:
@@ -2438,17 +2647,17 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: "#/components/schemas/Appliance"
+                    $ref: '#/components/schemas/Appliance'
                   message:
                     type: string
-                    example: "Appliance created successfully"
-        "401":
+                    example: Appliance created successfully
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
-        "403":
+                $ref: '#/components/schemas/UnauthenticatedError'
+        '403':
           description: Forbidden - Admin access required
           content:
             application/json:
@@ -2460,19 +2669,20 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Admin access required"
-        "422":
+                    example: Admin access required
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationError"
+                $ref: '#/components/schemas/ValidationError'
 
   /admin/appliances/{id}:
     put:
       summary: Update any appliance (Admin only)
       description: Update any appliance including visibility (requires admin role)
-      tags: [Admin - Appliances]
+      tags:
+        - Admin - Appliances
       parameters:
         - in: path
           name: id
@@ -2490,7 +2700,7 @@ paths:
                 name:
                   type: string
                   maxLength: 255
-                  example: "Updated Appliance"
+                  example: Updated Appliance
                 category_id:
                   type: integer
                   example: 3
@@ -2518,14 +2728,14 @@ paths:
                       type: string
                       maxLength: 10
                       nullable: true
-                      example: "A"
+                      example: A
                     notes:
                       type: string
                       maxLength: 500
                       nullable: true
-                      example: "Updated description"
+                      example: Updated description
       responses:
-        "200":
+        '200':
           description: Appliance updated successfully
           content:
             application/json:
@@ -2536,17 +2746,17 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: "#/components/schemas/Appliance"
+                    $ref: '#/components/schemas/Appliance'
                   message:
                     type: string
-                    example: "Appliance updated successfully"
-        "401":
+                    example: Appliance updated successfully
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
-        "403":
+                $ref: '#/components/schemas/UnauthenticatedError'
+        '403':
           description: Forbidden - Admin access required
           content:
             application/json:
@@ -2558,24 +2768,25 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Admin access required"
-        "404":
+                    example: Admin access required
+        '404':
           description: Appliance not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NotFoundError"
-        "422":
+                $ref: '#/components/schemas/NotFoundError'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationError"
+                $ref: '#/components/schemas/ValidationError'
 
     delete:
       summary: Delete any appliance (Admin only)
       description: Soft delete any appliance (requires admin role)
-      tags: [Admin - Appliances]
+      tags:
+        - Admin - Appliances
       parameters:
         - in: path
           name: id
@@ -2584,7 +2795,7 @@ paths:
             type: integer
           description: Appliance ID
       responses:
-        "200":
+        '200':
           description: Appliance deleted successfully
           content:
             application/json:
@@ -2596,14 +2807,14 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Appliance deleted successfully"
-        "401":
+                    example: Appliance deleted successfully
+        '401':
           description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UnauthenticatedError"
-        "403":
+                $ref: '#/components/schemas/UnauthenticatedError'
+        '403':
           description: Forbidden - Admin access required
           content:
             application/json:
@@ -2615,22 +2826,23 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Admin access required"
-        "404":
+                    example: Admin access required
+        '404':
           description: Appliance not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NotFoundError"
+                $ref: '#/components/schemas/NotFoundError'
 
   # ---------------- SITES ----------------
   /sites:
     get:
       summary: List user's personal sites
       description: Get all sites owned by the authenticated user
-      tags: [Sites]
+      tags:
+        - Sites
       responses:
-        "200":
+        '200':
           description: List of user sites
           content:
             application/json:
@@ -2642,36 +2854,36 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Sites retrieved successfully"
+                    example: Sites retrieved successfully
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Site"
+                      $ref: '#/components/schemas/Site'
               example:
                 success: true
-                message: "Sites retrieved successfully"
+                message: Sites retrieved successfully
                 data:
                   - id: 101
                     user_id: 1
-                    name: "Accra Apartment"
-                    address: "Osu, Accra"
+                    name: Accra Apartment
+                    address: Osu, Accra
                     latitude: 5.603717
                     longitude: -0.186964
-                    timezone: "Africa/Accra"
-                    notes: "Single phase connection"
-                    created_at: "2025-12-08T10:00:00Z"
-                    updated_at: "2025-12-08T10:00:00Z"
+                    timezone: Africa/Accra
+                    notes: Single phase connection
+                    created_at: '2025-12-08T10:00:00Z'
+                    updated_at: '2025-12-08T10:00:00Z'
                   - id: 102
                     user_id: 1
-                    name: "Kumasi Office"
-                    address: "Adum, Kumasi"
+                    name: Kumasi Office
+                    address: Adum, Kumasi
                     latitude: 6.688437
                     longitude: -1.624845
-                    timezone: "Africa/Accra"
-                    notes: "Three phase connection"
-                    created_at: "2025-12-08T11:00:00Z"
-                    updated_at: "2025-12-08T11:00:00Z"
-        "401":
+                    timezone: Africa/Accra
+                    notes: Three phase connection
+                    created_at: '2025-12-08T11:00:00Z'
+                    updated_at: '2025-12-08T11:00:00Z'
+        '401':
           description: Unauthenticated
           content:
             application/json:
@@ -2683,15 +2895,16 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Authentication required. Please provide a valid access token."
+                    example: Authentication required. Please provide a valid access token.
               example:
                 success: false
-                error: "Authentication required. Please provide a valid access token."
+                error: Authentication required. Please provide a valid access token.
 
     post:
       summary: Create a user site
       description: Create a new site for the authenticated user
-      tags: [Sites]
+      tags:
+        - Sites
       security:
         - bearerAuth: []
       requestBody:
@@ -2700,14 +2913,19 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name, address, latitude, longitude, timezone]
+              required:
+                - name
+                - address
+                - latitude
+                - longitude
+                - timezone
               properties:
                 name:
                   type: string
-                  example: "Home"
+                  example: Home
                 address:
                   type: string
-                  example: "123 Main St, Accra"
+                  example: 123 Main St, Accra
                 latitude:
                   type: number
                   minimum: -90
@@ -2720,13 +2938,13 @@ paths:
                   example: -0.186964
                 timezone:
                   type: string
-                  example: "Africa/Accra"
+                  example: Africa/Accra
                 notes:
                   type: string
                   nullable: true
-                  example: "Residential property"
+                  example: Residential property
       responses:
-        "201":
+        '201':
           description: Site created successfully
           content:
             application/json:
@@ -2738,24 +2956,40 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Site created successfully"
+                    example: Site created successfully
                   data:
-                    $ref: "#/components/schemas/Site"
+                    $ref: '#/components/schemas/Site'
               example:
                 success: true
-                message: "Site created successfully"
+                message: Site created successfully
                 data:
                   id: 101
                   user_id: 1
-                  name: "Accra Apartment"
-                  address: "Osu, Accra, Ghana"
+                  name: Accra Apartment
+                  address: Osu, Accra, Ghana
                   latitude: 5.603717
                   longitude: -0.186964
-                  timezone: "Africa/Accra"
-                  notes: "Single phase connection, accessible via main road"
-                  created_at: "2025-12-08T10:00:00Z"
-                  updated_at: "2025-12-08T10:00:00Z"
-        "422":
+                  timezone: Africa/Accra
+                  notes: Single phase connection, accessible via main road
+                  created_at: '2025-12-08T10:00:00Z'
+                  updated_at: '2025-12-08T10:00:00Z'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Authentication required. Please provide a valid access token.
+              example:
+                success: false
+                error: Authentication required. Please provide a valid access token.
+        '422':
           description: Validation error
           content:
             application/json:
@@ -2767,7 +3001,7 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Validation failed"
+                    example: Validation failed
                   errors:
                     type: object
                     additionalProperties:
@@ -2776,34 +3010,23 @@ paths:
                         type: string
               example:
                 success: false
-                error: "Validation failed"
+                error: Validation failed
                 errors:
-                  name: ["The name field is required."]
-                  latitude: ["The latitude must be between -90 and 90."]
-                  longitude: ["The longitude must be between -180 and 180."]
-                  timezone: ["The timezone field is required."]
-        "401":
-          description: Unauthenticated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: "Authentication required. Please provide a valid access token."
-              example:
-                success: false
-                error: "Authentication required. Please provide a valid access token."
+                  name:
+                    - The name field is required.
+                  latitude:
+                    - The latitude must be between -90 and 90.
+                  longitude:
+                    - The longitude must be between -180 and 180.
+                  timezone:
+                    - The timezone field is required.
 
   /sites/{id}:
     get:
       summary: Get a specific site
       description: Retrieve details of a specific site by ID
-      tags: [Sites]
+      tags:
+        - Sites
       security:
         - bearerAuth: []
       parameters:
@@ -2815,7 +3038,7 @@ paths:
           description: Site ID
           example: 101
       responses:
-        "200":
+        '200':
           description: Site retrieved successfully
           content:
             application/json:
@@ -2827,56 +3050,24 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Site retrieved successfully"
+                    example: Site retrieved successfully
                   data:
-                    $ref: "#/components/schemas/Site"
+                    $ref: '#/components/schemas/Site'
               example:
                 success: true
-                message: "Site retrieved successfully"
+                message: Site retrieved successfully
                 data:
                   id: 101
                   user_id: 1
-                  name: "Accra Apartment"
-                  address: "Osu, Accra, Ghana"
+                  name: Accra Apartment
+                  address: Osu, Accra, Ghana
                   latitude: 5.603717
                   longitude: -0.186964
-                  timezone: "Africa/Accra"
-                  notes: "Single phase connection"
-                  created_at: "2025-12-08T10:00:00Z"
-                  updated_at: "2025-12-08T10:00:00Z"
-        "404":
-          description: Site not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: "Site not found"
-              example:
-                success: false
-                error: "Site not found"
-        "403":
-          description: Forbidden - Not site owner
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: "You do not have access to this site"
-              example:
-                success: false
-                error: "You do not have access to this site"
-        "401":
+                  timezone: Africa/Accra
+                  notes: Single phase connection
+                  created_at: '2025-12-08T10:00:00Z'
+                  updated_at: '2025-12-08T10:00:00Z'
+        '401':
           description: Unauthenticated
           content:
             application/json:
@@ -2888,16 +3079,49 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Authentication required. Please provide a valid access token."
+                    example: Authentication required. Please provide a valid access token.
               example:
                 success: false
-                error: "Authentication required. Please provide a valid access token."
+                error: Authentication required. Please provide a valid access token.
+        '403':
+          description: Forbidden - Not site owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: You do not have access to this site
+              example:
+                success: false
+                error: You do not have access to this site
+        '404':
+          description: Site not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Site not found
+              example:
+                success: false
+                error: Site not found
 
   /sites/{site_id}/appliances:
     post:
       summary: Add appliance to site
       description: Add an appliance with quantity and daily usage hours to a specific site
-      tags: [Sites]
+      tags:
+        - Sites
       security:
         - bearerAuth: []
       parameters:
@@ -2914,7 +3138,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [appliance_id, quantity, daily_usage_hours]
+              required:
+                - appliance_id
+                - quantity
+                - daily_usage_hours
               properties:
                 appliance_id:
                   type: integer
@@ -2937,9 +3164,9 @@ paths:
                   nullable: true
                   maxLength: 1000
                   description: Optional notes about the appliance usage
-                  example: "Living room and bedroom fans"
+                  example: Living room and bedroom fans
       responses:
-        "201":
+        '201':
           description: Appliance added to site successfully
           content:
             application/json:
@@ -2951,12 +3178,12 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Appliance added to site successfully"
+                    example: Appliance added to site successfully
                   data:
-                    $ref: "#/components/schemas/SiteAppliance"
+                    $ref: '#/components/schemas/SiteAppliance'
               example:
                 success: true
-                message: "Appliance added to site successfully"
+                message: Appliance added to site successfully
                 data:
                   id: 1
                   user_id: 1
@@ -2964,10 +3191,10 @@ paths:
                   appliance_id: 7
                   quantity: 2
                   daily_usage_hours: 8.5
-                  notes: "Living room and bedroom fans"
-                  created_at: "2025-12-10T10:00:00Z"
-                  updated_at: "2025-12-10T10:00:00Z"
-        "401":
+                  notes: Living room and bedroom fans
+                  created_at: '2025-12-10T10:00:00Z'
+                  updated_at: '2025-12-10T10:00:00Z'
+        '401':
           description: Unauthenticated
           content:
             application/json:
@@ -2979,11 +3206,11 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Unauthenticated"
+                    example: Unauthenticated
               example:
                 success: false
-                error: "Unauthenticated"
-        "403":
+                error: Unauthenticated
+        '403':
           description: Forbidden - User doesn't own the site
           content:
             application/json:
@@ -2995,11 +3222,11 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "You do not have access to this site"
+                    example: You do not have access to this site
               example:
                 success: false
-                error: "You do not have access to this site"
-        "404":
+                error: You do not have access to this site
+        '404':
           description: Site not found or access denied
           content:
             application/json:
@@ -3011,11 +3238,11 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Site not found or access denied"
+                    example: Site not found or access denied
               example:
                 success: false
-                error: "Site not found or access denied"
-        "409":
+                error: Site not found or access denied
+        '409':
           description: Appliance already added to site
           content:
             application/json:
@@ -3027,11 +3254,11 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Appliance already added to this site"
+                    example: Appliance already added to this site
               example:
                 success: false
-                error: "Appliance already added to this site"
-        "422":
+                error: Appliance already added to this site
+        '422':
           description: Validation error
           content:
             application/json:
@@ -3043,7 +3270,7 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Validation failed"
+                    example: Validation failed
                   errors:
                     type: object
                     additionalProperties:
@@ -3052,21 +3279,23 @@ paths:
                         type: string
               example:
                 success: false
-                error: "Validation failed"
+                error: Validation failed
                 errors:
-                  appliance_id: ["Selected appliance does not exist"]
-                  quantity: ["Quantity must be at least 1"]
-                  daily_usage_hours: ["Daily usage hours cannot exceed 24"]
+                  appliance_id:
+                    - Selected appliance does not exist
+                  quantity:
+                    - Quantity must be at least 1
+                  daily_usage_hours:
+                    - Daily usage hours cannot exceed 24
 
   # ---------------- ESTIMATIONS ----------------
   /estimations:
     post:
       summary: Create energy estimation for a site
-      description: >
-        Creates a new estimation for a site. The owner is automatically determined from the site.
-        Calculates energy consumption based on site appliances, applies power factors, seasonal adjustments,
-        and location multipliers. Uses active tariff structure for cost calculation.
-      tags: [Estimations]
+      description: |
+        Creates a new estimation for a site. The owner is automatically determined from the site. Calculates energy consumption based on site appliances, applies power factors, seasonal adjustments, and location multipliers. Uses active tariff structure for cost calculation.
+      tags:
+        - Estimations
       security:
         - bearerAuth: []
       requestBody:
@@ -3075,15 +3304,16 @@ paths:
           application/json:
             schema:
               type: object
-              required: [site_id]
+              required:
+                - site_id
               properties:
                 site_id:
                   type: integer
-                  description: "ID of the site to create estimation for"
+                  description: ID of the site to create estimation for
             example:
               site_id: 101
       responses:
-        "201":
+        '201':
           description: Estimation created successfully
           content:
             application/json:
@@ -3095,25 +3325,25 @@ paths:
                   message:
                     type: string
                   data:
-                    $ref: "#/components/schemas/Estimation"
+                    $ref: '#/components/schemas/Estimation'
               example:
                 success: true
-                message: "Estimation created successfully"
+                message: Estimation created successfully
                 data:
                   id: 301
                   site:
                     id: 101
-                    name: "Accra Apartment"
+                    name: Accra Apartment
                   owner:
                     id: 1
-                    type: "User"
-                    name: "Ama Mensah"
+                    type: User
+                    name: Ama Mensah
                   version: 1
-                  total_watts: "5000.00"
-                  daily_kwh: "108.00"
-                  monthly_kwh: "3726.00"
-                  estimated_monthly_cost: "3890.45"
-        "400":
+                  total_watts: '5000.00'
+                  daily_kwh: '108.00'
+                  monthly_kwh: '3726.00'
+                  estimated_monthly_cost: '3890.45'
+        '400':
           description: Bad request (site not found, no active tariff, etc.)
           content:
             application/json:
@@ -3126,9 +3356,10 @@ paths:
                     type: string
               example:
                 success: false
-                error: "No active tariff structure found for country: Ghana"
-        "403":
-          description: Unauthorized (user doesn't have permission to create estimation for this site)
+                error: 'No active tariff structure found for country: Ghana'
+        '403':
+          description: Unauthorized (user doesn't have permission to create estimation for
+            this site)
           content:
             application/json:
               schema:
@@ -3140,16 +3371,17 @@ paths:
                     type: string
               example:
                 success: false
-                error: "Site does not belong to the specified owner"
-    
+                error: Site does not belong to the specified owner
+
     get:
       summary: List all estimations for authenticated user
       description: Returns all estimations owned by the authenticated user
-      tags: [Estimations]
+      tags:
+        - Estimations
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: List of user's estimations
           content:
             application/json:
@@ -3163,29 +3395,30 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Estimation"
+                      $ref: '#/components/schemas/Estimation'
               example:
                 success: true
-                message: "Estimations retrieved successfully"
+                message: Estimations retrieved successfully
                 data:
                   - id: 301
                     site:
                       id: 101
-                      name: "Accra Apartment"
+                      name: Accra Apartment
                     version: 2
-                    estimated_monthly_cost: "3890.45"
+                    estimated_monthly_cost: '3890.45'
                   - id: 302
                     site:
                       id: 102
-                      name: "Kumasi Office"
+                      name: Kumasi Office
                     version: 1
-                    estimated_monthly_cost: "5200.00"
+                    estimated_monthly_cost: '5200.00'
 
   /estimations/{estimation}:
     get:
       summary: Get a single estimation by ID
       description: Retrieves detailed estimation data with permission check
-      tags: [Estimations]
+      tags:
+        - Estimations
       security:
         - bearerAuth: []
       parameters:
@@ -3194,9 +3427,9 @@ paths:
           required: true
           schema:
             type: integer
-          description: "Estimation ID"
+          description: Estimation ID
       responses:
-        "200":
+        '200':
           description: Estimation retrieved successfully
           content:
             application/json:
@@ -3208,18 +3441,18 @@ paths:
                   message:
                     type: string
                   data:
-                    $ref: "#/components/schemas/Estimation"
+                    $ref: '#/components/schemas/Estimation'
               example:
                 success: true
-                message: "Estimation retrieved successfully"
+                message: Estimation retrieved successfully
                 data:
                   id: 301
                   site:
                     id: 101
-                    name: "Accra Apartment"
+                    name: Accra Apartment
                   version: 2
-                  estimated_monthly_cost: "3890.45"
-        "403":
+                  estimated_monthly_cost: '3890.45'
+        '403':
           description: Unauthorized access
           content:
             application/json:
@@ -3232,8 +3465,8 @@ paths:
                     type: string
               example:
                 success: false
-                error: "Unauthorized access to estimation"
-        "404":
+                error: Unauthorized access to estimation
+        '404':
           description: Estimation not found
           content:
             application/json:
@@ -3246,15 +3479,14 @@ paths:
                     type: string
               example:
                 success: false
-                error: "Estimation not found"
-    
+                error: Estimation not found
+
     put:
       summary: Recalculate an estimation
-      description: >
-        Recalculates an existing estimation with current tariffs and adjustments.
-        Creates a new version if appliances have changed since last calculation.
-        Requires admin/owner permission for organisation-owned estimations.
-      tags: [Estimations]
+      description: |
+        Recalculates an existing estimation with current tariffs and adjustments. Creates a new version if appliances have changed since last calculation. Requires admin/owner permission for organisation-owned estimations.
+      tags:
+        - Estimations
       security:
         - bearerAuth: []
       parameters:
@@ -3263,9 +3495,9 @@ paths:
           required: true
           schema:
             type: integer
-          description: "Estimation ID"
+          description: Estimation ID
       responses:
-        "200":
+        '200':
           description: Estimation recalculated successfully
           content:
             application/json:
@@ -3277,16 +3509,16 @@ paths:
                   message:
                     type: string
                   data:
-                    $ref: "#/components/schemas/Estimation"
+                    $ref: '#/components/schemas/Estimation'
               example:
                 success: true
-                message: "Estimation recalculated successfully"
+                message: Estimation recalculated successfully
                 data:
                   id: 302
                   version: 3
                   previous_estimation_id: 301
-                  estimated_monthly_cost: "4100.00"
-        "403":
+                  estimated_monthly_cost: '4100.00'
+        '403':
           description: Unauthorized (insufficient permissions)
           content:
             application/json:
@@ -3299,14 +3531,14 @@ paths:
                     type: string
               example:
                 success: false
-                error: "User does not have permission to modify this estimation"
-    
+                error: User does not have permission to modify this estimation
+
     delete:
       summary: Soft delete an estimation
-      description: >
-        Soft deletes an estimation (can be restored later).
-        Requires admin/owner permission for organisation-owned estimations.
-      tags: [Estimations]
+      description: |
+        Soft deletes an estimation (can be restored later). Requires admin/owner permission for organisation-owned estimations.
+      tags:
+        - Estimations
       security:
         - bearerAuth: []
       parameters:
@@ -3315,9 +3547,9 @@ paths:
           required: true
           schema:
             type: integer
-          description: "Estimation ID"
+          description: Estimation ID
       responses:
-        "200":
+        '200':
           description: Estimation deleted successfully
           content:
             application/json:
@@ -3330,8 +3562,8 @@ paths:
                     type: string
               example:
                 success: true
-                message: "Estimation deleted successfully"
-        "403":
+                message: Estimation deleted successfully
+        '403':
           description: Unauthorized
           content:
             application/json:
@@ -3344,15 +3576,16 @@ paths:
                     type: string
               example:
                 success: false
-                error: "User does not have permission to modify this estimation"
+                error: User does not have permission to modify this estimation
 
   /organisations/{organisation}/estimations:
     get:
       summary: List all estimations for an organisation
-      description: >
-        Returns all estimations owned by an organisation.
-        Any member of the organisation can view estimations.
-      tags: [Estimations, Organisations]
+      description: |
+        Returns all estimations owned by an organisation. Any member of the organisation can view estimations.
+      tags:
+        - Estimations
+        - Organisations
       security:
         - bearerAuth: []
       parameters:
@@ -3361,9 +3594,9 @@ paths:
           required: true
           schema:
             type: integer
-          description: "Organisation ID"
+          description: Organisation ID
       responses:
-        "200":
+        '200':
           description: Organisation estimations retrieved successfully
           content:
             application/json:
@@ -3377,22 +3610,22 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Estimation"
+                      $ref: '#/components/schemas/Estimation'
               example:
                 success: true
-                message: "Organisation estimations retrieved successfully"
+                message: Organisation estimations retrieved successfully
                 data:
                   - id: 401
                     site:
                       id: 201
-                      name: "Office Building Accra"
+                      name: Office Building Accra
                     owner:
                       id: 10
-                      type: "Organisation"
-                      name: "Solar Tech Ghana Ltd"
+                      type: Organisation
+                      name: Solar Tech Ghana Ltd
                     version: 1
-                    estimated_monthly_cost: "12500.00"
-        "403":
+                    estimated_monthly_cost: '12500.00'
+        '403':
           description: User not a member of organisation
           content:
             application/json:
@@ -3405,12 +3638,13 @@ paths:
                     type: string
               example:
                 success: false
-                error: "You do not have access to this organisation"
+                error: You do not have access to this organisation
 
   /estimations/{id}/recommendations:
     get:
       summary: Get recommended hardware based on estimation
-      tags: [Estimations]
+      tags:
+        - Estimations
       parameters:
         - name: id
           in: path
@@ -3418,20 +3652,21 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: Recommended hardware list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/RecommendedHardware"
+                  $ref: '#/components/schemas/RecommendedHardware'
 
   # ---------------- PAYMENTS ----------------
   /projects/{id}/payments:
     post:
       summary: Make a payment for a project milestone
-      tags: [Payments]
+      tags:
+        - Payments
       parameters:
         - name: id
           in: path
@@ -3442,24 +3677,26 @@ paths:
           application/json:
             schema:
               type: object
-              required: [amount, payment_method]
+              required:
+                - amount
+                - payment_method
               properties:
                 amount: number
                 payment_method: string
                 milestone_id: integer
       responses:
-        "201":
+        '201':
           description: Payment recorded successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Payment"
-        "400":
+                $ref: '#/components/schemas/Payment'
+        '400':
           description: Payment error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
 tags:
   - name: Auth

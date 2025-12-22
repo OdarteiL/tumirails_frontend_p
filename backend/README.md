@@ -40,6 +40,56 @@ git clone https://github.com/tumirailsdotcom/tumi_configurator.git
 cd tumi_configurator
 ```
 
+## Demo & Quick Start
+
+This section explains how to seed and use the demo data shipped with the backend.
+
+Demo credentials (defaults):
+
+| Role     | Email              | Password      |
+|----------|-------------------|---------------|
+| Customer | demo@tumi.com     | demo123456    |
+| Provider | provider1@tumi.com| provider123   |
+
+Quick start (backend):
+
+```bash
+# Start containers
+docker compose up -d
+
+# Run migrations
+docker compose exec backend php artisan migrate
+
+# Seed demo data (safe to re-run, idempotent)
+docker compose exec backend php artisan app:seed-demo
+
+# Or reset and refresh demo
+docker compose exec backend php artisan app:seed-demo --refresh
+```
+
+Demo flow (view existing):
+
+- Login as `demo@tumi.com`
+- Navigate to Sites → "Demo Residential Home"
+- View appliances list (seeded catalog)
+- Navigate to Estimations → View demo estimation
+
+Demo flow (create new):
+
+- Create a new site using the API or UI
+- Add appliances from the catalog
+- Generate a new estimation via `POST /api/estimations`
+- Retrieve recommendations via `GET /api/estimations/{id}/recommendations` (if configured)
+
+Reset demo data:
+
+```bash
+docker compose exec backend php artisan app:seed-demo --refresh
+```
+
+Note: Demo data is not automatically seeded by `php artisan db:seed`. Use `app:seed-demo` to add demo content.
+
+
 2. Start the development environment:
 ```bash
 docker compose up -d

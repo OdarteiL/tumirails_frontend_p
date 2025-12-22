@@ -41,12 +41,13 @@ class SeedDemoCommand extends Command
 
         // Seed in dependency order with progress indicators
         $seeders = [
-            \Database\Seeders\CategorySeeder::class => 'Categories',
-            \Database\Seeders\ApplianceSeeder::class => 'Appliances',
             \Database\Seeders\CountrySeeder::class => 'Countries',
             \Database\Seeders\TariffStructureSeeder::class => 'Tariff Structures',
             \Database\Seeders\SeasonalAdjustmentSeeder::class => 'Seasonal Adjustments',
             \Database\Seeders\LocationMultiplierSeeder::class => 'Location Multipliers',
+            \Database\Seeders\CategorySeeder::class => 'Categories',
+            \Database\Seeders\ApplianceSeeder::class => 'Appliances',
+            // Provider/Hardware seeders are optional and may be run separately
         ];
 
         foreach ($seeders as $seeder => $name) {
@@ -55,16 +56,21 @@ class SeedDemoCommand extends Command
             $this->line("<fg=green>✓</> {$name} seeded successfully");
         }
 
+        // Seed demo user last (depends on appliances/categories)
+        $this->info('Seeding Demo user...');
+        $this->call('db:seed', ['--class' => \Database\Seeders\DemoUserSeeder::class]);
+        $this->line("<fg=green>✓</> Demo user seeded successfully");
+
         $this->newLine();
         $this->info('✅ Demo data seeded successfully!');
         $this->newLine();
         $this->line('<fg=cyan>Demo credentials:</>');
-        $this->line('  Email: demo@tumi.com');
-        $this->line('  Password: password');
+        $this->line('  Email: '.config('demo.user_email', env('DEMO_USER_EMAIL', 'demo@tumi.com')));
+        $this->line('  Password: '.config('demo.user_password', env('DEMO_USER_PASSWORD', 'demo123456')));
         $this->newLine();
         $this->line('<fg=cyan>Admin credentials:</>');
         $this->line('  Email: admin@tumi.com');
-        $this->line('  Password: password');
+        $this->line('  Password: admin123');
 
         return Command::SUCCESS;
     }
