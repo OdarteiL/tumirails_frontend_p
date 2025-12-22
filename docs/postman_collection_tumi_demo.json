@@ -1,0 +1,184 @@
+{
+  "info": {
+    "name": "Tumi Configurator - Demo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "tumi-demo-collection"
+  },
+  "item": [
+    {
+      "name": "01 - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{demo_email}}\",\n  \"password\": \"{{demo_password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "if(json && json.data && json.data.access_token) {",
+              "  pm.environment.set('token', json.data.access_token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Create Site",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Demo Site\",\n  \"address\": \"45 Demo Street, Accra, Ghana\",\n  \"latitude\": 5.6037,\n  \"longitude\": -0.1870,\n  \"timezone\": \"Africa/Accra\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/sites", "host": ["{{baseUrl}}"], "path": ["api","sites"] }
+      },
+      "event": [
+        { "listen": "test", "script": { "exec": [
+          "var j = pm.response.json();",
+          "if(j && j.data && j.data.id) pm.environment.set('site_id', j.data.id);",
+          "else if(j && Array.isArray(j.data) && j.data.length) pm.environment.set('site_id', j.data[0].id);"
+        ] } }
+      ]
+    },
+    {
+      "name": "03 - List Sites",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{baseUrl}}/api/sites", "host": ["{{baseUrl}}"], "path": ["api","sites"] } }
+    },
+    {
+      "name": "03.1 - List All Appliances",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/appliances", "host": ["{{baseUrl}}"], "path": ["api","appliances"] }
+      }
+    },
+    {
+      "name": "03.2 - List Site Appliances",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/sites/{{site_id}}/appliances", "host": ["{{baseUrl}}"], "path": ["api","sites","{{site_id}}","appliances"] }
+      }
+    },
+    {
+      "name": "03.3 - List Site Appliances (capture id)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/sites/{{site_id}}/appliances", "host": ["{{baseUrl}}"], "path": ["api","sites","{{site_id}}","appliances"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var j = pm.response.json();",
+              "if(j && Array.isArray(j.data) && j.data.length) {",
+              "  pm.environment.set('site_appliance_id', j.data[0].id);",
+              "} else {",
+              "  pm.environment.unset('site_appliance_id');",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03.4 - Remove Site Appliance",
+      "request": {
+        "method": "DELETE",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/sites/{{site_id}}/appliances/{{site_appliance_id}}", "host": ["{{baseUrl}}"], "path": ["api","sites","{{site_id}}","appliances","{{site_appliance_id}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('deleted successfully', function() { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Attach Appliance to Site",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"appliance_id\": {{appliance_id}},\n  \"quantity\": 1,\n  \"daily_usage_hours\": 6\n}" },
+        "url": { "raw": "{{baseUrl}}/api/sites/{{site_id}}/appliances", "host": ["{{baseUrl}}"], "path": ["api","sites","{{site_id}}","appliances"] }
+      }
+    },
+    {
+      "name": "05 - Create Estimation",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"site_id\": {{site_id}}\n}" },
+        "url": { "raw": "{{baseUrl}}/api/estimations", "host": ["{{baseUrl}}"], "path": ["api","estimations"] }
+      },
+      "event": [ { "listen": "test", "script": { "exec": [
+        "var j = pm.response.json();",
+        "if(j && j.data && j.data.id) pm.environment.set('estimation_id', j.data.id);"
+      ] } } ]
+    },
+    {
+      "name": "06 - Recalculate Estimation (PUT)",
+      "request": {
+        "method": "PUT",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/estimations/{{estimation_id}}", "host": ["{{baseUrl}}"], "path": ["api","estimations","{{estimation_id}}"] }
+      }
+    },
+    {
+      "name": "07 - Add another Appliance to Site",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"appliance_id\": {{appliance_id_2}},\n  \"quantity\": 1,\n  \"daily_usage_hours\": 8\n}" },
+        "url": { "raw": "{{baseUrl}}/api/sites/{{site_id}}/appliances", "host": ["{{baseUrl}}"], "path": ["api","sites","{{site_id}}","appliances"] }
+      }
+    },
+    {
+      "name": "08 - Create Estimation (new version expected)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"site_id\": {{site_id}}\n}" },
+        "url": { "raw": "{{baseUrl}}/api/estimations", "host": ["{{baseUrl}}"], "path": ["api","estimations"] }
+      }
+    },
+    {
+      "name": "09 - List Estimations",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{baseUrl}}/api/estimations", "host": ["{{baseUrl}}"], "path": ["api","estimations"] } }
+    }
+  ]
+}

@@ -61,6 +61,12 @@ class SeedDemoCommand extends Command
         $this->call('db:seed', ['--class' => \Database\Seeders\DemoUserSeeder::class]);
         $this->line("<fg=green>✓</> Demo user seeded successfully");
 
+        // Normalize any estimation snapshots created by the seeders so they use the canonical 'id' key
+        $this->info('Normalizing estimation snapshots...');
+        // Call the artisan command we added to normalize legacy snapshots
+        $this->call('app:normalize-estimations');
+        $this->line("<fg=green>✓</> Estimation snapshots normalized");
+
         $this->newLine();
         $this->info('✅ Demo data seeded successfully!');
         $this->newLine();

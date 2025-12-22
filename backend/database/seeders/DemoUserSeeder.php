@@ -77,7 +77,7 @@ class DemoUserSeeder extends Seeder
             ]);
 
             $snapshot[] = [
-                'appliance_id' => $appliance->id,
+                'id' => $appliance->id,
                 'name' => $appliance->name,
                 'default_wattage' => $appliance->default_wattage,
                 'daily_usage_hours' => $appliance->default_usage_hours ?? $ap['default_usage_hours'],
