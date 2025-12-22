@@ -12,7 +12,7 @@ class SiteApplianceResource extends JsonResource
         return [
             'id' => $this->id,
             'added_by_id' => $this->added_by_id,
-            'added_by_type' => $this->added_by_type,
+            'added_by_type' => $this->added_by_type ? class_basename($this->added_by_type) : null,
             'site_id' => $this->site_id,
             'appliance_id' => $this->appliance_id,
             'appliance' => [

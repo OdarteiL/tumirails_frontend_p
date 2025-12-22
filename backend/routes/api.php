@@ -53,6 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Organisation site appliances
         Route::post('/{organisation}/sites/{siteId}/appliances', [SiteController::class, 'addApplianceToOrganisationSite']);
+        Route::get('/{organisation}/sites/{siteId}/appliances', [SiteController::class, 'organisationAppliances']);
+        Route::delete('/{organisation}/sites/{siteId}/appliances/{siteApplianceId}', [SiteController::class, 'organisationRemoveAppliance']);
 
         // Organisation estimations
         Route::get('/{organisation}/estimations', [EstimationController::class, 'organisationIndex']);
@@ -62,4 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User site appliances
     Route::post('sites/{site}/appliances', [SiteController::class, 'addAppliance']);
+    Route::get('sites/{site}/appliances', [SiteController::class, 'appliances']);
+    Route::delete('sites/{site}/appliances/{siteAppliance}', [SiteController::class, 'removeAppliance']);
 });

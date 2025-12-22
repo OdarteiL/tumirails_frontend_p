@@ -159,6 +159,27 @@ class SiteController extends Controller
     }
 
     /**
+     * List appliances attached to a user-owned site.
+     */
+    public function appliances(Request $request, int $siteId): JsonResponse
+    {
+        try {
+            $siteAppliances = $this->siteApplianceService->getSiteAppliances($request->user()->id, $siteId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Site appliances retrieved successfully',
+                'data' => SiteApplianceResource::collection($siteAppliances),
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Site not found or access denied',
+            ], 404);
+        }
+    }
+
+    /**
      * Add an appliance to an organisation site.
      */
     public function addApplianceToOrganisationSite(Organisation $organisation, int $siteId, AddApplianceToSiteRequest $request): JsonResponse
@@ -192,6 +213,83 @@ class SiteController extends Controller
                 'success' => false,
                 'error' => $e->getMessage(),
             ], 409);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Site not found or access denied',
+            ], 404);
+        }
+    }
+
+    /**
+     * List appliances attached to an organisation site.
+     */
+    public function organisationAppliances(Request $request, Organisation $organisation, int $siteId): JsonResponse
+    {
+        // Check if user belongs to organisation
+        if (! $request->user()->belongsToOrganisation($organisation->id)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'You do not have access to this organisation',
+            ], 403);
+        }
+
+        try {
+            $siteAppliances = $this->siteApplianceService->getOrganisationSiteAppliances($request->user()->id, $organisation->id, $siteId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Organisation site appliances retrieved successfully',
+                'data' => SiteApplianceResource::collection($siteAppliances),
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Site not found or access denied',
+            ], 404);
+        }
+    }
+
+    /**
+     * Remove a site appliance from a user-owned site.
+     */
+    public function removeAppliance(int $siteId, int $siteApplianceId): JsonResponse
+    {
+        try {
+            $this->siteApplianceService->removeAppliance(auth()->id(), $siteId, $siteApplianceId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Appliance removed from site successfully',
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Site not found or access denied',
+            ], 404);
+        }
+    }
+
+    /**
+     * Remove a site appliance from an organisation site.
+     */
+    public function organisationRemoveAppliance(Request $request, Organisation $organisation, int $siteId, int $siteApplianceId): JsonResponse
+    {
+        // Check if user belongs to organisation
+        if (! $request->user()->belongsToOrganisation($organisation->id)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'You do not have access to this organisation',
+            ], 403);
+        }
+
+        try {
+            $this->siteApplianceService->removeOrganisationSiteAppliance($request->user()->id, $organisation->id, $siteId, $siteApplianceId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Appliance removed from organisation site successfully',
+            ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
