@@ -50,6 +50,8 @@ class DatabaseSeeder extends Seeder
             TariffStructureSeeder::class,
             SeasonalAdjustmentSeeder::class,
             LocationMultiplierSeeder::class,
+            HardwareTypeSeeder::class,
+            ProviderHardwareSeeder::class,
         ]);
     }
 }
