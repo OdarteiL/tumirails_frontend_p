@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Target, Eye, Lightbulb, Users, Shield, Rocket, LucideAngularModule } from 'lucide-angular';
+import { Target, Eye, Lightbulb, Rocket, LucideAngularModule, type LucideIconData } from 'lucide-angular';
 
 interface CoreValue {
   title: string;
   description: string;
-  icon: any;
+  icon: LucideIconData;
 }
 
 interface JourneyMilestone {

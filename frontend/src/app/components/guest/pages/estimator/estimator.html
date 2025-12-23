@@ -7,21 +7,23 @@
 
             <!-- Usage Slider -->
             <div class="mb-10">
-                <label class="block text-sm font-semibold text-slate-700 mb-4 flex justify-between">
+                <label for="monthly-usage" class="block text-sm font-semibold text-slate-700 mb-4 flex justify-between">
                     Monthly Electricity Usage (kWh)
                     <span class="text-[#0E6C8B] font-bold">{{ monthlyUsage() }} kWh</span>
                 </label>
-                <input type="range" min="100" max="2000" step="50" [value]="monthlyUsage()"
+                <input id="monthly-usage" type="range" min="100" max="2000" step="50" [value]="monthlyUsage()"
                     (input)="onUsageChange($event)"
                     class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0E6C8B]">
             </div>
 
             <!-- Bill Input -->
             <div class="mb-10">
-                <label class="block text-sm font-semibold text-slate-700 mb-3">Average Monthly Electricity Bill
+                <label for="monthly-bill" class="block text-sm font-semibold text-slate-700 mb-3">Average Monthly
+                    Electricity Bill
                     (GH₵)</label>
                 <div class="relative">
-                    <input type="number" [ngModel]="monthlyBill()" (ngModelChange)="monthlyBill.set($event)"
+                    <input id="monthly-bill" type="number" [ngModel]="monthlyBill()"
+                        (ngModelChange)="monthlyBill.set($event)"
                         class="block w-full pl-4 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-[#0E6C8B] focus:border-[#0E6C8B] text-slate-900 placeholder-slate-400 transition-colors"
                         placeholder="200">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none hidden">
@@ -32,7 +34,7 @@
 
             <!-- Appliances -->
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-4">Common Appliance Usage</label>
+                <div class="block text-sm font-semibold text-slate-700 mb-4">Common Appliance Usage</div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div *ngFor="let app of appliances()" class="flex items-start">
                         <div class="flex items-center h-5">
@@ -40,9 +42,9 @@
                                 class="w-5 h-5 border-slate-300 rounded text-[#0E6C8B] focus:ring-[#0E6C8B] cursor-pointer">
                         </div>
                         <div class="ml-3 text-sm">
-                            <label class="text-slate-600 cursor-pointer select-none">
+                            <span class="text-slate-600 cursor-pointer select-none">
                                 {{ app.name }} <span class="text-slate-400 text-xs ml-1">({{ app.power }})</span>
-                            </label>
+                            </span>
                         </div>
                     </div>
                 </div>

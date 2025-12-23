@@ -86,7 +86,8 @@
                 </p>
 
                 <div class="flex items-center gap-4">
-                    <img [src]="tm.image" class="w-14 h-14 rounded-full object-cover border-2 border-slate-100">
+                    <img [src]="tm.image" [alt]="tm.name + ' - ' + tm.role"
+                        class="w-14 h-14 rounded-full object-cover border-2 border-slate-100">
                     <div>
                         <h4 class="font-bold text-slate-900">{{ tm.name }}</h4>
                         <p class="text-sm text-slate-500">{{ tm.role }}</p>
