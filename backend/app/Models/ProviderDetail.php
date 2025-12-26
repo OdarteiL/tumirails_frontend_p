@@ -17,6 +17,7 @@ class ProviderDetail extends Model
         'service_areas',
         'certifications',
         'rating',
+        'verified',
     ];
 
     protected function casts(): array
@@ -25,6 +26,7 @@ class ProviderDetail extends Model
             'service_areas' => 'array',
             'certifications' => 'array',
             'rating' => 'decimal:2',
+            'verified' => 'boolean',
         ];
     }
 
