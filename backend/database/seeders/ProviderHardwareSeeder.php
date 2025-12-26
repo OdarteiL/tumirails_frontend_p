@@ -4,7 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Hardware;
 use App\Models\HardwareType;
-use App\Models\Provider;
+use App\Models\User;
+use App\Models\ProviderDetail;
 use Illuminate\Database\Seeder;
 
 class ProviderHardwareSeeder extends Seeder
@@ -20,46 +21,65 @@ class ProviderHardwareSeeder extends Seeder
         $types = HardwareType::all()->keyBy('key');
 
         foreach ($providers as $providerData) {
-            $provider = Provider::updateOrCreate(
-                ['company_name' => $providerData['company_name']],
-                array_merge($providerData, ['status' => 'active'])
+            // create a user to represent the provider
+            $email = strtolower(str_replace(' ', '.', $providerData['company_name'])) . '@example.test';
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'first_name' => $providerData['company_name'],
+                    'last_name' => '',
+                    'password' => bcrypt('password'),
+                ]
+            );
+
+            // ensure provider detail exists for the user
+            ProviderDetail::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'company_name' => $providerData['company_name'],
+                    'business_registration' => Str::slug($providerData['company_name']) . '-reg',
+                    'service_areas' => json_encode([]),
+                    'certifications' => json_encode([]),
+                    'rating' => $providerData['rating'],
+                    'verified' => $providerData['verified'] ?? false,
+                ]
             );
 
             // Solar Panels
-            $this->createHardware($provider, $types['solar_panel'], [
+            $this->createHardware($user, $types['solar_panel'], [
                 ['name' => 'Canadian Solar 450W', 'price' => 1600, 'specs' => ['power_watts' => 450, 'efficiency' => 20.5, 'voltage' => 48]],
                 ['name' => 'Longi 550W Mono', 'price' => 1800, 'specs' => ['power_watts' => 550, 'efficiency' => 21.2, 'voltage' => 48]],
                 ['name' => 'JA Solar 600W', 'price' => 2000, 'specs' => ['power_watts' => 600, 'efficiency' => 21.8, 'voltage' => 48]],
             ]);
 
             // Inverters
-            $this->createHardware($provider, $types['inverter'], [
+            $this->createHardware($user, $types['inverter'], [
                 ['name' => 'Growatt 3kW', 'price' => 4500, 'specs' => ['power_kw' => 3, 'efficiency' => 95.5, 'voltage' => '48V']],
                 ['name' => 'Growatt 5kW', 'price' => 6500, 'specs' => ['power_kw' => 5, 'efficiency' => 96.2, 'voltage' => '48V']],
                 ['name' => 'Deye 8kW', 'price' => 9500, 'specs' => ['power_kw' => 8, 'efficiency' => 96.8, 'voltage' => '48V']],
             ]);
 
             // Batteries
-            $this->createHardware($provider, $types['battery'], [
+            $this->createHardware($user, $types['battery'], [
                 ['name' => 'Pylontech 5kWh', 'price' => 8000, 'specs' => ['capacity_kwh' => 5, 'voltage' => '48V', 'chemistry' => 'LiFePO4']],
                 ['name' => 'Pylontech 10kWh', 'price' => 15000, 'specs' => ['capacity_kwh' => 10, 'voltage' => '48V', 'chemistry' => 'LiFePO4']],
                 ['name' => 'BYD 15kWh', 'price' => 22000, 'specs' => ['capacity_kwh' => 15, 'voltage' => '48V', 'chemistry' => 'LiFePO4']],
             ]);
 
             // Charge Controllers
-            $this->createHardware($provider, $types['charge_controller'], [
+            $this->createHardware($user, $types['charge_controller'], [
                 ['name' => 'Victron 60A MPPT', 'price' => 2500, 'specs' => ['current_amps' => 60, 'type' => 'MPPT', 'efficiency' => 98]],
                 ['name' => 'Victron 100A MPPT', 'price' => 3500, 'specs' => ['current_amps' => 100, 'type' => 'MPPT', 'efficiency' => 98]],
             ]);
         }
     }
 
-    private function createHardware(Provider $provider, HardwareType $type, array $items): void
+    private function createHardware(User $providerUser, HardwareType $type, array $items): void
     {
         foreach ($items as $item) {
             $priceVariation = rand(-10, 10) / 100;
             Hardware::updateOrCreate(
-                ['name' => $item['name'], 'provider_id' => $provider->id],
+                ['name' => $item['name'], 'owner_type' => User::class, 'owner_id' => $providerUser->id],
                 [
                     'hardware_type_id' => $type->id,
                     'price' => $item['price'] * (1 + $priceVariation),
