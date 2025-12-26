@@ -36,7 +36,13 @@ class RecommendationService
             foreach ($inverters as $inverter) {
                 foreach ($batteries as $battery) {
                     foreach ($controllers as $controller) {
-                        $key = $panel->provider_id.'-'.$inverter->provider_id.'-'.$battery->provider_id.'-'.$controller->provider_id;
+                        // Build a key representing the owning entities so we don't duplicate same set
+                        $panelOwner = $this->ownerKeyFor($panel);
+                        $inverterOwner = $this->ownerKeyFor($inverter);
+                        $batteryOwner = $this->ownerKeyFor($battery);
+                        $controllerOwner = $this->ownerKeyFor($controller);
+
+                        $key = "$panelOwner-$inverterOwner-$batteryOwner-$controllerOwner";
                         if (! isset($providerCombinations[$key])) {
                             $config = $this->buildConfiguration($panel, $inverter, $battery, $controller, $panelCount, $inverterKw, $batteryKwh);
                             $recommendations[] = $config;
@@ -122,16 +128,77 @@ class RecommendationService
 
         $totalPrice = ($panel->price * $actualPanelCount) + $inverter->price + ($battery->price * $batteryCount) + $controller->price;
 
+        // Resolve provider/owner info from the component owner (user/org) or legacy provider relation
+        $providerInfo = $this->ownerInfoFor($panel);
+
         return [
-            'provider' => [
-                'id' => $panel->provider->id,
-                'company_name' => $panel->provider->company_name,
-                'rating' => $panel->provider->rating,
-                'verified' => $panel->provider->verified,
-            ],
+            'provider' => $providerInfo,
             'components' => $components,
             'total_price' => $totalPrice,
             'currency' => 'GHS',
+        ];
+    }
+
+    private function ownerKeyFor($item): string
+    {
+        if (isset($item->owner_type) && isset($item->owner_id) && $item->owner_type && $item->owner_id) {
+            return $item->owner_type . ':' . $item->owner_id;
+        }
+
+        // fall back to provider id if still present
+        return 'provider:' . ($item->provider_id ?? '0');
+    }
+
+    private function ownerInfoFor($item): array
+    {
+        // If hardware was migrated to have an owner, read provider metadata from owner
+        if (isset($item->owner_type) && isset($item->owner_id) && $item->owner_type && $item->owner_id) {
+            try {
+                $owner = $item->owner;
+
+                if ($owner) {
+                    // User provider details
+                    if ($owner instanceof \App\Models\User && method_exists($owner, 'providerDetail')) {
+                        $pd = $owner->providerDetail()->first();
+                        return [
+                            'id' => $owner->id,
+                            'company_name' => $pd->company_name ?? $owner->first_name,
+                            'rating' => $pd->rating ?? 0.0,
+                            'verified' => $pd->rating ? true : false,
+                        ];
+                    }
+
+                    // Organisation provider details
+                    if ($owner instanceof \App\Models\Organisation && method_exists($owner, 'organisationProviderDetail')) {
+                        $od = $owner->organisationProviderDetail()->first();
+                        return [
+                            'id' => $owner->id,
+                            'company_name' => $od->company_name ?? $owner->name ?? 'Organisation',
+                            'rating' => $od->rating ?? 0.0,
+                            'verified' => $od->rating ? true : false,
+                        ];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // ignore and fallback
+            }
+        }
+
+        // Legacy provider relation fallback
+        if (isset($item->provider) && $item->provider) {
+            return [
+                'id' => $item->provider->id,
+                'company_name' => $item->provider->company_name,
+                'rating' => $item->provider->rating,
+                'verified' => $item->provider->verified,
+            ];
+        }
+
+        return [
+            'id' => null,
+            'company_name' => 'Unknown',
+            'rating' => 0.0,
+            'verified' => false,
         ];
     }
 }
