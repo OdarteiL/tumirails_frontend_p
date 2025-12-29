@@ -6,7 +6,7 @@ use App\Models\Estimation;
 use App\Models\Hardware;
 use App\Models\HardwareType;
 use App\Models\Organisation;
-use App\Models\Provider;
+use App\Models\ProviderDetail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -48,12 +48,7 @@ class RecommendationControllerTest extends TestCase
                     'recommendations' => [
                         '*' => [
                             'rank',
-                            'provider' => [
-                                'id',
-                                'company_name',
-                                'rating',
-                                'verified',
-                            ],
+                            'providers',
                             'components' => [
                                 'solar_panels',
                                 'inverter',
@@ -144,10 +139,11 @@ class RecommendationControllerTest extends TestCase
         $this->assertNotEmpty($recommendations);
 
         foreach ($recommendations as $recommendation) {
-            $this->assertArrayHasKey('provider', $recommendation);
-            $this->assertArrayHasKey('company_name', $recommendation['provider']);
-            $this->assertArrayHasKey('rating', $recommendation['provider']);
-            $this->assertArrayHasKey('verified', $recommendation['provider']);
+            $this->assertArrayHasKey('providers', $recommendation);
+            $this->assertNotEmpty($recommendation['providers']);
+            $this->assertArrayHasKey('company_name', $recommendation['providers'][0]);
+            $this->assertArrayHasKey('rating', $recommendation['providers'][0]);
+            $this->assertArrayHasKey('verified', $recommendation['providers'][0]);
         }
     }
 
@@ -172,7 +168,7 @@ class RecommendationControllerTest extends TestCase
         $this->assertEquals(1500, $summary['total_watts']);
         $this->assertEquals(10.0, $summary['daily_kwh']); // 300/30
         $this->assertEquals(300, $summary['monthly_kwh']);
-        $this->assertEquals('400.00', $summary['estimated_monthly_cost']);
+        $this->assertEquals(400.00, $summary['estimated_monthly_cost_meta']['amount']);
     }
 
     public function test_provider_diversity_in_recommendations(): void
@@ -184,7 +180,8 @@ class RecommendationControllerTest extends TestCase
         ]);
 
         // Create additional providers with different hardware
-        $provider2 = Provider::factory()->create(['verified' => true, 'rating' => 4.3]);
+        $provider2 = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $provider2->id, 'verified' => true, 'rating' => 4.3]);
         $this->createHardwareForProvider($provider2, 5100);
 
         Sanctum::actingAs($user);
@@ -210,17 +207,19 @@ class RecommendationControllerTest extends TestCase
 
     private function createTestHardware(): void
     {
-        $provider = Provider::factory()->create(['verified' => true, 'rating' => 4.5]);
+        $provider = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $provider->id, 'verified' => true, 'rating' => 4.5]);
         $this->createHardwareForProvider($provider);
     }
 
-    private function createHardwareForProvider(Provider $provider, float $basePrice = 5000): void
+    private function createHardwareForProvider(User $providerUser, float $basePrice = 5000): void
     {
         $types = HardwareType::all()->keyBy('key');
 
         Hardware::factory()->solarPanel()->create([
             'hardware_type_id' => $types['solar_panel']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.32,
             'verified' => true,
             'status' => 'active',
@@ -229,7 +228,8 @@ class RecommendationControllerTest extends TestCase
 
         Hardware::factory()->inverter()->create([
             'hardware_type_id' => $types['inverter']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.25,
             'verified' => true,
             'status' => 'active',
@@ -238,7 +238,8 @@ class RecommendationControllerTest extends TestCase
 
         Hardware::factory()->battery()->create([
             'hardware_type_id' => $types['battery']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.35,
             'verified' => true,
             'status' => 'active',
@@ -247,7 +248,8 @@ class RecommendationControllerTest extends TestCase
 
         Hardware::factory()->chargeController()->create([
             'hardware_type_id' => $types['charge_controller']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.08,
             'verified' => true,
             'status' => 'active',

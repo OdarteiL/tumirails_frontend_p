@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Actions\Recommendation;
 
-use PHPUnit\Framework\TestCase;
 use App\Actions\Recommendation\GenerateRecommendationsAction;
+use PHPUnit\Framework\TestCase;
 
 class CalculateStringArchitectureTest extends TestCase
 {
@@ -27,7 +27,7 @@ class CalculateStringArchitectureTest extends TestCase
             ],
         ];
 
-        $result = $action->calculateStringArchitecture($panel, $inverter, null, 12);
+        $result = $action->calculateStringArchitecture($panel, 12, $inverter, null);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('series', $result);

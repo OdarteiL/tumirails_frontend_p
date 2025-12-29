@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Actions\Currency\FormatCurrencyAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Actions\Currency\FormatCurrencyAction;
 
 class RecommendationResource extends JsonResource
 {
@@ -25,10 +25,12 @@ class RecommendationResource extends JsonResource
                 'total_watts' => $this->total_watts,
                 'daily_kwh' => round($this->monthly_kwh / 30, 1),
                 'monthly_kwh' => $this->monthly_kwh,
-                'estimated_monthly_cost' => $fmt->formatMeta(floatval($this->estimated_monthly_cost)),
+                'estimated_monthly_cost' => number_format($this->estimated_monthly_cost, 2),
+                'estimated_monthly_cost_meta' => $fmt->formatMeta(floatval($this->estimated_monthly_cost)),
             ],
             'recommendations' => array_map(function ($recommendation, $index) use ($fmt) {
                 $meta = $fmt->formatMeta(floatval($recommendation['total_price'] ?? 0));
+
                 return array_merge($recommendation, [
                     'rank' => $index + 1,
                     'total_price' => $recommendation['total_price'],

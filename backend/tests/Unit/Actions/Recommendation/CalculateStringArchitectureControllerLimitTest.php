@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Actions\Recommendation;
 
-use PHPUnit\Framework\TestCase;
 use App\Actions\Recommendation\GenerateRecommendationsAction;
+use PHPUnit\Framework\TestCase;
 
 class CalculateStringArchitectureControllerLimitTest extends TestCase
 {
@@ -29,7 +29,7 @@ class CalculateStringArchitectureControllerLimitTest extends TestCase
             ],
         ];
 
-        $result = $action->calculateStringArchitecture($panel, null, $controller, 12);
+        $result = $action->calculateStringArchitecture($panel, 12, null, $controller);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('controller_current_a', $result);

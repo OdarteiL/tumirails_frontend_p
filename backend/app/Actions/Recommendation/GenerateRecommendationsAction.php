@@ -2,19 +2,30 @@
 
 namespace App\Actions\Recommendation;
 
+use App\Actions\Currency\FormatCurrencyAction;
 use App\Models\Estimation;
 use App\Models\Hardware;
 use App\Models\HardwareType;
-use App\Actions\Currency\FormatCurrencyAction;
-use App\Models\Country;
 
 class GenerateRecommendationsAction
 {
+    protected ?FormatCurrencyAction $currencyFormatter = null;
+
+    private function getCurrencyFormatter(): FormatCurrencyAction
+    {
+        if ($this->currencyFormatter === null) {
+            $this->currencyFormatter = new FormatCurrencyAction();
+        }
+
+        return $this->currencyFormatter;
+    }
+
     /**
      * Execute generation with sane defaults. Returns an array of recommendation objects.
      */
     public function execute(Estimation $estimation, array $options = []): array
     {
+        // action performs generation directly; services should delegate to this action
         $topN = (int) ($options['top_n'] ?? 5);
         $beam = (int) ($options['beam'] ?? 20);
         $singleProviderFirst = $options['single_provider_first'] ?? true;
@@ -37,6 +48,7 @@ class GenerateRecommendationsAction
                     $price = $h->price ?? 0;
                     $rating = optional($h->owner && method_exists($h->owner, 'providerDetail') ? $h->owner->providerDetail()->first() : null)->rating ?? 0;
                     $eff = $h->specs['efficiency'] ?? 0;
+
                     return $price - ($rating * 0.01) - ($eff * 0.001);
                 })
                 ->values()
@@ -60,7 +72,8 @@ class GenerateRecommendationsAction
         $batteryKwh = max(5, ceil($dailyKwh * 1.5));
 
         $results = [];
-        $currencyFormatter = new FormatCurrencyAction();
+        // ensure class-level formatter is available to all helpers
+        $this->currencyFormatter = new FormatCurrencyAction();
 
         // Try single-provider configurations first (cheaper to compute)
         if ($singleProviderFirst) {
@@ -111,8 +124,10 @@ class GenerateRecommendationsAction
                 if ($a['price'] == $b['price']) {
                     $ar = $this->avgOwnerRating($a['owners']);
                     $br = $this->avgOwnerRating($b['owners']);
+
                     return $br <=> $ar;
                 }
+
                 return $a['price'] <=> $b['price'];
             });
 
@@ -126,11 +141,11 @@ class GenerateRecommendationsAction
                 $inv = $partial['components']['inverter']['hardware'] ?? null;
                 $ctrl = $partial['components']['charge_controller']['hardware'] ?? null;
                 $desired = $partial['components']['solar_panels']['count'] ?? 0;
-                $arch = $this->calculateStringArchitecture($panel, $inv, $ctrl, $desired);
+                $arch = $this->calculateStringArchitecture($panel, $desired, $inv, $ctrl);
                 $partial['components']['solar_panels']['string_architecture'] = $arch;
             }
 
-            $config = $this->formatPartialConfig($partial, $currencyFormatter);
+            $config = $this->formatPartialConfig($partial);
             $results[] = $config;
         }
 
@@ -139,8 +154,10 @@ class GenerateRecommendationsAction
             if (($a['total_price'] ?? 0) == ($b['total_price'] ?? 0)) {
                 $ar = $this->avgProvidersRating($a['providers'] ?? []);
                 $br = $this->avgProvidersRating($b['providers'] ?? []);
+
                 return $br <=> $ar;
             }
+
             return ($a['total_price'] ?? 0) <=> ($b['total_price'] ?? 0);
         });
 
@@ -157,8 +174,10 @@ class GenerateRecommendationsAction
             }
         }
 
-        $ownerKeysLists = array_map(fn($a) => array_keys($a), $ownersPerCategory);
-        if (empty($ownerKeysLists)) return [];
+        $ownerKeysLists = array_map(fn ($a) => array_keys($a), $ownersPerCategory);
+        if (empty($ownerKeysLists)) {
+            return [];
+        }
         $common = array_intersect(...$ownerKeysLists);
         $commonOwners = array_values($common);
 
@@ -168,20 +187,25 @@ class GenerateRecommendationsAction
             $total = 0;
             foreach ($ownersPerCategory as $i => $map) {
                 $items = $map[$ownerKey] ?? [];
-                if (empty($items)) { $chosen = []; break; }
-                usort($items, fn($a,$b) => ($a->price <=> $b->price));
+                if (empty($items)) {
+                    $chosen = [];
+                    break;
+                }
+                usort($items, fn ($a, $b) => ($a->price <=> $b->price));
                 $item = $items[0];
-                $role = ['solar_panels','inverter','battery','charge_controller'][$i];
+                $role = ['solar_panels', 'inverter', 'battery', 'charge_controller'][$i];
                 $count = $role === 'solar_panels' ? $panelCount : ($role === 'battery' ? max(1, ceil($batteryKwh / ($item->specs['capacity_kwh'] ?? 10))) : 1);
                 $subtotal = $item->price * $count;
-                $chosen[$role] = ['hardware'=>$item,'count'=>$count,'subtotal'=>$subtotal];
+                $chosen[$role] = ['hardware' => $item, 'count' => $count, 'subtotal' => $subtotal];
                 $total += $subtotal;
             }
 
-            if (empty($chosen)) continue;
+            if (empty($chosen)) {
+                continue;
+            }
 
             $owners = [$ownerKey => $this->ownerInfoFor($chosen['solar_panels']['hardware'])];
-            $results[] = $this->formatPartialConfig(['components'=>$chosen,'price'=>$total,'owners'=>$owners]);
+            $results[] = $this->formatPartialConfig(['components' => $chosen, 'price' => $total, 'owners' => $owners]);
         }
 
         return $results;
@@ -189,22 +213,27 @@ class GenerateRecommendationsAction
 
     private function avgOwnerRating(array $owners): float
     {
-        if (empty($owners)) return 0.0;
-        $sum = 0; $n = 0;
+        if (empty($owners)) {
+            return 0.0;
+        }
+        $sum = 0;
+        $n = 0;
         foreach ($owners as $o) {
             $sum += $o['rating'] ?? 0;
             $n++;
         }
+
         return $n ? $sum / $n : 0.0;
     }
 
-    private function formatPartialConfig(array $partial, FormatCurrencyAction $currencyFormatter): array
+    private function formatPartialConfig(array $partial): array
     {
         $components = [];
         foreach ($partial['components'] as $role => $info) {
             $hw = $info['hardware'];
-            $unitMeta = $currencyFormatter->formatMeta(floatval($hw->price));
-            $subtotalMeta = $currencyFormatter->formatMeta(floatval($info['subtotal']));
+            $formatter = $this->getCurrencyFormatter();
+            $unitMeta = $formatter->formatMeta(floatval($hw->price));
+            $subtotalMeta = $formatter->formatMeta(floatval($info['subtotal']));
 
             $components[$role] = [
                 'hardware_id' => $hw->id,
@@ -220,7 +249,7 @@ class GenerateRecommendationsAction
             ];
         }
 
-        $providers = array_values(array_map(fn($o) => $o, $partial['owners']));
+        $providers = array_values(array_map(fn ($o) => $o, $partial['owners']));
 
         // Pick a primary provider for backward-compatibility and simple displays.
         // Prefer verified providers, then higher rating.
@@ -230,15 +259,16 @@ class GenerateRecommendationsAction
                 $av = $a['verified'] ? 1 : 0;
                 $bv = $b['verified'] ? 1 : 0;
                 if ($av === $bv) {
-                    return ($b['rating'] <=> $a['rating']);
+                    return $b['rating'] <=> $a['rating'];
                 }
+
                 return $bv <=> $av;
             });
             $primaryProvider = $providers[0];
         }
 
-        $total = array_sum(array_map(fn($c) => floatval($c['subtotal']), $components));
-        $totalMeta = $currencyFormatter->formatMeta($total);
+        $total = array_sum(array_map(fn ($c) => floatval($c['subtotal']), $components));
+        $totalMeta = $this->getCurrencyFormatter()->formatMeta($total);
 
         return [
             'provider' => $primaryProvider,
@@ -254,7 +284,7 @@ class GenerateRecommendationsAction
      * Calculate a realistic string architecture for panels given constraints.
      * Returns array with 'series', 'parallel', 'controller_current', and notes.
      */
-    private function calculateStringArchitecture($panel, $inverter = null, $controller = null, int $desiredPanels): array
+    public function calculateStringArchitecture($panel, int $desiredPanels, $inverter = null, $controller = null): array
     {
         // panel specs: expect 'vmp', 'voc', 'imp' or 'isc' in specs
         $specs = $panel->specs ?? [];
@@ -290,18 +320,26 @@ class GenerateRecommendationsAction
         $series = 1;
         if ($mppt_min > 0 && $mppt_max > 0) {
             $target_v = ($mppt_min + $mppt_max) / 2.0;
-            $best = null; $bestDiff = null;
+            $best = null;
+            $bestDiff = null;
             for ($s = $min_series; $s <= $max_series; $s++) {
-                if ($s > $desiredPanels) break;
+                if ($s > $desiredPanels) {
+                    break;
+                }
                 $diff = abs($vmp * $s - $target_v);
-                if ($best === null || $diff < $bestDiff) { $best = $s; $bestDiff = $diff; }
+                if ($best === null || $diff < $bestDiff) {
+                    $best = $s;
+                    $bestDiff = $diff;
+                }
             }
             $series = $best ?? min($max_series, max(1, (int) floor($desiredPanels / 2)));
         } else {
             $series = min($max_series, max(1, (int) floor($desiredPanels / 2)));
         }
 
-        if ($series < 1) $series = 1;
+        if ($series < 1) {
+            $series = 1;
+        }
 
         // parallel strings to reach desired panel count
         $parallel = (int) ceil($desiredPanels / max(1, $series));
@@ -332,9 +370,9 @@ class GenerateRecommendationsAction
             'imp_per_string' => $imp_per_string,
             'controller_current_a' => round($controller_current, 2),
             'notes' => [
-                "max_series_by_mppt" => $max_series_by_mppt,
-                "max_series_by_voc_cold" => $max_series_by_voc,
-                "cold_factor" => $cold_factor,
+                'max_series_by_mppt' => $max_series_by_mppt,
+                'max_series_by_voc_cold' => $max_series_by_voc,
+                'cold_factor' => $cold_factor,
             ],
         ];
     }
@@ -342,8 +380,9 @@ class GenerateRecommendationsAction
     private function ownerKeyFor($item): string
     {
         if (isset($item->owner_type) && isset($item->owner_id) && $item->owner_type && $item->owner_id) {
-            return $item->owner_type . ':' . $item->owner_id;
+            return $item->owner_type.':'.$item->owner_id;
         }
+
         return 'unknown:0';
     }
 
@@ -355,6 +394,7 @@ class GenerateRecommendationsAction
                 if ($owner) {
                     if ($owner instanceof \App\Models\User && method_exists($owner, 'providerDetail')) {
                         $pd = $owner->providerDetail()->first();
+
                         return [
                             'id' => $owner->id,
                             'company_name' => $pd->company_name ?? ($owner->first_name ?? 'Unknown'),
@@ -365,6 +405,7 @@ class GenerateRecommendationsAction
 
                     if ($owner instanceof \App\Models\Organisation && method_exists($owner, 'organisationProviderDetail')) {
                         $od = $owner->organisationProviderDetail()->first();
+
                         return [
                             'id' => $owner->id,
                             'company_name' => $od->company_name ?? ($owner->name ?? 'Organisation'),
@@ -387,12 +428,16 @@ class GenerateRecommendationsAction
 
     private function avgProvidersRating(array $providers): float
     {
-        if (empty($providers)) return 0.0;
-        $sum = 0; $n = 0;
+        if (empty($providers)) {
+            return 0.0;
+        }
+        $sum = 0;
+        $n = 0;
         foreach ($providers as $p) {
             $sum += $p['rating'] ?? 0;
             $n++;
         }
+
         return $n ? $sum / $n : 0.0;
     }
 }
