@@ -14,22 +14,24 @@ class ProviderHardwareSeeder extends Seeder
     public function run(): void
     {
         $providers = [
-            ['company_name' => 'Solar Ghana Ltd', 'rating' => 4.5, 'verified' => true],
-            ['company_name' => 'West Africa Solar', 'rating' => 4.2, 'verified' => true],
-            ['company_name' => 'Eco Power Systems', 'rating' => 4.7, 'verified' => true],
+            ['company_name' => 'SolarTech Ghana', 'rating' => 4.8, 'verified' => true, 'email' => 'provider1@tumi.com'],
+            ['company_name' => 'EcoPower Solutions', 'rating' => 4.5, 'verified' => true, 'email' => 'provider2@tumi.com'],
+            ['company_name' => 'Green Energy Ltd', 'rating' => 4.2, 'verified' => true, 'email' => 'provider3@tumi.com'],
         ];
 
         $types = HardwareType::all()->keyBy('key');
 
         foreach ($providers as $providerData) {
-            // create a user to represent the provider
-            $email = strtolower(str_replace(' ', '.', $providerData['company_name'])).'@example.test';
+            // create a user to represent the provider; use explicit demo provider emails/passwords
+            $email = $providerData['email'] ?? strtolower(str_replace(' ', '.', $providerData['company_name'])).'@example.test';
             $user = User::firstOrCreate(
                 ['email' => $email],
                 [
                     'first_name' => $providerData['company_name'],
                     'last_name' => '',
-                    'password' => bcrypt('password'),
+                    'password' => bcrypt('provider123'),
+                    'role' => 'provider',
+                    'status' => 'active',
                 ]
             );
 

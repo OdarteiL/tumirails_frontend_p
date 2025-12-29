@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Estimation routes
     Route::apiResource('estimations', EstimationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::get('estimations/{estimation}/recommendations', [RecommendationController::class, 'index']);
+    Route::post('estimations/{estimation}/recommendations', [RecommendationController::class, 'store']);
+    Route::get('estimations/{estimation}/recommendation-bundles', [RecommendationController::class, 'bundles']);
 
     // Organisation routes
     Route::apiResource('organisations', OrganisationController::class);

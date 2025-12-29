@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Hardware extends Model
@@ -43,11 +43,6 @@ class Hardware extends Model
     public function owner(): MorphTo
     {
         return $this->morphTo(__FUNCTION__, 'owner_type', 'owner_id');
-    }
-
-    public function recommendedHardware(): HasMany
-    {
-        return $this->hasMany(RecommendedHardware::class);
     }
 
     // Query Scopes

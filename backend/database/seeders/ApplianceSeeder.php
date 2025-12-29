@@ -4,17 +4,27 @@ namespace Database\Seeders;
 
 use App\Models\Appliance;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ApplianceSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get admin user
-        $admin = \App\Models\User::where('role', 'admin')->first();
+        // Get admin user; create a fallback admin if none exists so seeding works in fresh/dev envs
+        $admin = User::where('role', 'admin')->first();
 
         if (! $admin) {
-            return;
+            $admin = User::firstOrCreate(
+                ['email' => 'admin@tumi.com'],
+                [
+                    'first_name' => 'Admin',
+                    'last_name' => '',
+                    'password' => bcrypt(env('ADMIN_PASSWORD', 'admin123')),
+                    'role' => 'admin',
+                    'status' => 'active',
+                ]
+            );
         }
 
         // Get categories
@@ -197,7 +207,7 @@ class ApplianceSeeder extends Seeder
                     'is_public' => true,
                     'is_active' => true,
                     'owner_id' => $admin->id,
-                    'owner_type' => \App\Models\User::class,
+                    'owner_type' => User::class,
                 ]
             );
         }

@@ -6,30 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RecommendedHardware extends Model
+class RecommendationBundleComponent extends Model
 {
     use HasFactory;
 
+    protected $table = 'recommendation_bundle_components';
+
     protected $fillable = [
-        'estimation_id',
+        'bundle_id',
         'hardware_id',
+        'role',
         'quantity',
         'total_cost',
-        'currency',
-        'recommendation_rank',
         'rationale',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'total_cost' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'total_cost' => 'decimal:2',
+    ];
 
-    public function estimation(): BelongsTo
+    public function bundle(): BelongsTo
     {
-        return $this->belongsTo(Estimation::class);
+        return $this->belongsTo(RecommendationBundle::class, 'bundle_id');
     }
 
     public function hardware(): BelongsTo

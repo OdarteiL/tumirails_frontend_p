@@ -6,6 +6,7 @@ use App\Models\Estimation;
 use App\Models\Site;
 use App\Models\SiteAppliance;
 use App\Models\User;
+use App\Services\RecommendationService;
 use Illuminate\Database\Seeder;
 
 class DemoUserSeeder extends Seeder
@@ -103,5 +104,60 @@ class DemoUserSeeder extends Seeder
             ],
             'created_by' => $user->id,
         ]);
+
+        // Generate and persist demo recommendations (top 3) for the demo estimation
+        try {
+            $recommendationService = app(RecommendationService::class);
+
+            $estimation = Estimation::where('owner_id', $user->id)->where('site_id', $site->id)->first();
+            if ($estimation) {
+                $recommendations = $recommendationService->generateRecommendations($estimation, ['limit' => 3]);
+
+                $rank = 1;
+                foreach ($recommendations as $rec) {
+                    // build components payload for bundle
+                    $components = [];
+                    foreach (($rec['components'] ?? []) as $role => $comp) {
+                        if (empty($comp['hardware_id'])) {
+                            continue;
+                        }
+
+                        $components[] = [
+                            'hardware_id' => $comp['hardware_id'],
+                            'role' => $role,
+                            'quantity' => $comp['count'] ?? 1,
+                            'total_cost' => $comp['subtotal'] ?? 0,
+                            'rationale' => isset($comp['rationale']) ? (string) $comp['rationale'] : null,
+                        ];
+                    }
+
+                    if (! empty($components)) {
+                        $bundleData = [
+                            'total_cost' => $rec['total_price'] ?? array_sum(array_column($components, 'total_cost')),
+                            'currency' => $rec['currency'] ?? 'GHS',
+                            'metadata' => [
+                                'generated_rank' => $rank,
+                                'providers' => $rec['providers'] ?? [],
+                            ],
+                            'components' => $components,
+                        ];
+
+                        // persist as RecommendationBundle via service
+                        try {
+                            $recommendationService->saveBundle($estimation, $bundleData, $user);
+                        } catch (\Throwable $e) {
+                            // ignore persistence errors in seeder
+                        }
+                    }
+
+                    $rank++;
+                    if ($rank > 3) {
+                        break;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // don't break seeding if recommendation generation fails in some environments
+        }
     }
 }
