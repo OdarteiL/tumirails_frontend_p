@@ -48,7 +48,7 @@ class SiteApplianceTest extends TestCase
                 'message' => 'Appliance added to site successfully',
                 'data' => [
                     'added_by_id' => $this->user->id,
-                    'added_by_type' => User::class,
+                    'added_by_type' => 'User',
                     'site_id' => $this->site->id,
                     'appliance_id' => $this->appliance->id,
                     'quantity' => 2,

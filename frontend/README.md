@@ -35,6 +35,27 @@ Angular 20 frontend application for the Tumi Solar Configurator platform.
 npm install
 ```
 
+## Demo Guide
+
+This project works with the backend demo data seeded by the backend `app:seed-demo` command.
+
+Quick steps:
+
+```bash
+# Start backend and seed demo data
+docker compose up -d
+docker compose exec backend php artisan app:seed-demo
+
+# Start frontend
+npm start
+
+# Login using demo credentials
+# Customer: demo@tumi.com / demo123456
+```
+
+See backend README for demo details and API examples.
+
+
 2. Start the development server:
 ```bash
 npm start

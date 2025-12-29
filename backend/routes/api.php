@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Estimation routes
     Route::apiResource('estimations', EstimationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::get('estimations/{estimation}/recommendations', [RecommendationController::class, 'index']);
+    Route::post('estimations/{estimation}/recommendations', [RecommendationController::class, 'store']);
+    Route::get('estimations/{estimation}/recommendation-bundles', [RecommendationController::class, 'bundles']);
 
     // Organisation routes
     Route::apiResource('organisations', OrganisationController::class);
@@ -55,6 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Organisation site appliances
         Route::post('/{organisation}/sites/{siteId}/appliances', [SiteController::class, 'addApplianceToOrganisationSite']);
+        Route::get('/{organisation}/sites/{siteId}/appliances', [SiteController::class, 'organisationAppliances']);
+        Route::delete('/{organisation}/sites/{siteId}/appliances/{siteApplianceId}', [SiteController::class, 'organisationRemoveAppliance']);
 
         // Organisation estimations
         Route::get('/{organisation}/estimations', [EstimationController::class, 'organisationIndex']);
@@ -64,4 +68,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User site appliances
     Route::post('sites/{site}/appliances', [SiteController::class, 'addAppliance']);
+    Route::get('sites/{site}/appliances', [SiteController::class, 'appliances']);
+    Route::delete('sites/{site}/appliances/{siteAppliance}', [SiteController::class, 'removeAppliance']);
 });

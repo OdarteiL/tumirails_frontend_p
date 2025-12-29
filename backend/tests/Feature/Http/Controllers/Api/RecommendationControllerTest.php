@@ -6,7 +6,7 @@ use App\Models\Estimation;
 use App\Models\Hardware;
 use App\Models\HardwareType;
 use App\Models\Organisation;
-use App\Models\Provider;
+use App\Models\ProviderDetail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -48,12 +48,7 @@ class RecommendationControllerTest extends TestCase
                     'recommendations' => [
                         '*' => [
                             'rank',
-                            'provider' => [
-                                'id',
-                                'company_name',
-                                'rating',
-                                'verified',
-                            ],
+                            'providers',
                             'components' => [
                                 'solar_panels',
                                 'inverter',
@@ -144,10 +139,11 @@ class RecommendationControllerTest extends TestCase
         $this->assertNotEmpty($recommendations);
 
         foreach ($recommendations as $recommendation) {
-            $this->assertArrayHasKey('provider', $recommendation);
-            $this->assertArrayHasKey('company_name', $recommendation['provider']);
-            $this->assertArrayHasKey('rating', $recommendation['provider']);
-            $this->assertArrayHasKey('verified', $recommendation['provider']);
+            $this->assertArrayHasKey('providers', $recommendation);
+            $this->assertNotEmpty($recommendation['providers']);
+            $this->assertArrayHasKey('company_name', $recommendation['providers'][0]);
+            $this->assertArrayHasKey('rating', $recommendation['providers'][0]);
+            $this->assertArrayHasKey('verified', $recommendation['providers'][0]);
         }
     }
 
@@ -172,7 +168,7 @@ class RecommendationControllerTest extends TestCase
         $this->assertEquals(1500, $summary['total_watts']);
         $this->assertEquals(10.0, $summary['daily_kwh']); // 300/30
         $this->assertEquals(300, $summary['monthly_kwh']);
-        $this->assertEquals('400.00', $summary['estimated_monthly_cost']);
+        $this->assertEquals(400.00, $summary['estimated_monthly_cost_meta']['amount']);
     }
 
     public function test_provider_diversity_in_recommendations(): void
@@ -184,7 +180,8 @@ class RecommendationControllerTest extends TestCase
         ]);
 
         // Create additional providers with different hardware
-        $provider2 = Provider::factory()->create(['verified' => true, 'rating' => 4.3]);
+        $provider2 = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $provider2->id, 'verified' => true, 'rating' => 4.3]);
         $this->createHardwareForProvider($provider2, 5100);
 
         Sanctum::actingAs($user);
@@ -200,6 +197,175 @@ class RecommendationControllerTest extends TestCase
         $this->assertGreaterThanOrEqual(1, count($recommendations));
     }
 
+    public function test_user_can_persist_recommendation_bundle(): void
+    {
+        $user = User::factory()->create();
+        $estimation = Estimation::factory()->create([
+            'owner_type' => User::class,
+            'owner_id' => $user->id,
+        ]);
+
+        // Ensure some hardware exists (created in setUp)
+        $hardware = \App\Models\Hardware::limit(2)->get();
+
+        $components = [];
+        $total = 0;
+        foreach ($hardware as $h) {
+            $cost = (float) $h->price * 1;
+            $components[] = [
+                'hardware_id' => $h->id,
+                'quantity' => 1,
+                'total_cost' => $cost,
+                'role' => 'component',
+                'rationale' => 'Test selection',
+            ];
+            $total += $cost;
+        }
+
+        Sanctum::actingAs($user);
+
+        $payload = [
+            'total_cost' => $total,
+            'currency' => 'GHS',
+            'components' => $components,
+        ];
+
+        $response = $this->postJson("/api/estimations/{$estimation->id}/recommendations", $payload);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'id',
+                    'estimation_id',
+                    'total_cost',
+                    'components' => [
+                        '*' => [
+                            'id',
+                            'hardware_id',
+                            'quantity',
+                        ],
+                    ],
+                ],
+            ]);
+
+        $this->assertDatabaseHas('recommendation_bundles', ['estimation_id' => $estimation->id, 'total_cost' => $total]);
+    }
+
+    public function test_org_member_can_persist_recommendation_bundle(): void
+    {
+        $user = User::factory()->create();
+        $organisation = Organisation::factory()->create();
+        $organisation->members()->create(['user_id' => $user->id, 'role' => 'admin']);
+
+        $estimation = Estimation::factory()->create([
+            'owner_type' => Organisation::class,
+            'owner_id' => $organisation->id,
+        ]);
+
+        $hardware = \App\Models\Hardware::limit(1)->get();
+
+        $components = [[
+            'hardware_id' => $hardware->first()->id,
+            'quantity' => 1,
+            'total_cost' => (float) $hardware->first()->price,
+        ]];
+
+        Sanctum::actingAs($user);
+
+        $payload = [
+            'total_cost' => (float) $hardware->first()->price,
+            'components' => $components,
+        ];
+
+        $response = $this->postJson("/api/estimations/{$estimation->id}/recommendations", $payload);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('recommendation_bundles', ['estimation_id' => $estimation->id]);
+    }
+
+    public function test_validation_errors_returned_for_invalid_payload(): void
+    {
+        $user = User::factory()->create();
+        $estimation = Estimation::factory()->create([
+            'owner_type' => User::class,
+            'owner_id' => $user->id,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $response = $this->postJson("/api/estimations/{$estimation->id}/recommendations", []);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_user_can_fetch_persisted_bundles(): void
+    {
+        $user = User::factory()->create();
+        $estimation = Estimation::factory()->create([
+            'owner_type' => User::class,
+            'owner_id' => $user->id,
+        ]);
+
+        // Create a persisted bundle
+        $hardware = \App\Models\Hardware::first();
+        $bundle = \App\Services\RecommendationService::class;
+
+        Sanctum::actingAs($user);
+
+        // Persist using service to simulate user action
+        $service = app(\App\Services\RecommendationService::class);
+        $service->saveBundle($estimation, [
+            'total_cost' => (float) $hardware->price,
+            'currency' => 'GHS',
+            'components' => [
+                [
+                    'hardware_id' => $hardware->id,
+                    'quantity' => 1,
+                    'total_cost' => (float) $hardware->price,
+                ],
+            ],
+        ], $user);
+
+        $response = $this->getJson("/api/estimations/{$estimation->id}/recommendation-bundles");
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'estimation_id',
+                        'total_cost',
+                        'components' => [
+                            '*' => [
+                                'id',
+                                'hardware_id',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+    }
+
+    public function test_unauthorized_user_cannot_fetch_bundles(): void
+    {
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+
+        $estimation = Estimation::factory()->create([
+            'owner_type' => User::class,
+            'owner_id' => $other->id,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $response = $this->getJson("/api/estimations/{$estimation->id}/recommendation-bundles");
+
+        $response->assertStatus(403);
+    }
+
     private function seedHardwareTypes(): void
     {
         HardwareType::create(['key' => 'solar_panel', 'name' => 'Solar Panel']);
@@ -210,17 +376,19 @@ class RecommendationControllerTest extends TestCase
 
     private function createTestHardware(): void
     {
-        $provider = Provider::factory()->create(['verified' => true, 'rating' => 4.5]);
+        $provider = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $provider->id, 'verified' => true, 'rating' => 4.5]);
         $this->createHardwareForProvider($provider);
     }
 
-    private function createHardwareForProvider(Provider $provider, float $basePrice = 5000): void
+    private function createHardwareForProvider(User $providerUser, float $basePrice = 5000): void
     {
         $types = HardwareType::all()->keyBy('key');
 
         Hardware::factory()->solarPanel()->create([
             'hardware_type_id' => $types['solar_panel']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.32,
             'verified' => true,
             'status' => 'active',
@@ -229,7 +397,8 @@ class RecommendationControllerTest extends TestCase
 
         Hardware::factory()->inverter()->create([
             'hardware_type_id' => $types['inverter']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.25,
             'verified' => true,
             'status' => 'active',
@@ -238,7 +407,8 @@ class RecommendationControllerTest extends TestCase
 
         Hardware::factory()->battery()->create([
             'hardware_type_id' => $types['battery']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.35,
             'verified' => true,
             'status' => 'active',
@@ -247,7 +417,8 @@ class RecommendationControllerTest extends TestCase
 
         Hardware::factory()->chargeController()->create([
             'hardware_type_id' => $types['charge_controller']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.08,
             'verified' => true,
             'status' => 'active',

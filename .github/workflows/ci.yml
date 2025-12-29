@@ -144,8 +144,10 @@ jobs:
         working-directory: backend
         run: |
           php artisan migrate:fresh --force
-          php artisan db:seed --class=Database\\Seeders\\CategorySeeder --force
-          php artisan db:seed --class=Database\\Seeders\\ApplianceSeeder --force
+          # Seed foundation data then demo data for integration tests
+          php artisan db:seed --class=CategorySeeder --force
+          php artisan db:seed --class=ApplianceSeeder --force
+          php artisan app:seed-demo
           php artisan test --testsuite=Feature --coverage --min=80
 
       - name: Upload coverage reports
