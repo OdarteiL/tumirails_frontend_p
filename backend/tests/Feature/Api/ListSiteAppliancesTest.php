@@ -16,6 +16,7 @@ class ListSiteAppliancesTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Site $site;
 
     protected function setUp(): void
@@ -64,11 +65,11 @@ class ListSiteAppliancesTest extends TestCase
                         'added_by_id',
                         'site_id',
                         'appliance_id',
-                        'appliance' => ['id','name','default_wattage'],
+                        'appliance' => ['id', 'name', 'default_wattage'],
                         'quantity',
                         'daily_usage_hours',
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
         $json = $response->json();

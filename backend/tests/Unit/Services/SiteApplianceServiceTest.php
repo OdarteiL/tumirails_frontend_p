@@ -23,6 +23,7 @@ class SiteApplianceServiceTest extends TestCase
     private SiteApplianceService $service;
 
     private AddApplianceToSiteAction $mockAction;
+
     private RemoveApplianceFromSiteAction $mockRemoveAction;
 
     protected function setUp(): void

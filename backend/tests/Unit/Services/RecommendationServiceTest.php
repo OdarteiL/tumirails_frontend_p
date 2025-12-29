@@ -5,7 +5,8 @@ namespace Tests\Unit\Services;
 use App\Models\Estimation;
 use App\Models\Hardware;
 use App\Models\HardwareType;
-use App\Models\Provider;
+use App\Models\ProviderDetail;
+use App\Models\User;
 use App\Services\RecommendationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -35,7 +36,8 @@ class RecommendationServiceTest extends TestCase
 
         $this->assertNotEmpty($recommendations);
         $this->assertLessThanOrEqual(5, count($recommendations));
-        $this->assertArrayHasKey('provider', $recommendations[0]);
+        $this->assertArrayHasKey('providers', $recommendations[0]);
+        $this->assertNotEmpty($recommendations[0]['providers']);
         $this->assertArrayHasKey('components', $recommendations[0]);
         $this->assertArrayHasKey('total_price', $recommendations[0]);
     }
@@ -95,11 +97,14 @@ class RecommendationServiceTest extends TestCase
             'monthly_kwh' => 300,
         ]);
 
-        $highRatedProvider = Provider::factory()->create(['rating' => 4.8, 'verified' => true]);
-        $lowRatedProvider = Provider::factory()->create(['rating' => 3.5, 'verified' => true]);
+        $highRatedUser = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $highRatedUser->id, 'rating' => 4.8, 'verified' => true]);
 
-        $this->createHardwareForProvider($highRatedProvider, 5000); // Higher price
-        $this->createHardwareForProvider($lowRatedProvider, 4900); // Lower price
+        $lowRatedUser = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $lowRatedUser->id, 'rating' => 3.5, 'verified' => true]);
+
+        $this->createHardwareForProvider($highRatedUser, 5000); // Higher price
+        $this->createHardwareForProvider($lowRatedUser, 4900); // Lower price
 
         $recommendations = $this->service->generateRecommendations($estimation);
 
@@ -113,17 +118,21 @@ class RecommendationServiceTest extends TestCase
             'monthly_kwh' => 300,
         ]);
 
-        $verifiedProvider = Provider::factory()->create(['verified' => true, 'rating' => 4.0]);
-        $unverifiedProvider = Provider::factory()->create(['verified' => false, 'rating' => 4.5]);
+        $verifiedUser = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $verifiedUser->id, 'verified' => true, 'rating' => 4.0]);
 
-        $this->createHardwareForProvider($verifiedProvider, 5000, true);
-        $this->createHardwareForProvider($unverifiedProvider, 4900, false); // Unverified hardware
+        $unverifiedUser = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $unverifiedUser->id, 'verified' => false, 'rating' => 4.5]);
+
+        $this->createHardwareForProvider($verifiedUser, 5000, true);
+        $this->createHardwareForProvider($unverifiedUser, 4900, false); // Unverified hardware
 
         $recommendations = $this->service->generateRecommendations($estimation);
 
         // Should only return verified provider since unverified hardware is filtered out
         $this->assertNotEmpty($recommendations);
-        $this->assertTrue($recommendations[0]['provider']['verified']);
+        $this->assertNotEmpty($recommendations[0]['providers']);
+        $this->assertTrue($recommendations[0]['providers'][0]['verified']);
     }
 
     public function test_handles_insufficient_hardware(): void
@@ -134,11 +143,13 @@ class RecommendationServiceTest extends TestCase
         ]);
 
         // Create only panels, no other hardware
-        $provider = Provider::factory()->create();
+        $providerUser = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $providerUser->id]);
         $panelType = HardwareType::where('key', 'solar_panel')->first();
         Hardware::factory()->create([
             'hardware_type_id' => $panelType->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'verified' => true,
             'status' => 'active',
         ]);
@@ -155,14 +166,15 @@ class RecommendationServiceTest extends TestCase
             'monthly_kwh' => 300,
         ]);
 
-        $provider = Provider::factory()->create();
-        $this->createHardwareForProvider($provider);
+        $providerUser = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $providerUser->id]);
+        $this->createHardwareForProvider($providerUser);
 
         $recommendations = $this->service->generateRecommendations($estimation);
 
         $this->assertGreaterThanOrEqual(1, count($recommendations));
         if (! empty($recommendations)) {
-            $this->assertEquals($provider->id, $recommendations[0]['provider']['id']);
+            $this->assertEquals($providerUser->id, $recommendations[0]['providers'][0]['id']);
         }
     }
 
@@ -173,8 +185,9 @@ class RecommendationServiceTest extends TestCase
             'monthly_kwh' => 300,
         ]);
 
-        $provider = Provider::factory()->create(['verified' => false]);
-        $this->createHardwareForProvider($provider, 5000, false);
+        $providerUser = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $providerUser->id, 'verified' => false]);
+        $this->createHardwareForProvider($providerUser, 5000, false);
 
         $recommendations = $this->service->generateRecommendations($estimation);
 
@@ -224,41 +237,48 @@ class RecommendationServiceTest extends TestCase
 
     private function createTestHardware(): void
     {
-        $provider1 = Provider::factory()->create(['rating' => 4.5, 'verified' => true]);
-        $provider2 = Provider::factory()->create(['rating' => 4.2, 'verified' => true]);
+        $provider1 = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $provider1->id, 'rating' => 4.5, 'verified' => true]);
+
+        $provider2 = User::factory()->create();
+        ProviderDetail::factory()->create(['user_id' => $provider2->id, 'rating' => 4.2, 'verified' => true]);
 
         $this->createHardwareForProvider($provider1, 5000);
         $this->createHardwareForProvider($provider2, 5200);
     }
 
-    private function createHardwareForProvider(Provider $provider, float $basePrice = 5000, bool $verified = true): void
+    private function createHardwareForProvider(User $providerUser, float $basePrice = 5000, bool $verified = true): void
     {
         $types = HardwareType::all()->keyBy('key');
 
         Hardware::factory()->solarPanel()->create([
             'hardware_type_id' => $types['solar_panel']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.32, // 32% of total
             'verified' => $verified,
         ]);
 
         Hardware::factory()->inverter()->create([
             'hardware_type_id' => $types['inverter']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.25, // 25% of total
             'verified' => $verified,
         ]);
 
         Hardware::factory()->battery()->create([
             'hardware_type_id' => $types['battery']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.35, // 35% of total
             'verified' => $verified,
         ]);
 
         Hardware::factory()->chargeController()->create([
             'hardware_type_id' => $types['charge_controller']->id,
-            'provider_id' => $provider->id,
+            'owner_type' => User::class,
+            'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.08, // 8% of total
             'verified' => $verified,
         ]);

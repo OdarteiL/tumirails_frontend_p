@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Hardware extends Model
 {
@@ -15,7 +14,6 @@ class Hardware extends Model
 
     protected $fillable = [
         'hardware_type_id',
-        'provider_id',
         'name',
         'description',
         'price',
@@ -40,10 +38,7 @@ class Hardware extends Model
         return $this->belongsTo(HardwareType::class);
     }
 
-    public function provider(): BelongsTo
-    {
-        return $this->belongsTo(Provider::class);
-    }
+    // Legacy provider relation removed. Use the polymorphic `owner` relationship instead.
 
     public function owner(): MorphTo
     {
@@ -63,7 +58,7 @@ class Hardware extends Model
 
     public function scopeByProvider(Builder $query, int $providerId): Builder
     {
-        return $query->where('provider_id', $providerId);
+        throw new \BadMethodCallException('scopeByProvider has been removed; use owner-based queries instead.');
     }
 
     public function scopeAvailable(Builder $query): Builder

@@ -3,13 +3,13 @@
 namespace Tests\Unit\Services;
 
 use App\Actions\Site\RemoveApplianceFromSiteAction;
-use App\Services\SiteApplianceService;
 use App\Models\Appliance;
 use App\Models\Category;
 use App\Models\Organisation;
 use App\Models\Site;
 use App\Models\SiteAppliance;
 use App\Models\User;
+use App\Services\SiteApplianceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

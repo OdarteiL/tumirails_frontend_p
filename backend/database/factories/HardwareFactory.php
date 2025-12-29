@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Hardware;
 use App\Models\HardwareType;
-use App\Models\Provider;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,8 +15,6 @@ class HardwareFactory extends Factory
     {
         return [
             'hardware_type_id' => HardwareType::factory(),
-            'provider_id' => Provider::factory(),
-            // new polymorphic owner fields (default to a user for test fixtures)
             'owner_type' => \App\Models\User::class,
             'owner_id' => User::factory(),
             'name' => $this->faker->words(3, true),
