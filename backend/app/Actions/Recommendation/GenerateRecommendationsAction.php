@@ -266,19 +266,41 @@ class GenerateRecommendationsAction
         $mppt_min = $inverter->specs['mppt_v_min'] ?? ($controller->specs['mppt_v_min'] ?? 0);
         $mppt_max = $inverter->specs['mppt_v_max'] ?? ($controller->specs['mppt_v_max'] ?? 1000);
         $voc_max = $inverter->specs['voc_max'] ?? ($controller->specs['voc_max'] ?? 1000);
+        $controller_max_current = $controller->specs['max_input_current'] ?? null;
 
         // cold temperature multiplier for Voc (approx -10C = +1.25 factor safety)
         $cold_factor = 1.25;
 
-        // max series by MPPT Vmp (so that series * Vmp within MPPT range)
-        $max_series_by_mppt = $mppt_max > 0 && $vmp > 0 ? floor($mppt_max / max(0.0001, $vmp)) : PHP_INT_MAX;
-        // max series by Voc under cold
-        $max_series_by_voc = $voc_max > 0 && $voc > 0 ? floor($voc_max / ($voc * $cold_factor)) : PHP_INT_MAX;
+        // determine feasible series range using MPPT and Voc constraints
+        $min_series_by_mppt = ($mppt_min > 0 && $vmp > 0) ? (int) ceil($mppt_min / max(0.0001, $vmp)) : 1;
+        $max_series_by_mppt = ($mppt_max > 0 && $vmp > 0) ? (int) floor($mppt_max / max(0.0001, $vmp)) : PHP_INT_MAX;
+        $max_series_by_voc = ($voc_max > 0 && $voc > 0) ? (int) floor($voc_max / ($voc * $cold_factor)) : PHP_INT_MAX;
 
-        $max_series = (int) max(1, min($max_series_by_mppt, $max_series_by_voc));
+        $min_series = max(1, $min_series_by_mppt);
+        $max_series = max(1, min($max_series_by_mppt, $max_series_by_voc));
 
-        // choose series as the largest that doesn't exceed desired panels when possible
-        $series = min($max_series, max(1, (int) floor($desiredPanels / 2)));
+        // If constraints are impossible, relax to best-effort choices
+        if ($min_series > $max_series) {
+            $max_series = max(1, min($max_series_by_mppt ?: PHP_INT_MAX, $max_series_by_voc ?: PHP_INT_MAX));
+            $min_series = 1;
+        }
+
+        // Prefer a series count that places Vmp*series near mid-MPPT when possible,
+        // but never exceed the desired panel count.
+        $series = 1;
+        if ($mppt_min > 0 && $mppt_max > 0) {
+            $target_v = ($mppt_min + $mppt_max) / 2.0;
+            $best = null; $bestDiff = null;
+            for ($s = $min_series; $s <= $max_series; $s++) {
+                if ($s > $desiredPanels) break;
+                $diff = abs($vmp * $s - $target_v);
+                if ($best === null || $diff < $bestDiff) { $best = $s; $bestDiff = $diff; }
+            }
+            $series = $best ?? min($max_series, max(1, (int) floor($desiredPanels / 2)));
+        } else {
+            $series = min($max_series, max(1, (int) floor($desiredPanels / 2)));
+        }
+
         if ($series < 1) $series = 1;
 
         // parallel strings to reach desired panel count
@@ -288,6 +310,21 @@ class GenerateRecommendationsAction
         $safety = 1.2;
         $imp_per_string = $imp > 0 ? ($imp) : 0;
         $controller_current = $imp_per_string * $parallel * $safety;
+
+        // If a controller with max_input_current is present and current exceeds it,
+        // try to increase series (reducing parallel) up to max_series to satisfy the limit.
+        if ($controller_max_current !== null && $controller_current > $controller_max_current) {
+            for ($s = $series + 1; $s <= $max_series; $s++) {
+                $p = (int) ceil($desiredPanels / max(1, $s));
+                $c = $imp_per_string * $p * $safety;
+                if ($c <= $controller_max_current) {
+                    $series = $s;
+                    $parallel = $p;
+                    $controller_current = $c;
+                    break;
+                }
+            }
+        }
 
         return [
             'series' => $series,
