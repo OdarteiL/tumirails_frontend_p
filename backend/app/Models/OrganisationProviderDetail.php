@@ -16,6 +16,8 @@ class OrganisationProviderDetail extends Model
         'service_areas',
         'certifications',
         'rating',
+        'verified',
+        'status',
     ];
 
     protected $casts = [
@@ -24,6 +26,7 @@ class OrganisationProviderDetail extends Model
         'rating' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'verified' => 'boolean',
     ];
 
     /**

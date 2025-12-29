@@ -4,9 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\Hardware;
 use App\Models\HardwareType;
-use App\Models\User;
 use App\Models\ProviderDetail;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ProviderHardwareSeeder extends Seeder
 {
@@ -22,7 +23,7 @@ class ProviderHardwareSeeder extends Seeder
 
         foreach ($providers as $providerData) {
             // create a user to represent the provider
-            $email = strtolower(str_replace(' ', '.', $providerData['company_name'])) . '@example.test';
+            $email = strtolower(str_replace(' ', '.', $providerData['company_name'])).'@example.test';
             $user = User::firstOrCreate(
                 ['email' => $email],
                 [
@@ -37,7 +38,7 @@ class ProviderHardwareSeeder extends Seeder
                 ['user_id' => $user->id],
                 [
                     'company_name' => $providerData['company_name'],
-                    'business_registration' => Str::slug($providerData['company_name']) . '-reg',
+                    'business_registration' => Str::slug($providerData['company_name']).'-reg',
                     'service_areas' => json_encode([]),
                     'certifications' => json_encode([]),
                     'rating' => $providerData['rating'],

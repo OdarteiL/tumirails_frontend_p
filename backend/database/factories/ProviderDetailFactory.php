@@ -18,7 +18,7 @@ class ProviderDetailFactory extends Factory
         return [
             'user_id' => User::factory(),
             'company_name' => $company,
-            'business_registration' => Str::slug($company) . '-' . $this->faker->unique()->numerify('###'),
+            'business_registration' => Str::slug($company).'-'.$this->faker->unique()->numerify('###'),
             'service_areas' => [],
             'certifications' => [],
             'rating' => $this->faker->randomFloat(2, 3.5, 5.0),

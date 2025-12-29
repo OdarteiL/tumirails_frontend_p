@@ -18,6 +18,7 @@ class ProviderDetail extends Model
         'certifications',
         'rating',
         'verified',
+        'status',
     ];
 
     protected function casts(): array

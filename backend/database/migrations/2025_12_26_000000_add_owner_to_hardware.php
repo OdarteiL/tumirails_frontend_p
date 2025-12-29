@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 return new class() extends Migration
@@ -25,7 +25,7 @@ return new class() extends Migration
 
             foreach ($providers as $provider) {
                 // Create a user to represent this provider company
-                $email = Str::slug($provider->company_name) . 
+                $email = Str::slug($provider->company_name).
                     sprintf('+provider%d@tumi.local', $provider->id);
 
                 $userId = DB::table('users')->insertGetId([
