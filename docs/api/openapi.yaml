@@ -812,6 +812,202 @@ components:
         total_cost: 1800
         currency: GHS
 
+    # ---------------------- RECOMMENDATION RESOURCE ----------------------
+    ProviderSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        company_name:
+          type: string
+          nullable: true
+        rating:
+          type: number
+          format: double
+        verified:
+          type: boolean
+      example:
+        id: 15
+        company_name: Solar Providers Ghana Ltd
+        rating: 4.85
+        verified: true
+
+    RecommendationComponent:
+      type: object
+      properties:
+        hardware_id:
+          type: integer
+        name:
+          type: string
+        count:
+          type: integer
+        unit_price:
+          type: string
+        subtotal:
+          type: string
+        specs:
+          type: object
+        rationale:
+          type: string
+        provider:
+          $ref: '#/components/schemas/ProviderSummary'
+      example:
+        hardware_id: 4001
+        name: SuperPanel 450W
+        count: 4
+        unit_price: '1200.00'
+        subtotal: '4800.00'
+        specs:
+          power_watts: 450
+          efficiency: 19.5
+        rationale: 'Sized for daily kWh and efficiency'
+        provider:
+          id: 15
+          company_name: Solar Providers Ghana Ltd
+          rating: 4.85
+          verified: true
+
+    RecommendationItem:
+      type: object
+      properties:
+        providers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderSummary'
+        components:
+          type: object
+          properties:
+            solar_panels:
+              $ref: '#/components/schemas/RecommendationComponent'
+            inverter:
+              $ref: '#/components/schemas/RecommendationComponent'
+            battery:
+              $ref: '#/components/schemas/RecommendationComponent'
+            charge_controller:
+              $ref: '#/components/schemas/RecommendationComponent'
+        total_price:
+          type: number
+          format: double
+        currency:
+          type: string
+      example:
+        providers:
+          - id: 15
+            company_name: Solar Providers Ghana Ltd
+            rating: 4.85
+            verified: true
+        components:
+          solar_panels:
+            hardware_id: 4001
+            name: SuperPanel 450W
+            count: 4
+            unit_price: '1200.00'
+            subtotal: '4800.00'
+            specs:
+              power_watts: 450
+              efficiency: 19.5
+            rationale: 'Sized for daily kWh and efficiency'
+            provider:
+              id: 15
+              company_name: Solar Providers Ghana Ltd
+              rating: 4.85
+              verified: true
+        total_price: 17160.0
+        currency: GHS
+
+    RecommendationData:
+      type: object
+      properties:
+        estimation_summary:
+          type: object
+          properties:
+            total_watts:
+              type: integer
+            daily_kwh:
+              type: number
+            monthly_kwh:
+              type: number
+            estimated_monthly_cost:
+              type: string
+            estimated_monthly_cost_meta:
+              type: object
+              properties:
+                amount:
+                  type: number
+                formatted:
+                  type: string
+                currency:
+                  type: string
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendationItem'
+      example:
+        estimation_summary:
+          total_watts: 1500
+          daily_kwh: 10.0
+          monthly_kwh: 300
+          estimated_monthly_cost: '400.00'
+        recommendations:
+          - providers:
+              - id: 15
+                company_name: Solar Providers Ghana Ltd
+                rating: 4.85
+                verified: true
+            components:
+              solar_panels:
+                hardware_id: 4001
+                name: SuperPanel 450W
+                count: 4
+                unit_price: '1200.00'
+                subtotal: '4800.00'
+                specs:
+                  power_watts: 450
+                rationale: 'Sized for daily kWh and efficiency'
+            total_price: 17160.0
+            currency: GHS
+
+    RecommendationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/RecommendationData'
+        message:
+          type: string
+      example:
+        success: true
+        data:
+          estimation_summary:
+            total_watts: 1500
+            daily_kwh: 10.0
+            monthly_kwh: 300
+            estimated_monthly_cost: '400.00'
+            estimated_monthly_cost_meta:
+              amount: 400.00
+              formatted: GHS 400.00
+              currency: GHS
+          recommendations:
+            - providers:
+                - id: 15
+                  company_name: Solar Providers Ghana Ltd
+                  rating: 4.85
+                  verified: true
+              components:
+                solar_panels:
+                  hardware_id: 4001
+                  name: SuperPanel 450W
+                  count: 4
+                  unit_price: '1200.00'
+                  subtotal: '4800.00'
+                  specs:
+                    power_watts: 450
+                  rationale: 'Sized for daily kWh and efficiency'
+              total_price: 17160.0
+              currency: GHS
+
     # ---------------------- PAYMENT ----------------------
     Payment:
       type: object
@@ -3657,9 +3853,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RecommendedHardware'
+                $ref: '#/components/schemas/RecommendationResponse'
 
   # ---------------- PAYMENTS ----------------
   /projects/{id}/payments:
