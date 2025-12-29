@@ -12,7 +12,13 @@ class FormatCurrencyAction
      */
     public function execute(float $amount, ?string $currencyCode = null): string
     {
-        $active = Country::where('is_active', true)->first();
+        $active = null;
+        try {
+            $active = Country::where('is_active', true)->first();
+        } catch (\Throwable $e) {
+            // in tests or early bootstrap Country/config may not be resolvable
+            $active = null;
+        }
         $currency = $currencyCode ?? ($active->currency_code ?? 'GHS');
 
         // Try using intl if available
@@ -20,7 +26,9 @@ class FormatCurrencyAction
             try {
                 $fmt = new \NumberFormatter('en_US', \NumberFormatter::CURRENCY);
                 $formatted = $fmt->formatCurrency($amount, $currency);
-                if ($formatted !== false) return $formatted;
+                if ($formatted !== false) {
+                    return $formatted;
+                }
             } catch (\Throwable $e) {
                 // fall through
             }
@@ -36,7 +44,12 @@ class FormatCurrencyAction
      */
     public function formatMeta(float $amount, ?string $currencyCode = null): array
     {
-        $active = Country::where('is_active', true)->first();
+        $active = null;
+        try {
+            $active = Country::where('is_active', true)->first();
+        } catch (\Throwable $e) {
+            $active = null;
+        }
         $currency = $currencyCode ?? ($active->currency_code ?? 'GHS');
 
         $formatted = $this->execute($amount, $currency);
