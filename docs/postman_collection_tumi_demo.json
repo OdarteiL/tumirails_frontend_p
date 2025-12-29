@@ -179,6 +179,40 @@
     {
       "name": "09 - List Estimations",
       "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{baseUrl}}/api/estimations", "host": ["{{baseUrl}}"], "path": ["api","estimations"] } }
+    },
+    {
+      "name": "10 - Get Recommendations",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": { "raw": "{{baseUrl}}/api/estimations/{{estimation_id}}/recommendations", "host": ["{{baseUrl}}"], "path": ["api","estimations","{{estimation_id}}","recommendations"] } }
+    }
+    ,
+    {
+      "name": "11 - Persist Recommendation Bundle",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"total_cost\": 10000.00,\n  \"currency\": \"GHS\",\n  \"components\": [\n    { \"hardware_id\": {{hardware_id_1}}, \"quantity\": 1, \"total_cost\": 10000.00 }\n  ]\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/estimations/{{estimation_id}}/recommendations", "host": ["{{baseUrl}}"], "path": ["api","estimations","{{estimation_id}}","recommendations"] }
+      },
+      "event": [ { "listen": "test", "script": { "exec": [
+        "var j = pm.response.json();",
+        "if(j && j.data && j.data.id) { pm.environment.set('bundle_id', j.data.id); pm.test('bundle persisted', function() { pm.response.to.have.status(201); }); }"
+      ] } } ]
+    },
+    {
+      "name": "12 - Get Persisted Recommendation Bundles",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/estimations/{{estimation_id}}/recommendation-bundles", "host": ["{{baseUrl}}"], "path": ["api","estimations","{{estimation_id}}","recommendation-bundles"] }
+      },
+      "event": [ { "listen": "test", "script": { "exec": [
+        "var j = pm.response.json();",
+        "pm.test('ok', function() { pm.response.to.have.status(200); });",
+        "if(j && Array.isArray(j.data) && j.data.length) { pm.environment.set('bundle_id', j.data[0].id); }"
+      ] } } ]
     }
   ]
 }
