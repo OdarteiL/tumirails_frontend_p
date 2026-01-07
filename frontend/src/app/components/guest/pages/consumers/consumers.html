@@ -1,45 +1,100 @@
-<section class="py-24 bg-gray-50 relative">
-    <div class="container mx-auto px-6 text-center relative z-10">
-        <span class="text-[var(--color-primary)] font-bold tracking-widest uppercase text-sm mb-4 block">Residential &
-            Commercial</span>
-        <h1 class="text-5xl font-black text-[var(--color-secondary)] mb-6">For Consumers</h1>
-        <p class="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">Simple, affordable, and reliable solar
-            solutions tailored for your home or business.</p>
-    </div>
-</section>
+<div class="min-h-screen bg-white font-sans text-slate-800">
 
-<section class="py-24 bg-white">
-    <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div
-                class="card p-10 h-full flex flex-col items-start border-none shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow">
-                <div class="text-6xl text-blue-100 mb-6 font-bold">1</div>
-                <h3 class="text-2xl font-bold mb-4 text-[var(--color-secondary)]">Estimate Your Needs</h3>
-                <p class="text-gray-500 leading-relaxed mb-6 flex-grow">Use our free online estimator tool to calculate
-                    your energy requirements and estimated costs in minutes based on your actual data.</p>
-                <a routerLink="/estimator" class="text-[var(--color-primary)] font-bold hover:underline">Start
-                    Estimation &rarr;</a>
-            </div>
-
-            <div
-                class="card p-10 h-full flex flex-col items-start border-none shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow">
-                <div class="text-6xl text-blue-100 mb-6 font-bold">2</div>
-                <h3 class="text-2xl font-bold mb-4 text-[var(--color-secondary)]">Connect with Installers</h3>
-                <p class="text-gray-500 leading-relaxed mb-6 flex-grow">We match you with verified, local installers who
-                    can deliver your specific system requirements efficiently and professionally.</p>
-            </div>
-
-            <div
-                class="card p-10 h-full flex flex-col items-start border-none shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow">
-                <div class="text-6xl text-blue-100 mb-6 font-bold">3</div>
-                <h3 class="text-2xl font-bold mb-4 text-[var(--color-secondary)]">Enjoy Reliable Power</h3>
-                <p class="text-gray-500 leading-relaxed mb-6 flex-grow">Get your system installed and enjoy consistent
-                    electricity while saving on long-term energy costs.</p>
-            </div>
+    <!-- Hero Section -->
+    <section
+        class="relative h-[600px] flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="assets/consumers-hero.png" alt="Solar Installation" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-slate-900/40 mix-blend-multiply"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20"></div>
         </div>
 
-        <div class="mt-24 text-center">
-            <a routerLink="/estimator" class="btn btn-primary text-lg px-12 py-4 shadow-xl">Calculate My Savings</a>
+        <!-- Content -->
+        <div class="relative z-10 max-w-4xl mx-auto space-y-6">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white drop-shadow-md">
+                Empowering Your Home with Clean Energy
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-50 max-w-3xl mx-auto leading-relaxed font-light drop-shadow-sm">
+                Join the Tumirails community to access affordable, sustainable solar energy for your household. Take
+                control of your power, save on bills, and contribute to a greener Ghana.
+            </p>
+            <div class="pt-4">
+                <a href="/estimator"
+                    class="bg-[#0E6C8B] hover:bg-[#094d63] text-white font-bold py-4 px-10 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg border-2 border-transparent hover:border-[#4ec4e8]/50">
+                    Discover Your Savings
+                </a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-16">Benefits for Your Home</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div *ngFor="let benefit of benefits"
+                class="group bg-white p-10 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 text-center">
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white text-[#0E6C8B] mb-6 shadow-md group-hover:bg-[#0E6C8B] group-hover:text-white transition-colors duration-300 ring-4 ring-[#e0f2f7]">
+                    <lucide-icon [img]="benefit.icon" class="w-8 h-8" [strokeWidth]="2"></lucide-icon>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-4">{{ benefit.title }}</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    {{ benefit.description }}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started Section -->
+    <section class="bg-gradient-to-b from-slate-50 to-white py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-20">Getting Started is Easy</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div *ngFor="let step of steps" class="text-center relative group">
+                    <div
+                        class="text-7xl font-bold text-[#0E6C8B]/10 group-hover:text-[#0E6C8B]/20 transition-colors duration-300 select-none absolute -top-12 left-1/2 transform -translate-x-1/2 scale-150 z-0">
+                        {{ step.number }}
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-16 h-16 mx-auto mb-6 flex items-center justify-center text-4xl font-bold text-[#0E6C8B]">
+                            {{ step.number }}
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-4">{{ step.title }}</h3>
+                        <p class="text-slate-600 leading-relaxed max-w-xs mx-auto">
+                            {{ step.description }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 pb-32">
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-16">What Our Consumers Say</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            <div *ngFor="let tm of testimonials" class="p-8 rounded-2xl transition-all duration-300 border relative"
+                [ngClass]="tm.isHighlighted ? 'bg-white border-[#8B5CF6] shadow-xl scale-105 z-10' : 'bg-white border-slate-100 shadow-sm hover:shadow-md'">
+
+                <p class="text-slate-600 italic mb-8 leading-relaxed text-lg">
+                    "{{ tm.quote }}"
+                </p>
+
+                <div class="flex items-center gap-4">
+                    <img [src]="tm.image" [alt]="tm.name + ' - ' + tm.role"
+                        class="w-14 h-14 rounded-full object-cover border-2 border-slate-100">
+                    <div>
+                        <h4 class="font-bold text-slate-900">{{ tm.name }}</h4>
+                        <p class="text-sm text-slate-500">{{ tm.role }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>

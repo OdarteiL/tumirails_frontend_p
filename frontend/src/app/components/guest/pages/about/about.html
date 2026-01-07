@@ -1,49 +1,157 @@
-<!-- consistent hero -->
-<section class="py-24 bg-[var(--color-secondary)] relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] to-[#004e6e] opacity-95"></div>
-    <div class="container mx-auto px-6 relative z-10 text-center">
-        <h1 class="text-5xl font-black text-white mb-6">About Us</h1>
-        <p class="text-xl text-blue-100 max-w-2xl mx-auto font-light leading-relaxed">
-            Driving the future of energy in Ghana through innovation, community partnership, and a commitment to
-            sustainability.
-        </p>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">Transforming Ghana's Energy Landscape</h1>
+        <p class="hero-subtitle">At Tumirails, we are dedicated to building a sustainable and equitable energy future
+            for Ghana, powered by decentralized solar technology and community empowerment.</p>
     </div>
 </section>
 
-<section class="py-24 bg-[#fcfcfc]">
-    <div class="container mx-auto px-6">
-        <div class="flex flex-col md:flex-row gap-16 items-center mb-24">
-            <div class="w-full md:w-1/2">
-                <h2 class="text-4xl font-bold text-[var(--color-secondary)] mb-6">Our Mission</h2>
-                <p class="text-gray-500 text-lg leading-relaxed mb-6">
-                    To provide accessible, reliable, and sustainable electricity to every corner of Ghana by leveraging
-                    localized inputs and decentralized networks.
+<!-- Our Story & Vision Section -->
+<section class="story-vision-section">
+    <div class="container">
+        <div class="story-vision-wrapper">
+            <!-- Left Side - Text Content -->
+            <div class="story-vision-content">
+                <h2 class="section-title-left">Our Story & Vision</h2>
+                <p class="story-vision-text">
+                    Tumirails was founded on the belief that access to clean, affordable, and reliable energy is a
+                    fundamental right. Witnessing the energy challenges faced by many communities in Ghana, our founders
+                    envisioned a decentralized marketplace that would empower individuals and businesses to take control
+                    of their energy future.
                 </p>
-                <p class="text-gray-500 text-lg leading-relaxed">
-                    We aim to empower communities to take control of their energy needs, fostering economic growth and
-                    environmental stewardship.
+                <p class="story-vision-text">
+                    Our vision is to revolutionize Ghana's energy sector by establishing a nationwide network of digital
+                    solar rails. This infrastructure will enable seamless peer-to-peer energy trading, connecting
+                    prosumers with excess solar energy to consumers in need. We strive for a future where energy is not
+                    just a utility, but a shared resource that fosters economic growth and environmental stewardship.
                 </p>
             </div>
-            <div
-                class="w-full md:w-1/2 h-80 rounded-3xl bg-gray-200 flex items-center justify-center relative overflow-hidden shadow-xl group">
-                <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-transparent"></div>
-                <span class="text-gray-400 font-bold text-xl">Mission Image</span>
+
+            <!-- Right Side - Image -->
+            <div class="story-vision-image-wrapper">
+                <img src="/assets/placeholder-image.svg" alt="Tumirails Team" class="story-vision-image">
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="flex flex-col md:flex-row gap-16 items-center">
-            <div
-                class="w-full md:w-1/2 h-80 rounded-3xl bg-gray-200 flex items-center justify-center relative overflow-hidden shadow-xl group order-2 md:order-1">
-                <div class="absolute inset-0 bg-gradient-to-tr from-green-500/20 to-transparent"></div>
-                <span class="text-gray-400 font-bold text-xl">Vision Image</span>
+<!-- Our Core Values Section -->
+<section class="core-values-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Our Core Values</h2>
+        </div>
+
+        <div class="values-grid">
+            @for (value of coreValues; track value.title) {
+            <div class="value-card">
+                <div class="value-icon-wrapper">
+                    <lucide-icon [img]="value.icon" [size]="48" strokeWidth="1.5" class="value-icon"></lucide-icon>
+                </div>
+                <h3 class="value-title">{{ value.title }}</h3>
+                <p class="value-description">{{ value.description }}</p>
             </div>
-            <div class="w-full md:w-1/2 order-1 md:order-2">
-                <h2 class="text-4xl font-bold text-[var(--color-secondary)] mb-6">Our Vision</h2>
-                <p class="text-gray-500 text-lg leading-relaxed">
-                    A Ghana where energy poverty is a thing of the past, and every household and business has the power
-                    to thrive through clean, cost-effective renewable sources.
-                </p>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Our Journey Section -->
+<section class="journey-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Our Journey: Key Milestones</h2>
+        </div>
+
+        <div class="journey-timeline">
+            @for (milestone of journeyMilestones; track milestone.year) {
+            <div class="milestone-item">
+                <div class="milestone-year">{{ milestone.year }}</div>
+                <div class="milestone-content">
+                    <h3 class="milestone-title">{{ milestone.title }}</h3>
+                    <p class="milestone-description">{{ milestone.description }}</p>
+                </div>
             </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Meet Our Team Section -->
+<section class="team-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Meet Our Team</h2>
+        </div>
+
+        <div class="team-grid">
+            @for (member of teamMembers; track member.name) {
+            <div class="team-card">
+                <img [src]="member.image" [alt]="member.name" class="team-image">
+            </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Our Valued Partners Section -->
+<section class="partners-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Our Valued Partners</h2>
+            <p class="section-subtitle">Collaborating with industry leaders to deliver exceptional service</p>
+        </div>
+
+        <div class="partners-grid">
+            <div class="partner-logo-card"></div>
+            <div class="partner-logo-card"></div>
+            <div class="partner-logo-card"></div>
+            <div class="partner-logo-card"></div>
+            <div class="partner-logo-card"></div>
+            <div class="partner-logo-card"></div>
+            <div class="partner-logo-card"></div>
+            <div class="partner-logo-card"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Awards & Recognition Section -->
+<section class="awards-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Awards & Recognition</h2>
+            <p class="section-subtitle">Honored for our commitment to innovation and sustainability</p>
+        </div>
+
+        <div class="awards-grid">
+            @for (award of awards; track award.title) {
+            <div class="award-card">
+                <div class="award-image-wrapper">
+                    <img [src]="award.image" [alt]="award.title" class="award-image">
+                </div>
+                <div class="award-content">
+                    <h3 class="award-title">{{ award.title }}</h3>
+                    <p class="award-organization">{{ award.organization }}</p>
+                    <p class="award-year">{{ award.year }}</p>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta-section">
+    <div class="container cta-container">
+        <h3 class="cta-title">Ready to Join the Energy Revolution?</h3>
+        <p class="cta-description">
+            Be part of Ghana's growing community of energy traders and contribute to a sustainable future.
+        </p>
+        <div class="cta-action-buttons">
+            <a routerLink="/register" class="btn btn-light">Get Started Today</a>
+            <a routerLink="/contact" class="btn btn-outline-light">Contact Us</a>
         </div>
     </div>
 </section>

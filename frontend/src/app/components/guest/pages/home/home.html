@@ -1,190 +1,205 @@
-<!-- Hero Section -->
-<section class="min-h-[85vh] flex items-center bg-white border-b border-gray-100 relative overflow-hidden">
-    <div class="container mx-auto px-6 relative z-10 text-center pt-20 pb-32">
-        <div class="max-w-4xl mx-auto">
-            <span
-                class="inline-block py-1.5 px-4 rounded-full bg-blue-50 text-[var(--color-primary)] text-sm font-bold tracking-wide mb-8">
-                POWERING THE FUTURE OF GHANA
-            </span>
-            <h1 class="text-5xl md:text-7xl font-bold text-[var(--color-secondary)] mb-8 leading-tight tracking-tight">
-                Decentralized Energy <br>
-                <span class="text-[var(--color-primary)]">Made Simple.</span>
-            </h1>
-            <p class="text-xl text-gray-500 mb-12 max-w-2xl mx-auto font-normal leading-relaxed">
-                Join the revolution of sustainable, affordable, and reliable solar energy solutions tailored for your
-                community. Get started in minutes.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a routerLink="/estimator"
-                    class="px-8 py-4 rounded-full bg-[var(--color-primary)] text-white font-semibold hover:bg-[#00567a] transition-all shadow-lg hover:shadow-xl text-lg">
-                    Get Free Estimate
-                </a>
-                <a routerLink="/how-it-works"
-                    class="px-8 py-4 rounded-full border border-gray-200 text-gray-600 font-semibold hover:border-gray-400 hover:text-gray-900 transition-all text-lg bg-white">
-                    How It Works
-                </a>
-            </div>
-        </div>
-    </div>
+<!-- Hero Section Carousel -->
+<section class="hero-carousel" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+    <!-- Carousel Slides -->
+    <div class="carousel-container">
+        @for (slide of [currentSlide()]; track slide.id) {
+        <div class="carousel-slide" [style.background-image]="'url(' + slide.backgroundImage + ')'">
+            <!-- Overlay for better text readability -->
+            <div class="slide-overlay"></div>
 
-    <!-- Decorative faint pattern (optional, keeps it clean) -->
-    <div class="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none"
-        style="background-image: radial-gradient(#006994 1px, transparent 1px); background-size: 32px 32px;">
-    </div>
-</section>
+            <!-- Slide Content -->
+            <div class="slide-content">
+                <h1 class="slide-heading">{{ slide.heading }}</h1>
+                <p class="slide-description">{{ slide.description }}</p>
 
-<!-- Value Proposition Section -->
-<section class="py-24 bg-white">
-    <div class="container mx-auto px-6">
-        <div class="text-center mb-20">
-            <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-secondary)] mb-4">Why Choose TumiRails?</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto text-lg">Connecting consumers and providers with transparency and
-                trust.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            <!-- Feature 1 -->
-            <div
-                class="p-8 rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 bg-white group cursor-default">
-                <div
-                    class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform text-2xl">
-                    ⚡</div>
-                <h3 class="text-xl font-bold mb-3 text-[var(--color-secondary)]">Reliable Energy</h3>
-                <p class="text-gray-500 leading-relaxed">Access consistent power supply designed to meet your specific
-                    needs, reducing reliance on the grid.</p>
-            </div>
-
-            <!-- Feature 2 -->
-            <div
-                class="p-8 rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 bg-white group cursor-default">
-                <div
-                    class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform text-2xl">
-                    💰</div>
-                <h3 class="text-xl font-bold mb-3 text-[var(--color-secondary)]">Cost Effective</h3>
-                <p class="text-gray-500 leading-relaxed">Save money with competitive pricing and transparent tools. No
-                    hidden fees, just savings.</p>
-            </div>
-
-            <!-- Feature 3 -->
-            <div
-                class="p-8 rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 bg-white group cursor-default">
-                <div
-                    class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform text-2xl">
-                    🌱</div>
-                <h3 class="text-xl font-bold mb-3 text-[var(--color-secondary)]">Sustainable</h3>
-                <p class="text-gray-500 leading-relaxed">Contribute to a greener Ghana by utilizing clean solar energy.
-                    Reduce your carbon footprint today.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Audience Segments -->
-<section class="py-24 bg-gray-50">
-    <div class="container mx-auto px-6 max-w-6xl">
-        <!-- For Consumers -->
-        <div
-            class="flex flex-col md:flex-row gap-16 items-center mb-32 border-b border-gray-200 pb-24 last:border-0 last:pb-0">
-            <div class="w-full md:w-1/2">
-                <div class="h-2 w-12 bg-[var(--color-primary)] rounded-full mb-6"></div>
-                <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-secondary)] mb-6">For Consumers</h2>
-                <p class="text-gray-500 text-lg mb-8 leading-relaxed">
-                    Cut costs and gain energy independence. We provide the tools to assess your needs and connect you
-                    with trusted professionals instantly.
-                </p>
-                <ul class="space-y-4 mb-8">
-                    <li class="flex items-center text-gray-700">
-                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Instant cost estimation
-                    </li>
-                    <li class="flex items-center text-gray-700">
-                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Vetted installation partners
-                    </li>
-                    <li class="flex items-center text-gray-700">
-                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Seamless project management
-                    </li>
-                </ul>
-                <a routerLink="/consumers"
-                    class="text-[var(--color-primary)] font-bold hover:underline flex items-center group">
-                    Learn More <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                </a>
-            </div>
-            <div class="w-full md:w-1/2">
-                <div
-                    class="bg-white p-2 rounded-2xl shadow-xl border border-gray-100 aspect-video flex items-center justify-center bg-gray-100">
-                    <span class="text-gray-400 font-medium">Consumer Dashboard Preview</span>
+                <!-- CTA Buttons -->
+                <div class="cta-buttons">
+                    <a routerLink="/estimator" class="btn btn-primary">
+                        Start Trading Today
+                    </a>
+                    <a routerLink="/how-it-works" class="btn btn-secondary">
+                        Learn More
+                    </a>
                 </div>
             </div>
         </div>
+        }
+    </div>
 
-        <!-- For Installers -->
-        <div class="flex flex-col md:flex-row-reverse gap-16 items-center">
-            <div class="w-full md:w-1/2">
-                <div class="h-2 w-12 bg-[var(--color-primary)] rounded-full mb-6"></div>
-                <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-secondary)] mb-6">For Installers & Vendors
-                </h2>
-                <p class="text-gray-500 text-lg mb-8 leading-relaxed">
-                    Grow your business with TumiRails. We provide qualified leads and streamlined tools to help you
-                    scale efficiently.
-                </p>
-                <ul class="space-y-4 mb-8">
-                    <li class="flex items-center text-gray-700">
-                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Qualified project leads
-                    </li>
-                    <li class="flex items-center text-gray-700">
-                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Digital tools for estimation
-                    </li>
-                    <li class="flex items-center text-gray-700">
-                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Simplified payments
-                    </li>
-                </ul>
-                <a routerLink="/installers"
-                    class="text-[var(--color-primary)] font-bold hover:underline flex items-center group">
-                    Partner With Us <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                </a>
+    <!-- Navigation Controls -->
+    <button class="nav-button nav-prev" (click)="previousSlide()" aria-label="Previous slide">
+        <lucide-icon [img]="ChevronLeft" [size]="32"></lucide-icon>
+    </button>
+
+    <button class="nav-button nav-next" (click)="nextSlide()" aria-label="Next slide">
+        <lucide-icon [img]="ChevronRight" [size]="32"></lucide-icon>
+    </button>
+
+    <!-- Dot Indicators -->
+    <div class="dot-indicators">
+        @for (slide of [0, 1, 2]; track slide; let i = $index) {
+        <button class="dot" [class.active]="currentSlideIndex() === i" (click)="goToSlide(i)"
+            [attr.aria-label]="'Go to slide ' + (i + 1)"></button>
+        }
+    </div>
+</section>
+
+<!-- Revolutionizing Energy Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Revolutionizing Energy with Tumirails</h2>
+            <p class="section-subtitle">Built for real energy independence in Africa</p>
+        </div>
+
+        <div class="features-grid">
+            @for (feature of features; track feature.title) {
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <lucide-icon [img]="feature.icon" [size]="48" strokeWidth="1.5" class="feature-icon"></lucide-icon>
+                </div>
+                <h3 class="feature-title">{{ feature.title }}</h3>
+                <p class="feature-description">{{ feature.description }}</p>
+                <div class="feature-image-container">
+                    <img [src]="feature.image" [alt]="feature.title" class="feature-image">
+                </div>
             </div>
-            <div class="w-full md:w-1/2">
-                <div
-                    class="bg-white p-2 rounded-2xl shadow-xl border border-gray-100 aspect-video flex items-center justify-center bg-gray-100">
-                    <span class="text-gray-400 font-medium">Installer Portal Preview</span>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="benefits-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Benefits Tailored for You</h2>
+            <p class="section-subtitle">Each stakeholder finds their advantage on Tumi</p>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="benefits-tabs">
+            @for (tab of benefitsTabs; track tab.id) {
+            <button class="tab-button" [class.active]="activeTab() === tab.id" (click)="setActiveTab(tab.id)">
+                {{ tab.label }}
+            </button>
+            }
+        </div>
+
+        <!-- Tab Content -->
+        <div class="benefits-content">
+            <div class="benefits-card">
+                <h3 class="benefits-title">{{ currentBenefitTab.title }}</h3>
+                <ul class="benefits-list">
+                    @for (benefit of currentBenefitTab.benefits; track $index) {
+                    <li class="benefit-item">
+                        <span class="bullet">-</span>
+                        <span class="text">{{ benefit }}</span>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-header">
+            <div class="stats-header-left">
+                <h2 class="stats-title">Tumi is moving energy across Ghana one transaction at a time</h2>
+            </div>
+            <div class="stats-header-right">
+                <p class="stats-description">
+                    The numbers tell the story. Households are saving money. Prosumers are earning.
+                    The grid is holding steady. This is what happens when energy flows freely.
+                </p>
+            </div>
+        </div>
+
+        <div class="stats-grid-wrapper">
+            <!-- Main Big Card (Left) -->
+            <div class="stats-card large-card">
+                <div class="stat-value">{{ stats.activeTraders }}</div>
+                <div class="stat-label">Active traders:</div>
+                <div class="stat-sublabel">Households buying and selling energy daily</div>
+            </div>
+
+            <!-- Right Side Grid -->
+            <div class="stats-right-grid">
+                <!-- Image Card -->
+                <div class="stats-card image-card">
+                    <img src="/assets/placeholder-image.svg" alt="Energy Monitoring" class="stat-image-fit">
+                </div>
+
+                <!-- Stat Card -->
+                <div class="stats-card small-stat-card">
+                    <div class="stat-value">{{ stats.kwhTraded }}</div>
+                    <div class="stat-label">kWh traded</div>
+                    <div class="stat-sublabel">Energy moving through the marketplace</div>
+                </div>
+
+                <!-- Stat Card -->
+                <div class="stats-card small-stat-card">
+                    <div class="stat-value">{{ stats.evPoints }}</div>
+                    <div class="stat-label">EV charging Points</div>
+                    <div class="stat-sublabel">In charging points leveraging sunnode</div>
+                </div>
+
+                <!-- Image Card -->
+                <div class="stats-card image-card">
+                    <img src="/assets/placeholder-image.svg" alt="Solar Installation" class="stat-image-fit">
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Call to Action -->
-<section class="py-24 bg-[var(--color-secondary)] text-white text-center">
-    <div class="container mx-auto px-6">
-        <h2 class="text-3xl md:text-5xl font-bold mb-6">Ready to Switch to Solar?</h2>
-        <p class="text-xl text-blue-200 mb-10 max-w-2xl mx-auto">Get a free estimate today and see how much you can
-            save.</p>
-        <a routerLink="/estimator"
-            class="inline-block px-10 py-4 rounded-full bg-white text-[var(--color-secondary)] font-bold hover:bg-gray-100 transition-all shadow-lg text-lg">
-            Start Your Estimate
-        </a>
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">What Our Users Say</h2>
+        </div>
+
+        <div class="testimonials-grid">
+            @for (testimonial of testimonials; track testimonial.author) {
+            <div class="testimonial-card">
+                <div class="testimonial-avatar-wrapper">
+                    <img [src]="testimonial.image" [alt]="testimonial.author" class="testimonial-avatar">
+                </div>
+                <p class="testimonial-quote">"{{ testimonial.quote }}"</p>
+                <div class="testimonial-footer">
+                    <div class="divider"></div>
+                    <div class="testimonial-author-info">
+                        <h4 class="author-name">{{ testimonial.author }}</h4>
+                        <p class="author-role">{{ testimonial.role }}</p>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Partners Strip -->
+        <div class="partners-strip">
+            <div class="partner-logo-placeholder"></div>
+            <div class="partner-logo-placeholder"></div>
+            <div class="partner-logo-placeholder"></div>
+            <div class="partner-logo-placeholder"></div>
+            <div class="partner-logo-placeholder"></div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta-section">
+    <div class="container cta-container">
+        <h3 class="cta-title">Join the Future of Energy in Ghana Today</h3>
+        <div class="cta-action-buttons">
+            <a routerLink="/register" class="btn btn-light">Sign up now</a>
+            <a routerLink="/marketplace" class="btn btn-outline-light">Explore Marketplace</a>
+        </div>
     </div>
 </section>

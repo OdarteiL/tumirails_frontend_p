@@ -1,64 +1,255 @@
-<section class="py-24 bg-[var(--color-secondary)] relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-secondary)] to-[#001824] opacity-95"></div>
-    <div class="container mx-auto px-6 relative z-10 text-center">
-        <h1 class="text-5xl font-black text-white mb-6">Partner with TumiRails</h1>
-        <p class="text-xl text-gray-300 max-w-2xl mx-auto font-light">Expand your business and reach more customers by
-            joining our network of trusted installers.</p>
-    </div>
-</section>
+<div class="min-h-screen bg-white font-sans text-slate-800">
 
-<section class="py-24 bg-[#fcfcfc]">
-    <div class="container mx-auto px-6 max-w-5xl">
-        <div class="bg-white rounded-3xl shadow-xl p-12 md:p-16 border border-gray-100 relative overflow-hidden">
-            <!-- Decorative element -->
+    <!-- Hero Section -->
+    <section class="relative h-[650px] flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="/assets/installers-hero.png" alt="Solar Installers Team" class="w-full h-full object-cover top-0">
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[1px]"></div>
+        </div>
+
+        <!-- Content Split -->
+        <div
+            class="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+
+            <!-- Box 1: Installers -->
             <div
-                class="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full mix-blend-multiply filter blur-3xl opacity-70 -mr-20 -mt-20">
+                class="bg-white/10 backdrop-blur-md border border-white/20 p-8 md:p-12 rounded-3xl text-center shadow-2xl transition-transform duration-300 hover:scale-[1.02]">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4 leading-tight">
+                    Grow Your Solar Business with Tumirails
+                </h1>
+                <p class="text-slate-100 text-lg mb-8 font-light leading-relaxed">
+                    Expand your client base, streamline project management, and access a steady flow of quality solar
+                    leads directly through our platform.
+                </p>
+                <button (click)="scrollToForm()"
+                    class="w-full bg-[#0E6C8B] hover:bg-[#094d63] text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-[#0E6C8B]/40">
+                    Join as an Installer
+                </button>
             </div>
 
-            <h2 class="text-4xl font-bold text-[var(--color-secondary)] mb-12 text-center relative z-10">Why Join Us?
-            </h2>
-
-            <div class="space-y-10 relative z-10">
-                <div class="flex items-start">
-                    <div
-                        class="flex-shrink-0 h-14 w-14 bg-blue-100 rounded-2xl flex items-center justify-center text-[var(--color-primary)] font-bold text-xl shadow-sm">
-                        1</div>
-                    <div class="ml-8 pt-2">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Quality Leads</h3>
-                        <p class="text-gray-500 leading-relaxed">Stop chasing cold leads. We provide you with customers
-                            who have already estimated their needs and are ready to buy.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start">
-                    <div
-                        class="flex-shrink-0 h-14 w-14 bg-blue-100 rounded-2xl flex items-center justify-center text-[var(--color-primary)] font-bold text-xl shadow-sm">
-                        2</div>
-                    <div class="ml-8 pt-2">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Streamlined Process</h3>
-                        <p class="text-gray-500 leading-relaxed">Manage projects, quotes, and communications all in one
-                            centralized platform.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start">
-                    <div
-                        class="flex-shrink-0 h-14 w-14 bg-blue-100 rounded-2xl flex items-center justify-center text-[var(--color-primary)] font-bold text-xl shadow-sm">
-                        3</div>
-                    <div class="ml-8 pt-2">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Verified Trust</h3>
-                        <p class="text-gray-500 leading-relaxed">Gain credibility by being part of a vetted network of
-                            professionals.</p>
-                    </div>
-                </div>
+            <!-- Box 2: Vendors -->
+            <div
+                class="bg-white/10 backdrop-blur-md border border-white/20 p-8 md:p-12 rounded-3xl text-center shadow-2xl transition-transform duration-300 hover:scale-[1.02]">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4 leading-tight">
+                    Sell on Tumirails: Reach a Wider Market
+                </h1>
+                <p class="text-slate-100 text-lg mb-8 font-light leading-relaxed">
+                    Showcase your innovative solar products and components to a dedicated audience, manage inventory,
+                    and boost your sales effortlessly.
+                </p>
+                <button (click)="scrollToForm()"
+                    class="w-full bg-white hover:bg-slate-50 text-slate-900 font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 shadow-lg">
+                    Partner as a Vendor
+                </button>
             </div>
 
-            <div class="mt-16 text-center relative z-10">
-                <a routerLink="/register" class="btn btn-primary text-lg w-full md:w-auto px-12 py-4 shadow-xl">Register
-                    as Installer</a>
-                <p class="mt-6 text-sm text-gray-500">Already a partner? <a routerLink="/login"
-                        class="text-[var(--color-primary)] font-bold hover:underline">Log in here</a></p>
+        </div>
+    </section>
+
+    <!-- Why Partner Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-20">Why Partner with Tumirails?</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div *ngFor="let benefit of benefits"
+                class="group bg-white p-8 rounded-2xl border border-slate-100 hover:border-[#0E6C8B]/30 shadow-sm hover:shadow-xl transition-all duration-300">
+                <div
+                    class="w-14 h-14 rounded-xl bg-[#e0f2f7] text-[#0E6C8B] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <lucide-icon [img]="benefit.icon" class="w-7 h-7" [strokeWidth]="2"></lucide-icon>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#0E6C8B] transition-colors">{{
+                    benefit.title }}</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    {{ benefit.description }}
+                </p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- Ready to Transform CTA -->
+    <section class="bg-slate-50 py-24">
+        <div class="max-w-4xl mx-auto px-4 text-center space-y-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900">Ready to Transform Ghana's Energy Future?</h2>
+            <p class="text-lg text-slate-600 leading-relaxed">
+                Join the Tumirails network today and become a key player in the decentralized solar revolution. Our
+                platform provides the tools and connections you need to thrive.
+            </p>
+            <div class="pt-6">
+                <button (click)="scrollToForm()"
+                    class="bg-[#0E6C8B] hover:bg-[#094d63] text-white font-bold py-4 px-10 rounded-lg text-lg transition-all duration-300 shadow-md">
+                    Start Your Partnership
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Form Section -->
+    <section id="application-form" class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 pb-32">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="p-8 md:p-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-center text-slate-900 mb-10">Business Verification
+                    Application</h2>
+
+                <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="space-y-8">
+
+                    <!-- Business Info -->
+                    <div class="space-y-6">
+                        <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-2">Business
+                            Information</h3>
+                        <p class="text-sm text-slate-500 -mt-4">Please provide accurate details about your business for
+                            verification.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="businessName" class="block text-sm font-medium text-slate-700 mb-2">Business
+                                    Name</label>
+                                <input id="businessName" type="text" formControlName="businessName"
+                                    placeholder="e.g., Solar Ghana Ltd."
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all">
+                            </div>
+                            <div>
+                                <label for="brn" class="block text-sm font-medium text-slate-700 mb-2">Business
+                                    Registration
+                                    Number (BRN)</label>
+                                <input id="brn" type="text" formControlName="brn" placeholder="e.g., CS00012023"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-slate-700 mb-2">Business
+                                Address</label>
+                            <input id="address" type="text" formControlName="address"
+                                placeholder="Street, City, Region, Ghana"
+                                class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="partnershipType" class="block text-sm font-medium text-slate-700 mb-2">Type
+                                    of Partnership</label>
+                                <select id="partnershipType" formControlName="partnershipType"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all bg-white">
+                                    <option value="" disabled>Select type</option>
+                                    <option value="installer">Installer</option>
+                                    <option value="vendor">Vendor</option>
+                                    <option value="both">Both</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="yearsInBusiness" class="block text-sm font-medium text-slate-700 mb-2">Years
+                                    in Business</label>
+                                <input id="yearsInBusiness" type="number" formControlName="yearsInBusiness"
+                                    placeholder="e.g., 5"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div class="space-y-6">
+                        <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-2">Contact Details
+                        </h3>
+                        <p class="text-sm text-slate-500 -mt-4">Who should we contact regarding this application?</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="contactName" class="block text-sm font-medium text-slate-700 mb-2">Contact
+                                    Person Name</label>
+                                <input id="contactName" type="text" formControlName="contactName"
+                                    placeholder="Full Name"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email
+                                    Address</label>
+                                <input id="email" type="email" formControlName="email" placeholder="contact@example.com"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">Phone
+                                Number</label>
+                            <input id="phone" type="tel" formControlName="phone" placeholder="+233 55 123 4567"
+                                class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Services & Expertise -->
+                    <div class="space-y-6">
+                        <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-2">Services &
+                            Expertise</h3>
+                        <p class="text-sm text-slate-500 -mt-4">Let us know what services you offer or products you
+                            provide.</p>
+
+                        <div class="space-y-3" formGroupName="services">
+                            <div class="block text-sm font-medium text-slate-700 mb-2">Select Services
+                                Offered:</div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" formControlName="solarInstallation"
+                                        class="w-5 h-5 text-[#0E6C8B] border-slate-300 rounded focus:ring-[#0E6C8B]">
+                                    <span class="text-slate-700 text-sm">Solar Panel Installation</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" formControlName="energyStorage"
+                                        class="w-5 h-5 text-[#0E6C8B] border-slate-300 rounded focus:ring-[#0E6C8B]">
+                                    <span class="text-slate-700 text-sm">Energy Storage Solutions</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" formControlName="systemMaintenance"
+                                        class="w-5 h-5 text-[#0E6C8B] border-slate-300 rounded focus:ring-[#0E6C8B]">
+                                    <span class="text-slate-700 text-sm">System Maintenance & Repair</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" formControlName="energyAudits"
+                                        class="w-5 h-5 text-[#0E6C8B] border-slate-300 rounded focus:ring-[#0E6C8B]">
+                                    <span class="text-slate-700 text-sm">Energy Audits & Consulting</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" formControlName="offGridSolutions"
+                                        class="w-5 h-5 text-[#0E6C8B] border-slate-300 rounded focus:ring-[#0E6C8B]">
+                                    <span class="text-slate-700 text-sm">Off-Grid Solutions</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" formControlName="smartHome"
+                                        class="w-5 h-5 text-[#0E6C8B] border-slate-300 rounded focus:ring-[#0E6C8B]">
+                                    <span class="text-slate-700 text-sm">Smart Home Integration</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="certifications" class="block text-sm font-medium text-slate-700 mb-2">Relevant
+                                Certifications /
+                                Licenses (Optional)</label>
+                            <textarea id="certifications" formControlName="certifications" rows="3"
+                                placeholder="e.g., NABCEP Certified, Ghana Energy Commission License"
+                                class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"></textarea>
+                        </div>
+
+                        <div>
+                            <label for="additionalInfo" class="block text-sm font-medium text-slate-700 mb-2">Additional
+                                Information
+                                (Optional)</label>
+                            <textarea id="additionalInfo" formControlName="additionalInfo" rows="3"
+                                placeholder="Any other details you'd like us to know."
+                                class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4 text-right">
+                        <button type="submit" [disabled]="!applicationForm.valid"
+                            class="bg-[#0E6C8B] hover:bg-[#094d63] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-lg text-lg transition-all duration-300 shadow-md">
+                            Submit Application
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+</div>
