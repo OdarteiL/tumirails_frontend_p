@@ -17,6 +17,7 @@ export class RegisterComponent {
   registerForm: FormGroup;
   isLoading = signal(false);
   errorMessage = signal('');
+  backendErrors = signal<Record<string, string[]>>({});
 
   passwordMatchValidator(form: FormGroup): { [key: string]: boolean } | null {
     const password = form.get('password');
@@ -46,17 +47,33 @@ export class RegisterComponent {
     }, { validators: this.passwordMatchValidator });
   }
 
+  getFieldError(fieldName: string): string | null {
+    const errors = this.backendErrors();
+    return errors[fieldName] ? errors[fieldName][0] : null;
+  }
+
   onSubmit(): void {
     if (this.registerForm.valid) {
       this.isLoading.set(true);
       this.errorMessage.set('');
+      this.backendErrors.set({});
 
-      this.authService.register(this.registerForm.value).subscribe({
+      const payload = {
+        ...this.registerForm.value,
+        role: 'customer'
+      };
+
+      this.authService.register(payload).subscribe({
         next: () => {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          this.errorMessage.set(error.error?.message || 'Registration failed');
+          // Set field-specific errors if available
+          if (error.error?.errors) {
+            this.backendErrors.set(error.error.errors);
+          }
+          // Set general error message
+          this.errorMessage.set(error.error?.message || error.error?.error || 'Registration failed');
           this.isLoading.set(false);
         }
       });
