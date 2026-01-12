@@ -43,3 +43,34 @@ export interface RegisterRequest {
   address?: string;
   role?: string;
 }
+
+export interface RegisterInstallerRequest {
+  first_name: string;
+  last_name: string;
+  other_names?: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  phone?: string;
+  address?: string;
+  company_name?: string;
+  license_number: string;
+  service_areas: string[];
+  certifications?: string[];
+  years_experience: number;
+}
+
+export interface RegisterProviderRequest {
+  first_name: string;
+  last_name: string;
+  other_names?: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  phone?: string;
+  address?: string;
+  company_name?: string;
+  business_registration: string;
+  service_areas: string[];
+  certifications?: string[];
+}
