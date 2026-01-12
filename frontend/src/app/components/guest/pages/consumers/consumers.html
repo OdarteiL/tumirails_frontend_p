@@ -21,7 +21,7 @@
             </p>
             <div class="pt-4">
                 <a href="/estimator"
-                    class="bg-[#0E6C8B] hover:bg-[#094d63] text-white font-bold py-4 px-10 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg border-2 border-transparent hover:border-[#4ec4e8]/50">
+                    class="bg-primary hover:bg-primary text-white font-bold py-4 px-10 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg border-2 border-transparent hover:border-primary">
                     Discover Your Savings
                 </a>
             </div>
@@ -36,7 +36,7 @@
             <div *ngFor="let benefit of benefits"
                 class="group bg-white p-10 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 text-center">
                 <div
-                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white text-[#0E6C8B] mb-6 shadow-md group-hover:bg-[#0E6C8B] group-hover:text-white transition-colors duration-300 ring-4 ring-[#e0f2f7]">
+                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white text-primary mb-6 shadow-md group-hover:bg-primary group-hover:text-white transition-colors duration-300 ring-4 ring-primary">
                     <lucide-icon [img]="benefit.icon" class="w-8 h-8" [strokeWidth]="2"></lucide-icon>
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-4">{{ benefit.title }}</h3>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="relative z-10">
                         <div
-                            class="w-16 h-16 mx-auto mb-6 flex items-center justify-center text-4xl font-bold text-[#0E6C8B]">
+                            class="w-16 h-16 mx-auto mb-6 flex items-center justify-center text-4xl font-bold text-primary">
                             {{ step.number }}
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-4">{{ step.title }}</h3>
@@ -77,22 +77,43 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 pb-32">
         <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-16">What Our Consumers Say</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-            <div *ngFor="let tm of testimonials" class="p-8 rounded-2xl transition-all duration-300 border relative"
-                [ngClass]="tm.isHighlighted ? 'bg-white border-[#8B5CF6] shadow-xl scale-105 z-10' : 'bg-white border-slate-100 shadow-sm hover:shadow-md'">
+        <div class="max-w-4xl mx-auto">
+            <!-- Carousel Container -->
+            <div
+                class="relative bg-white p-8 md:p-12 rounded-3xl border border-slate-100 shadow-xl text-center transition-all duration-300">
+                <!-- Quote Icon Background -->
+                <div class="absolute top-6 left-6 md:top-10 md:left-10 text-primary/5">
+                    <lucide-icon [img]="Quote" class="w-12 h-12 md:w-20 md:h-20" [strokeWidth]="2"></lucide-icon>
+                </div>
 
-                <p class="text-slate-600 italic mb-8 leading-relaxed text-lg">
-                    "{{ tm.quote }}"
-                </p>
+                <div class="relative z-10 flex flex-col items-center">
+                    <div class="w-24 h-24 mb-6 relative">
+                        <img [src]="testimonials[currentTestimonialIndex].image"
+                            [alt]="testimonials[currentTestimonialIndex].name"
+                            class="w-full h-full rounded-full object-cover border-4 border-slate-50 shadow-md">
+                        <div class="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-full shadow-sm">
+                            <lucide-icon [img]="Quote" class="w-3 h-3" [strokeWidth]="3"></lucide-icon>
+                        </div>
+                    </div>
 
-                <div class="flex items-center gap-4">
-                    <img [src]="tm.image" [alt]="tm.name + ' - ' + tm.role"
-                        class="w-14 h-14 rounded-full object-cover border-2 border-slate-100">
+                    <p class="text-xl md:text-2xl text-slate-700 italic leading-relaxed font-light max-w-2xl mb-8">
+                        "{{ testimonials[currentTestimonialIndex].quote }}"
+                    </p>
+
                     <div>
-                        <h4 class="font-bold text-slate-900">{{ tm.name }}</h4>
-                        <p class="text-sm text-slate-500">{{ tm.role }}</p>
+                        <h4 class="text-xl font-bold text-slate-900">{{ testimonials[currentTestimonialIndex].name }}
+                        </h4>
+                        <p class="text-primary font-medium">{{ testimonials[currentTestimonialIndex].role }}</p>
                     </div>
                 </div>
+            </div>
+
+            <!-- Indicators -->
+            <div class="flex justify-center gap-3 mt-10">
+                <button *ngFor="let tm of testimonials; let i = index" (click)="setTestimonial(i)"
+                    class="h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                    [ngClass]="i === currentTestimonialIndex ? 'w-8 bg-primary' : 'w-2.5 bg-slate-300 hover:bg-slate-400'">
+                </button>
             </div>
         </div>
     </section>

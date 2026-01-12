@@ -105,33 +105,6 @@
     display: inline-block;
 }
 
-/* Primary Button */
-.btn-primary {
-    background-color: #006994;
-    color: white;
-    border-color: #006994;
-}
-
-.btn-primary:hover {
-    background-color: #005278;
-    border-color: #005278;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 105, 148, 0.3);
-}
-
-/* Secondary Button */
-.btn-secondary {
-    background-color: transparent;
-    color: white;
-    border-color: white;
-}
-
-.btn-secondary:hover {
-    background-color: white;
-    color: #006994;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.3);
-}
 
 /* Navigation Buttons */
 .nav-button {
@@ -363,7 +336,7 @@
 
 .feature-card {
     background: white;
-    border: 1px solid #006994;
+    border: 1px solid var(--color-primary);
     border-radius: 12px;
     padding: 2.5rem 2rem 0;
     text-align: center;
@@ -380,7 +353,7 @@
 }
 
 .feature-icon-wrapper {
-    color: #006994;
+    color: var(--color-primary);
     margin-bottom: 1.5rem;
     display: flex;
     justify-content: center;
@@ -461,16 +434,16 @@
     cursor: pointer;
     border-radius: 50px;
     transition: all 0.3s ease;
-    border: 1px solid #006994;
+    border: 1px solid var(--color-primary);
 }
 
 .tab-button:hover {
-    color: #006994;
+    color: var(--color-primary);
     background-color: rgba(0, 105, 148, 0.05);
 }
 
 .tab-button.active {
-    background-color: #006994;
+    background-color: var(--color-primary);
     color: white;
     box-shadow: 0 4px 12px rgba(0, 105, 148, 0.2);
 }
@@ -486,7 +459,7 @@
     padding: 3.5rem;
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--color-primary);
 }
 
 .benefits-title {
@@ -495,7 +468,7 @@
     color: #1a1a1a;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid var(--color-primary);
 }
 
 .benefits-list {
@@ -514,7 +487,7 @@
 }
 
 .benefit-item .bullet {
-    color: #006994;
+    color: var(--color-primary);
     font-weight: bold;
     margin-right: 1rem;
     font-size: 1.5rem;
@@ -603,7 +576,7 @@
 
 .stats-card:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border-color: #006994;
+    border-color: var(--color-primary);
 }
 
 /* Large Left Card */
@@ -643,7 +616,7 @@
 .stat-label {
     font-size: 1rem;
     font-weight: 700;
-    color: #006994;
+    color: var(--color-primary);
     margin-bottom: 0.25rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -764,7 +737,7 @@
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 1.5rem;
-    border: 2px solid #006994;
+    border: 2px solid var(--color-primary);
 }
 
 .testimonial-avatar {
@@ -789,20 +762,20 @@
 .divider {
     height: 2px;
     width: 40px;
-    background-color: #006994;
+    background-color: var(--color-primary);
     margin-bottom: 1rem;
 }
 
 .author-name {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--color-primary);
     margin-bottom: 0.25rem;
 }
 
 .author-role {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--color-primary);
 }
 
 /* Partners Strip */
@@ -863,7 +836,7 @@
 .cta-container {
     padding: 2rem;
     border-radius: 2rem;
-    background: linear-gradient(135deg, rgba(3, 34, 48, 0.95) 0%, rgba(0, 105, 148, 0.9) 100%);
+    background: linear-gradient(135deg, var(--color-deep-primary) 0%, rgba(0, 105, 148, 0.9) 100%);
     position: relative;
     z-index: 2;
 }
@@ -886,27 +859,28 @@
 /* Light Button Variant */
 .btn-light {
     background-color: white;
-    color: #006994;
-    border-color: white;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 .btn-light:hover {
     background-color: #f1f5f9;
     border-color: #f1f5f9;
-    color: #005278;
+    color: var(--color-deep-primary);
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 
 /* Outline Light Button */
 .btn-outline-light {
     background-color: transparent;
-    color: white;
-    border: 2px solid white;
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
 }
 
 .btn-outline-light:hover {
     background-color: white;
-    color: #006994;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 

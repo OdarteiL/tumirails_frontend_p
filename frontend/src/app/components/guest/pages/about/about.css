@@ -152,7 +152,7 @@
 }
 
 .value-icon-wrapper {
-    color: #006994;
+    color: var(--color-primary);
     margin-bottom: 1.5rem;
     display: flex;
     justify-content: center;
@@ -190,7 +190,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: linear-gradient(to bottom, #006994, #005278);
+    background: linear-gradient(to bottom, var(--color-deep-primary) 0%, rgba(0, 105, 148, 0.9));
 }
 
 .milestone-item {
@@ -207,7 +207,7 @@
 .milestone-year {
     font-size: 2rem;
     font-weight: 700;
-    color: #006994;
+    color: var(--color-primary);
     min-width: 100px;
     position: relative;
     z-index: 2;
@@ -222,9 +222,9 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background-color: #006994;
+    background-color: var(--color-primary);
     border: 3px solid white;
-    box-shadow: 0 0 0 2px #006994;
+    box-shadow: 0 0 0 2px var(--color-primary);
 }
 
 .milestone-content {
@@ -232,13 +232,13 @@
     background: #f8fafc;
     padding: 2rem;
     border-radius: 12px;
-    border-left: 3px solid #006994;
+    border-left: 3px solid var(--color-primary);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .milestone-content:hover {
     transform: translateX(5px);
-    box-shadow: 0 5px 20px rgba(0, 105, 148, 0.1);
+    box-shadow: 0 5px 20px rgba(var(--color-primary), 0.1);
 }
 
 .milestone-title {
@@ -311,7 +311,7 @@
 .partner-logo-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 105, 148, 0.1);
-    border-color: #006994;
+    border-color: var(--color-primary);
 }
 
 /* Awards Section */
@@ -340,7 +340,7 @@
 .award-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 105, 148, 0.15);
-    border-color: #006994;
+    border-color: var(--color-primary);
 }
 
 .award-image-wrapper {
@@ -374,7 +374,7 @@
 
 .award-organization {
     font-size: 1rem;
-    color: #006994;
+    color: var(--color-primary);
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
@@ -397,7 +397,7 @@
 .cta-container {
     padding: 4rem 2rem;
     border-radius: 2rem;
-    background: linear-gradient(135deg, rgba(3, 34, 48, 0.95) 0%, rgba(0, 105, 148, 0.9) 100%);
+    background: linear-gradient(135deg, var(--color-deep-primary) 0%, rgba(0, 105, 148, 0.9) 100%);
     position: relative;
     z-index: 2;
 }
@@ -441,7 +441,7 @@
 
 .btn-light {
     background-color: white;
-    color: #006994;
+    color: var(--color-primary);
     border-color: white;
 }
 
@@ -461,7 +461,7 @@
 
 .btn-outline-light:hover {
     background-color: white;
-    color: #006994;
+    color: var(--color-primary);
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(255, 255, 255, 0.3);
 }
