@@ -9,7 +9,7 @@ import { LucideAngularModule, DollarSign, Zap, ShieldCheck, Quote } from 'lucide
   templateUrl: './consumers.html',
   styleUrl: './consumers.css'
 })
-export class ConsumersComponent {
+export class ConsumersComponent implements OnInit, OnDestroy {
   readonly DollarSign = DollarSign;
   readonly Zap = Zap;
   readonly ShieldCheck = ShieldCheck;
@@ -52,7 +52,7 @@ export class ConsumersComponent {
   ];
 
   currentTestimonialIndex = 0;
-  private carouselInterval: any;
+  private carouselInterval?: ReturnType<typeof setInterval>;
 
   ngOnInit() {
     this.startCarousel();
