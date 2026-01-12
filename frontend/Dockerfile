@@ -10,7 +10,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+# Install dependencies with increased timeout for slow networks
+RUN npm config set fetch-retry-maxtimeout 600000 -g && npm install
 
 # Copy application files
 COPY . .

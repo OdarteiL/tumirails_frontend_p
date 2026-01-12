@@ -4,9 +4,11 @@
 @tailwind utilities;
 
 /* CSS Custom Properties */
+/* #1F2050, #304597, #8BE0FF, #FFFFFF */
 :root {
-  --color-primary: #006994;
-  --color-secondary: #032230;
+  --color-deep-primary: #1F2050;
+  --color-primary: #304597;
+  --color-secondary: #8BE0FF;
 
   --font-primary: 'Lato', sans-serif;
   --font-secondary: 'Montserrat', sans-serif;
@@ -28,7 +30,7 @@ body {
   /* Increased line-height for better readability */
   color: #4a5568;
   /* Softer text color than #333 */
-  background-color: #fcfcfc;
+  background-color: #FFFFFF;
   -webkit-font-smoothing: antialiased;
   padding-top: 80px;
   /* Account for fixed navbar height (h-20 = 5rem = 80px) */
@@ -91,7 +93,7 @@ h6 {
 .btn-secondary {
   background: white;
   color: var(--color-primary);
-  border: 1px solid rgba(0, 105, 148, 0.2);
+  border: 1px solid var(--color-secondary);
 }
 
 .btn-secondary:hover {
@@ -120,7 +122,7 @@ h6 {
   border-radius: 1rem;
   box-shadow: var(--shadow-soft);
   padding: 2.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--color-primary);
   transition: all 0.3s ease;
 }
 
@@ -133,7 +135,7 @@ h6 {
 .form-input {
   width: 100%;
   padding: 0.875rem 1.25rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-primary);
   border-radius: 0.5rem;
   font-size: 1rem;
   background-color: #f8fafc;
@@ -151,7 +153,7 @@ h6 {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: var(--color-secondary);
+  color: var(--color-primary);
   font-size: 0.95rem;
 }
 

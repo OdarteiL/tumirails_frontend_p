@@ -4,7 +4,7 @@
         <div class="max-w-full mx-auto space-y-6">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900">
                 How Tumirails Powers <span
-                    class="text-transparent bg-clip-text bg-gradient-to-r from-[#0E6C8B] to-[#2DA8D8]">Your
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-[#2DA8D8]">Your
                     Future</span>
             </h1>
             <p class="text-xl md:text-2xl text-slate-600 leading-relaxed font-light">
@@ -34,7 +34,7 @@
                         <!-- Number Indicator -->
                         <div class="flex-shrink-0 w-14 flex justify-center">
                             <div
-                                class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#0E6C8B] text-white flex items-center justify-center text-lg md:text-xl font-bold shadow-lg ring-4 ring-white transition-transform duration-300 group-hover:scale-110 group-hover:bg-[#094d63]">
+                                class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-lg md:text-xl font-bold shadow-lg ring-4 ring-white transition-transform duration-300 group-hover:scale-110 group-hover:bg-[var(--color-primary)]/20">
                                 {{ step.number }}
                             </div>
                         </div>
@@ -42,11 +42,11 @@
                         <!-- Content Card -->
                         <div class="flex-grow">
                             <div
-                                class="bg-slate-50 rounded-2xl p-6 md:p-8 flex items-start gap-5 md:gap-8 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-[#0E6C8B]/20 hover:-translate-y-1">
+                                class="bg-slate-50 rounded-2xl p-6 md:p-8 flex items-start gap-5 md:gap-8 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-[var(--color-primary)]/20 hover:-translate-y-1">
                                 <!-- Icon -->
                                 <div class="flex-shrink-0">
                                     <div
-                                        class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#e0f2f7] text-[#0E6C8B] flex items-center justify-center transition-colors group-hover:bg-[#ccebf4]">
+                                        class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-secondary text-primary flex items-center justify-center transition-colors group-hover:bg-[#ccebf4]">
                                         <!-- Note: Using [img] for lucide-angular icons -->
                                         <lucide-icon [img]="step.icon" class="w-6 h-6 md:w-7 md:h-7"
                                             [strokeWidth]="2"></lucide-icon>
@@ -56,7 +56,7 @@
                                 <!-- Text -->
                                 <div class="space-y-2">
                                     <h3
-                                        class="text-xl md:text-2xl font-bold text-slate-900 group-hover:text-[#0E6C8B] transition-colors">
+                                        class="text-xl md:text-2xl font-bold text-slate-900 group-hover:text-primary transition-colors">
                                         {{ step.title }}
                                     </h3>
                                     <p class="text-slate-600 leading-relaxed text-sm md:text-base">
@@ -71,14 +71,14 @@
                     <div *ngIf="!last" class="relative h-20 md:h-24">
                         <!-- Line -->
                         <div
-                            class="absolute left-7 top-0 bottom-0 w-px -ml-[1px] border-l-2 border-dotted border-[#0E6C8B]/40">
+                            class="absolute left-7 top-0 bottom-0 w-px -ml-[1px] border-l-2 border-dotted border-secondary">
                         </div>
 
                         <!-- Label Badge -->
                         <div class="absolute top-1/2 left-7 transform -translate-x-1/2 -translate-y-1/2 z-20"
                             *ngIf="step.connectorLabel">
                             <span
-                                class="bg-white px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#0E6C8B] shadow-sm rounded-full border border-slate-100">
+                                class="bg-white px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary shadow-sm rounded-full border border-slate-100">
                                 {{ step.connectorLabel }}
                             </span>
                         </div>
@@ -102,7 +102,7 @@
         <div *ngFor="let feature of features"
             class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 group">
             <div
-                class="w-12 h-12 rounded-full bg-[#e0f2f7] text-[#0E6C8B] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                class="w-12 h-12 rounded-full bg-secondary text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <lucide-icon [img]="feature.icon" class="w-6 h-6" [strokeWidth]="2"></lucide-icon>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-3">{{ feature.title }}</h3>

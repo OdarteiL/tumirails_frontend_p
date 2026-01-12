@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, DollarSign, Zap, ShieldCheck } from 'lucide-angular';
+import { LucideAngularModule, DollarSign, Zap, ShieldCheck, Quote } from 'lucide-angular';
 
 @Component({
   selector: 'app-consumers',
@@ -9,10 +9,11 @@ import { LucideAngularModule, DollarSign, Zap, ShieldCheck } from 'lucide-angula
   templateUrl: './consumers.html',
   styleUrl: './consumers.css'
 })
-export class ConsumersComponent {
+export class ConsumersComponent implements OnInit, OnDestroy {
   readonly DollarSign = DollarSign;
   readonly Zap = Zap;
   readonly ShieldCheck = ShieldCheck;
+  readonly Quote = Quote;
 
   benefits = [
     {
@@ -49,6 +50,35 @@ export class ConsumersComponent {
       description: 'Monitor your usage, optimize savings, and enjoy a consistent supply of clean energy.'
     }
   ];
+
+  currentTestimonialIndex = 0;
+  private carouselInterval?: ReturnType<typeof setInterval>;
+
+  ngOnInit() {
+    this.startCarousel();
+  }
+
+  ngOnDestroy() {
+    this.stopCarousel();
+  }
+
+  startCarousel() {
+    this.carouselInterval = setInterval(() => {
+      this.currentTestimonialIndex = (this.currentTestimonialIndex + 1) % this.testimonials.length;
+    }, 8000);
+  }
+
+  stopCarousel() {
+    if (this.carouselInterval) {
+      clearInterval(this.carouselInterval);
+    }
+  }
+
+  setTestimonial(index: number) {
+    this.currentTestimonialIndex = index;
+    this.stopCarousel();
+    this.startCarousel();
+  }
 
   testimonials = [
     {
