@@ -9,11 +9,11 @@
             <div class="mb-10">
                 <label for="monthly-usage" class="block text-sm font-semibold text-slate-700 mb-4 flex justify-between">
                     Monthly Electricity Usage (kWh)
-                    <span class="text-[#0E6C8B] font-bold">{{ monthlyUsage() }} kWh</span>
+                    <span class="text-primary font-bold">{{ monthlyUsage() }} kWh</span>
                 </label>
                 <input id="monthly-usage" type="range" min="100" max="2000" step="50" [value]="monthlyUsage()"
                     (input)="onUsageChange($event)"
-                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0E6C8B]">
+                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary">
             </div>
 
             <!-- Bill Input -->
@@ -24,7 +24,7 @@
                 <div class="relative">
                     <input id="monthly-bill" type="number" [ngModel]="monthlyBill()"
                         (ngModelChange)="monthlyBill.set($event)"
-                        class="block w-full pl-4 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-[#0E6C8B] focus:border-[#0E6C8B] text-slate-900 placeholder-slate-400 transition-colors"
+                        class="block w-full pl-4 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary text-slate-900 placeholder-slate-400 transition-colors"
                         placeholder="200">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none hidden">
                         <!-- Optional Prefix styling if needed, currently inside input placeholder/value roughly -->
@@ -39,7 +39,7 @@
                     <div *ngFor="let app of appliances()" class="flex items-start">
                         <div class="flex items-center h-5">
                             <input type="checkbox" [checked]="app.checked" (change)="app.checked = !app.checked"
-                                class="w-5 h-5 border-slate-300 rounded text-[#0E6C8B] focus:ring-[#0E6C8B] cursor-pointer">
+                                class="w-5 h-5 border-slate-300 rounded text-primary focus:ring-primary cursor-pointer">
                         </div>
                         <div class="ml-3 text-sm">
                             <span class="text-slate-600 cursor-pointer select-none">
@@ -61,12 +61,12 @@
                     <!-- Monthly Savings -->
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0 mt-1">
-                            <lucide-icon [img]="DollarSign" class="w-8 h-8 text-[#0E6C8B]"
+                            <lucide-icon [img]="DollarSign" class="w-8 h-8 text-primary"
                                 strokeWidth="2.5"></lucide-icon>
                         </div>
                         <div>
                             <p class="text-sm text-slate-500 font-medium mb-1">Estimated Monthly Savings</p>
-                            <p class="text-4xl font-bold text-[#0E6C8B]">
+                            <p class="text-4xl font-bold text-primary">
                                 GH₵ {{ estimatedSavings() }}
                             </p>
                         </div>
@@ -75,11 +75,11 @@
                     <!-- Solar Output -->
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0 mt-1">
-                            <lucide-icon [img]="Zap" class="w-8 h-8 text-slate-700" strokeWidth="2.5"></lucide-icon>
+                            <lucide-icon [img]="Zap" class="w-8 h-8 text-primary" strokeWidth="2.5"></lucide-icon>
                         </div>
                         <div>
                             <p class="text-sm text-slate-500 font-medium mb-1">Estimated Solar Output</p>
-                            <p class="text-4xl font-bold text-slate-900">
+                            <p class="text-4xl font-bold text-primary">
                                 {{ estimatedOutput() }} <span
                                     class="text-2xl font-medium text-slate-500">kWh/month</span>
                             </p>
@@ -89,11 +89,11 @@
                     <!-- Installation Cost -->
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0 mt-1">
-                            <lucide-icon [img]="Sun" class="w-8 h-8 text-slate-500" strokeWidth="2.5"></lucide-icon>
+                            <lucide-icon [img]="Sun" class="w-8 h-8 text-primary" strokeWidth="2.5"></lucide-icon>
                         </div>
                         <div>
                             <p class="text-sm text-slate-500 font-medium mb-1">Estimated Installation Cost</p>
-                            <p class="text-4xl font-bold text-slate-900">
+                            <p class="text-4xl font-bold text-primary">
                                 GH₵ {{ estimatedCost() }}
                             </p>
                         </div>
@@ -104,7 +104,7 @@
 
             <div class="mt-12">
                 <button
-                    class="w-full bg-[#0E6C8B] hover:bg-[#094d63] text-white font-bold py-4 px-6 rounded-lg text-lg transition-all duration-300 shadow-md hover:shadow-lg">
+                    class="w-full bg-primary hover:bg-primary text-white font-bold py-4 px-6 rounded-lg text-lg transition-all duration-300 shadow-md hover:shadow-lg">
                     Get Certified Installer Quotes
                 </button>
             </div>

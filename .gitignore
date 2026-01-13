@@ -1,5 +1,12 @@
 TODO
 
 *.vscode
+
 .marscode
 docs/analysis/*
+
+node_modules
+
+.idea
+
+.env
