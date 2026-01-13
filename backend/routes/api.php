@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\ApplianceController as AdminApplianceController;
 use App\Http\Controllers\Api\ApplianceController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\EstimationController;
 use App\Http\Controllers\Api\GuestEstimationController;
 use App\Http\Controllers\Api\OrganisationController;
@@ -21,6 +22,9 @@ Route::prefix('auth')->group(function () {
 // Guest estimation
 Route::post('/estimations/guest', GuestEstimationController::class)->middleware('throttle:10,1');
 
+// Contact form
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1');
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('auth')->group(function () {
@@ -33,6 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/appliances', [AdminApplianceController::class, 'store']);
         Route::put('/appliances/{appliance}', [AdminApplianceController::class, 'update']);
         Route::delete('/appliances/{appliance}', [AdminApplianceController::class, 'destroy']);
+
+        Route::get('/contacts', [ContactController::class, 'index']);
+        Route::get('/contacts/{contact}', [ContactController::class, 'show']);
     });
 
     // User appliance routes

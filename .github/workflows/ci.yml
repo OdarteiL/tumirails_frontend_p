@@ -144,7 +144,6 @@ jobs:
         working-directory: backend
         run: |
           php artisan migrate:fresh --force
-          # Seed foundation data then demo data for integration tests
           php artisan db:seed --class=CategorySeeder --force
           php artisan db:seed --class=ApplianceSeeder --force
           php artisan app:seed-demo
