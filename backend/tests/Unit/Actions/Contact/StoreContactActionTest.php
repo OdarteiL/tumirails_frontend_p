@@ -11,7 +11,7 @@ class StoreContactActionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function it_stores_a_contact()
+    public function test_it_stores_a_contact()
     {
         $action = new StoreContactAction();
         $data = [

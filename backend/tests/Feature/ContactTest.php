@@ -11,7 +11,7 @@ class ContactTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function a_user_can_submit_a_contact_form()
+    public function test_a_user_can_submit_a_contact_form()
     {
         $contactData = [
             'name' => 'John Doe',
@@ -31,7 +31,7 @@ class ContactTest extends TestCase
         $this->assertDatabaseHas('contacts', $contactData);
     }
 
-    public function contact_form_requires_all_fields()
+    public function test_contact_form_requires_all_fields()
     {
         $response = $this->postJson('/api/contact', []);
 
@@ -39,7 +39,7 @@ class ContactTest extends TestCase
             ->assertJsonValidationErrors(['name', 'email', 'subject', 'message']);
     }
 
-    public function an_admin_can_get_all_contacts()
+    public function test_an_admin_can_get_all_contacts()
     {
         $admin = User::factory()->create(['role' => 'admin']);
         Contact::factory()->count(5)->create();
@@ -50,7 +50,7 @@ class ContactTest extends TestCase
             ->assertJsonCount(5, 'data');
     }
 
-    public function a_non_admin_cannot_get_all_contacts()
+    public function test_a_non_admin_cannot_get_all_contacts()
     {
         $user = User::factory()->create();
         Contact::factory()->count(5)->create();
@@ -60,7 +60,7 @@ class ContactTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function an_admin_can_get_a_single_contact()
+    public function test_an_admin_can_get_a_single_contact()
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $contact = Contact::factory()->create();
