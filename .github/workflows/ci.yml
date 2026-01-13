@@ -138,17 +138,16 @@ jobs:
 
       - name: Run Unit Tests
         working-directory: backend
-        run: php artisan test --testsuite=Unit
+        run: php artisan test --testsuite=Unit --no-coverage
 
       - name: Run Feature Tests (with seeded data)
         working-directory: backend
         run: |
           php artisan migrate:fresh --force
-          # Seed foundation data then demo data for integration tests
           php artisan db:seed --class=CategorySeeder --force
           php artisan db:seed --class=ApplianceSeeder --force
           php artisan app:seed-demo
-          php artisan test --testsuite=Feature
+          php artisan test --testsuite=Feature --no-coverage
 
       - name: Upload coverage reports
         if: always()
