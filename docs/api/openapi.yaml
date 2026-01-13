@@ -641,6 +641,9 @@ components:
         estimated_monthly_cost:
           type: string
           description: Estimated monthly cost formatted to 2 decimal places
+        estimated_daily_cost:
+          type: string
+          description: Estimated daily cost formatted to 2 decimal places
         tariff_structure:
           type: object
           nullable: true
@@ -737,6 +740,7 @@ components:
         - daily_kwh
         - monthly_kwh
         - estimated_monthly_cost
+        - estimated_daily_cost
       example:
         id: 301
         site:
@@ -752,6 +756,7 @@ components:
         daily_kwh: '108.00'
         monthly_kwh: '3726.00'
         estimated_monthly_cost: '3890.45'
+        estimated_daily_cost: '129.68'
         tariff_structure:
           id: 1
           name: Ghana ECG Residential
@@ -793,6 +798,127 @@ components:
           name: Ama Mensah
         created_at: '2025-12-14T10:30:00Z'
         updated_at: '2025-12-14T10:30:00Z'
+
+    GuestEstimation:
+      type: object
+      properties:
+        total_watts:
+          type: string
+          description: Total watts formatted to 2 decimal places
+        daily_kwh:
+          type: string
+          description: Daily kilowatt-hours formatted to 2 decimal places
+        monthly_kwh:
+          type: string
+          description: Monthly kilowatt-hours formatted to 2 decimal places
+        estimated_monthly_cost:
+          type: string
+          description: Estimated monthly cost formatted to 2 decimal places
+        estimated_daily_cost:
+          type: string
+          description: Estimated daily cost formatted to 2 decimal places
+        power_factor_applied:
+          type: string
+          nullable: true
+          description: Average power factor applied formatted to 2 decimal places
+        seasonal_multiplier:
+          type: string
+          nullable: true
+          description: Seasonal adjustment multiplier formatted to 2 decimal places
+        appliances_breakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              category:
+                type: string
+              watts:
+                type: number
+              quantity:
+                type: integer
+              daily_usage_hours:
+                type: number
+              power_factor:
+                type: number
+              daily_kwh:
+                type: number
+              monthly_cost:
+                type: number
+        calculation_metadata:
+          type: object
+          properties:
+            tariff_structure_id:
+              type: integer
+            tariff_structure_name:
+              type: string
+            tariff_type:
+              type: string
+            seasonal_adjustment_id:
+              type: integer
+              nullable: true
+            seasonal_adjustment_name:
+              type: string
+              nullable: true
+            location_multiplier_id:
+              type: integer
+              nullable: true
+            location_region:
+              type: string
+              nullable: true
+            location_city:
+              type: string
+              nullable: true
+            calculated_at:
+              type: string
+              format: date-time
+            appliance_count:
+              type: integer
+      required:
+        - total_watts
+        - daily_kwh
+        - monthly_kwh
+        - estimated_monthly_cost
+        - estimated_daily_cost
+      example:
+        total_watts: '5000.00'
+        daily_kwh: '108.00'
+        monthly_kwh: '3726.00'
+        estimated_monthly_cost: '3890.45'
+        estimated_daily_cost: '129.68'
+        power_factor_applied: '0.90'
+        seasonal_multiplier: '1.15'
+        appliances_breakdown:
+          - name: Refrigerator
+            category: Cooling & Heating
+            watts: 150
+            quantity: 2
+            daily_usage_hours: 24
+            power_factor: 0.85
+            daily_kwh: 6.12
+            monthly_cost: 183.42
+          - name: LED Bulb
+            category: Lighting
+            watts: 15
+            quantity: 10
+            daily_usage_hours: 6
+            power_factor: 0.95
+            daily_kwh: 0.86
+            monthly_cost: 25.8
+        calculation_metadata:
+          tariff_structure_id: 1
+          tariff_structure_name: Ghana ECG Residential
+          tariff_type: tiered
+          seasonal_adjustment_id: 1
+          seasonal_adjustment_name: Dry Season
+          location_multiplier_id: null
+          location_region: null
+          location_city: null
+          calculated_at: '2025-12-14T10:30:00Z'
+          appliance_count: 2
 
     # ---------------------- RECOMMENDED HARDWARE ----------------------
     RecommendedHardware:
@@ -1184,6 +1310,8 @@ components:
         status: success
         transaction_ref: TXN-123456789
 
+    # ---------------------- ERROR RESPONSE ----------------------
+
     ErrorResponse:
       type: object
       properties:
@@ -1200,10 +1328,22 @@ components:
               type: string
       example:
         success: false
-        message: Validation failed
+        error: Validation failed
         errors:
           email:
             - This email is already registered
+
+    UnauthenticatedError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+      example:
+        success: false
+        error: Authentication required. Please provide a valid access token.
 
 paths:
   # ---------------- AUTH ----------------
@@ -1742,17 +1882,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: Invalid credentials
-              example:
-                success: false
-                error: Invalid credentials
+                $ref: '#components/schemas/UnauthenticatedError'
 
   /auth/me:
     get:
@@ -1802,17 +1932,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: Unauthenticated
-              example:
-                success: false
-                error: Unauthenticated
+                  $ref: '#/components/schemas/UnauthenticatedError'
 
   /auth/logout:
     post:
@@ -1844,17 +1964,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: Unauthenticated
-              example:
-                success: false
-                error: Unauthenticated
+                  $ref: '#/components/schemas/UnauthenticatedError'
 
   # ---------------- ORGANISATIONS ----------------
   /organisations:
@@ -1886,7 +1996,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/UnauthenticatedError'
 
     post:
       summary: Create a new organisation
@@ -3230,17 +3340,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: Authentication required. Please provide a valid access token.
-              example:
-                success: false
-                error: Authentication required. Please provide a valid access token.
+                  $ref: '#/components/schemas/UnauthenticatedError'
 
     post:
       summary: Create a user site
@@ -3320,17 +3420,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: Authentication required. Please provide a valid access token.
-              example:
-                success: false
-                error: Authentication required. Please provide a valid access token.
+                  $ref: '#/components/schemas/UnauthenticatedError'
         '422':
           description: Validation error
           content:
@@ -3414,17 +3504,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: Authentication required. Please provide a valid access token.
-              example:
-                success: false
-                error: Authentication required. Please provide a valid access token.
+                $ref: '#/components/schemas/UnauthenticatedError'
         '403':
           description: Forbidden - Not site owner
           content:
@@ -3541,17 +3621,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  error:
-                    type: string
-                    example: Unauthenticated
-              example:
-                success: false
-                error: Unauthenticated
+                $ref: '#/components/schemas/UnauthenticatedError'
         '403':
           description: Forbidden - User doesn't own the site
           content:
@@ -3631,6 +3701,91 @@ paths:
                     - Daily usage hours cannot exceed 24
 
   # ---------------- ESTIMATIONS ----------------
+  /estimations/guest:
+    post:
+      summary: Create guest estimation
+      description: |
+        Creates a new estimation for a guest. Calculates energy consumption based on guest appliances, applies power factors, seasonal adjustments, and location multipliers. Uses active tariff structure for cost calculation.
+      tags:
+        - Estimations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - appliances
+              properties:
+                appliances:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - wattage
+                      - quantity
+                      - daily_usage_hours
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the appliance
+                      wattage:
+                        type: number
+                        description: Power consumption in watts
+                      quantity:
+                        type: integer
+                        description: Number of appliances of this type
+                      daily_usage_hours:
+                        type: number
+                        description: Hours of daily usage (0-24)
+            example:
+              appliances:
+                - name: "Refrigerator"
+                  wattage: 150
+                  quantity: 1
+                  daily_usage_hours: 24
+                - name: "Light Bulb"
+                  wattage: 60
+                  quantity: 5
+                  daily_usage_hours: 8
+      responses:
+        '201':
+          description: Guest estimation created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/GuestEstimation'
+              example:
+                success: true
+                message: Estimation created successfully
+                data:
+                  total_watts: '5000.00'
+                  daily_kwh: '108.00'
+                  monthly_kwh: '3726.00'
+                  estimated_monthly_cost: '3890.45'
+                  estimated_daily_cost: '129.68'
+        '400':
+          description: Bad request 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                success: false
+                error: 'No active tariff structure found for country: Ghana'
+
   /estimations:
     post:
       summary: Create energy estimation for a site
@@ -3953,20 +4108,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Estimation'
-              example:
-                success: true
-                message: Organisation estimations retrieved successfully
-                data:
-                  - id: 401
-                    site:
-                      id: 201
-                      name: Office Building Accra
-                    owner:
-                      id: 10
-                      type: Organisation
-                      name: Solar Tech Ghana Ltd
-                    version: 1
-                    estimated_monthly_cost: '12500.00'
         '403':
           description: User not a member of organisation
           content:

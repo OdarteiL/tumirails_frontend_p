@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Admin\ApplianceController as AdminApplianceControll
 use App\Http\Controllers\Api\ApplianceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EstimationController;
+use App\Http\Controllers\Api\GuestEstimationController;
 use App\Http\Controllers\Api\OrganisationController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\SiteController;
@@ -16,6 +17,9 @@ Route::prefix('auth')->group(function () {
     Route::post('/register/provider', [AuthController::class, 'registerProvider']);
     Route::post('/login', [AuthController::class, 'login']);
 });
+
+// Guest estimation
+Route::post('/estimations/guest', GuestEstimationController::class)->middleware('throttle:10,1');
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
