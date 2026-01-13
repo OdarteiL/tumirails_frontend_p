@@ -3,6 +3,8 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
+         failOnWarning="false"
+         failOnRisky="false"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -17,6 +19,11 @@
             <directory>app</directory>
         </include>
     </source>
+    <coverage>
+        <report>
+            <text outputFile="php://stdout" showUncoveredFiles="false" showOnlySummary="true"/>
+        </report>
+    </coverage>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
