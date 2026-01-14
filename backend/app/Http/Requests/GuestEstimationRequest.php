@@ -21,7 +21,7 @@ class GuestEstimationRequest extends FormRequest
     {
         return [
             'appliances' => ['required', 'array'],
-            'appliances.*.name' => ['optional', 'string', 'max:255'],
+            'appliances.*.name' => ['nullable', 'string', 'max:255'],
             'appliances.*.wattage' => ['required', 'numeric', 'min:0'],
             'appliances.*.quantity' => ['required', 'integer', 'min:1'],
             'appliances.*.daily_usage_hours' => ['required', 'numeric', 'min:0', 'max:24'],
