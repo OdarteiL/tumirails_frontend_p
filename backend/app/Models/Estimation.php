@@ -29,6 +29,8 @@ class Estimation extends Model
         'appliances_snapshot',
         'calculation_metadata',
         'created_by',
+        'reference_code',
+        'expires_at',
     ];
 
     protected function casts(): array
