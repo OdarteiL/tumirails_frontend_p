@@ -1,4 +1,4 @@
-import { Component, computed, signal, effect, inject } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, DollarSign, Zap, Sun, Loader2, Plus, Trash2, X, Hash } from 'lucide-angular';
@@ -22,7 +22,7 @@ interface Appliance {
 })
 export class EstimatorComponent {
   private estimationsService = inject(EstimationsService);
-  private errorTimeout?: any;
+  private errorTimeout?: ReturnType<typeof setTimeout>;
 
   readonly DollarSign = DollarSign;
   readonly Zap = Zap;
@@ -134,7 +134,7 @@ export class EstimatorComponent {
     });
   }
 
-  addAppliance(suggestion?: any) {
+  addAppliance(suggestion?: { name: string; wattage: number }) {
     this.appliances.update(apps => [
       ...apps,
       {
@@ -153,7 +153,11 @@ export class EstimatorComponent {
   updateAppliance(index: number, field: keyof Appliance, value: string | number) {
     this.appliances.update(apps => {
       const newApps = [...apps];
-      (newApps[index] as any)[field] = field === 'name' ? value : Number(value);
+      if (field === 'name') {
+        newApps[index].name = value as string;
+      } else {
+        newApps[index][field as 'wattage' | 'quantity' | 'daily_usage_hours'] = Number(value);
+      }
       return newApps;
     });
   }
@@ -191,9 +195,8 @@ export class EstimatorComponent {
           this.estimationResult.set(res.data);
           this.refCode.set(res.data.ref_code || this.tempRefCode);
 
-          // Try to reconstruct appliances from breakdown if available
           if (res.data.appliances_breakdown) {
-            this.appliances.set(res.data.appliances_breakdown.map((a: any) => ({
+            this.appliances.set(res.data.appliances_breakdown.map((a: { name: string; watts: number; quantity: number; daily_usage_hours: number }) => ({
               name: a.name,
               wattage: a.watts,
               quantity: a.quantity,
@@ -203,7 +206,7 @@ export class EstimatorComponent {
           this.showRefCodeModal.set(false);
         }
       },
-      error: (err: any) => {
+      error: () => {
         this.isLoading.set(false);
         this.setError('Reference code not found or invalid.');
       }
