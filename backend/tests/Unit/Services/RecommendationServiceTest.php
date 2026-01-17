@@ -255,6 +255,7 @@ class RecommendationServiceTest extends TestCase
             'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.32, // 32% of total
             'verified' => $verified,
+            'status' => 'active',
         ]);
 
         Hardware::factory()->inverter()->create([
@@ -263,6 +264,7 @@ class RecommendationServiceTest extends TestCase
             'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.25, // 25% of total
             'verified' => $verified,
+            'status' => 'active',
         ]);
 
         Hardware::factory()->battery()->create([
@@ -271,6 +273,7 @@ class RecommendationServiceTest extends TestCase
             'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.35, // 35% of total
             'verified' => $verified,
+            'status' => 'active',
         ]);
 
         Hardware::factory()->chargeController()->create([
@@ -279,6 +282,7 @@ class RecommendationServiceTest extends TestCase
             'owner_id' => $providerUser->id,
             'price' => $basePrice * 0.08, // 8% of total
             'verified' => $verified,
+            'status' => 'active',
         ]);
     }
 
