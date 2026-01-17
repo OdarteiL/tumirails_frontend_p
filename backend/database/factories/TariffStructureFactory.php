@@ -21,7 +21,7 @@ class TariffStructureFactory extends Factory
         $hasEndDate = fake()->boolean(30);
 
         return [
-            'country_id' => Country::factory(),
+            'country_id' => Country::inRandomOrder()->first()?->id ?? Country::factory(),
             'name' => fake()->randomElement([
                 'Residential Tariff',
                 'Commercial Tariff',
