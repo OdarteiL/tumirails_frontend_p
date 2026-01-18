@@ -22,7 +22,7 @@ class HardwareFactory extends Factory
             'price' => $this->faker->randomFloat(2, 100, 5000),
             'currency' => 'GHS',
             'specs' => ['power' => $this->faker->numberBetween(100, 1000)],
-            'stock_quantity' => $this->faker->numberBetween(0, 100),
+            'stock_quantity' => $this->faker->numberBetween(1, 100),
             'status' => 'active',
             'verified' => true,
         ];

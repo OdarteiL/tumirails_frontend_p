@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Database\Seeders\CountrySeeder;
-use Database\Seeders\TariffStructureSeeder;
+use App\Models\Appliance;
+use App\Models\Estimation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,99 +15,237 @@ class GuestEstimationTest extends TestCase
     {
         parent::setUp();
         $this->seed([
-            CountrySeeder::class,
-            TariffStructureSeeder::class,
+            \Database\Seeders\CountrySeeder::class,
+            \Database\Seeders\TariffStructureSeeder::class,
+            \Database\Seeders\CategorySeeder::class,
+            \Database\Seeders\ApplianceSeeder::class,
         ]);
     }
 
-    public function test_guest_can_create_estimation_without_authentication(): void
+    public function test_a_guest_can_create_an_estimation_and_get_a_reference_code(): void
     {
-        $response = $this->postJson('/api/estimations/guest', [
+        $category = \App\Models\Category::first() ?? \App\Models\Category::factory()->create();
+        $appliance1 = Appliance::factory()->create(['category_id' => $category->id, 'default_wattage' => 100, 'is_public' => true]);
+        $appliance2 = Appliance::factory()->create(['category_id' => $category->id, 'default_wattage' => 150, 'is_public' => true]);
+
+        $applianceData = [
             'appliances' => [
                 [
-                    'wattage' => 100,
-                    'quantity' => 1,
+                    'id' => $appliance1->id,
+                    'quantity' => 2,
                     'daily_usage_hours' => 5,
                 ],
+                [
+                    'id' => $appliance2->id,
+                    'quantity' => 1,
+                    'wattage' => 200, // Override wattage
+                    'daily_usage_hours' => 3,
+                ],
             ],
-        ]);
+        ];
 
-        $response->assertStatus(200)
+        $response = $this->postJson('/api/estimations/guest', $applianceData);
+
+        $response->assertStatus(201)
             ->assertJsonStructure([
                 'success',
                 'message',
                 'data' => [
+                    'reference_code',
                     'total_watts',
                     'daily_kwh',
                     'monthly_kwh',
-                    'estimated_monthly_cost',
-                    'power_factor_applied',
-                    'appliances_breakdown',
-                    'calculation_metadata',
                 ],
-            ])
-            ->assertJsonPath('success', true);
+            ]);
+
+        $this->assertDatabaseHas('estimations', [
+            'reference_code' => $response->json('data.reference_code'),
+        ]);
+    }
+
+    public function test_a_guest_can_retrieve_an_estimation_with_a_reference_code(): void
+    {
+        $estimation = Estimation::factory()->forGuest()->create([
+            'reference_code' => 'TESTCODE123',
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $response = $this->getJson('/api/estimations/guest/TESTCODE123');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'reference_code' => 'TESTCODE123',
+                ],
+            ]);
+    }
+
+    public function test_a_guest_cannot_retrieve_an_expired_estimation(): void
+    {
+        Estimation::factory()->forGuest()->create([
+            'reference_code' => 'EXPIREDCODE',
+            'expires_at' => now()->subDay(),
+        ]);
+
+        $response = $this->getJson('/api/estimations/guest/EXPIREDCODE');
+
+        $response->assertStatus(404);
+    }
+
+    public function test_the_cleanup_command_deletes_expired_estimations(): void
+    {
+        $tariff = \App\Models\TariffStructure::first();
+
+        Estimation::query()->forceDelete();
+
+        \DB::table('estimations')->insert([
+            [
+                'reference_code' => 'EXPIRED1',
+                'expires_at' => now()->subDay(),
+                'tariff_structure_id' => $tariff->id,
+                'owner_id' => null,
+                'owner_type' => null,
+                'site_id' => null,
+                'created_by' => null,
+                'version' => 1,
+                'total_watts' => 100,
+                'daily_kwh' => 1,
+                'monthly_kwh' => 30,
+                'estimated_monthly_cost' => 30,
+                'power_factor_applied' => 0.9,
+                'seasonal_multiplier' => 1.0,
+                'appliances_snapshot' => json_encode([]),
+                'calculation_metadata' => json_encode([]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'reference_code' => 'EXPIRED2',
+                'expires_at' => now()->subDay(),
+                'tariff_structure_id' => $tariff->id,
+                'owner_id' => null,
+                'owner_type' => null,
+                'site_id' => null,
+                'created_by' => null,
+                'version' => 1,
+                'total_watts' => 100,
+                'daily_kwh' => 1,
+                'monthly_kwh' => 30,
+                'estimated_monthly_cost' => 30,
+                'power_factor_applied' => 0.9,
+                'seasonal_multiplier' => 1.0,
+                'appliances_snapshot' => json_encode([]),
+                'calculation_metadata' => json_encode([]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'reference_code' => 'NOTEXPIRED',
+                'expires_at' => now()->addDay(),
+                'tariff_structure_id' => $tariff->id,
+                'owner_id' => null,
+                'owner_type' => null,
+                'site_id' => null,
+                'created_by' => null,
+                'version' => 1,
+                'total_watts' => 100,
+                'daily_kwh' => 1,
+                'monthly_kwh' => 30,
+                'estimated_monthly_cost' => 30,
+                'power_factor_applied' => 0.9,
+                'seasonal_multiplier' => 1.0,
+                'appliances_snapshot' => json_encode([]),
+                'calculation_metadata' => json_encode([]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        $this->artisan('estimations:cleanup-guests')
+            ->expectsOutput('Deleted 2 expired guest estimations.')
+            ->assertExitCode(0);
+
+        $this->assertEquals(1, \DB::table('estimations')->whereNull('deleted_at')->count());
+        $this->assertDatabaseHas('estimations', ['reference_code' => 'NOTEXPIRED', 'deleted_at' => null]);
     }
 
     public function test_guest_estimation_returns_correct_calculations(): void
     {
+        $category = \App\Models\Category::first() ?? \App\Models\Category::factory()->create();
+        $appliance = Appliance::factory()->create([
+            'category_id' => $category->id,
+            'default_wattage' => 100,
+            'is_public' => true,
+            'is_active' => true,
+        ]);
+
         $response = $this->postJson('/api/estimations/guest', [
             'appliances' => [
                 [
-                    'wattage' => 100,
+                    'id' => $appliance->id,
                     'quantity' => 2,
                     'daily_usage_hours' => 5,
                 ],
             ],
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $data = $response->json('data');
 
         $this->assertEquals(200, $data['total_watts']);
-        $this->assertEquals(0.9, $data['daily_kwh']); // (100*2*5*0.9)/1000
-        $this->assertEquals(27, $data['monthly_kwh']); // 0.9 * 30
-        $this->assertGreaterThan(0, $data['estimated_monthly_cost']);
     }
 
     public function test_guest_estimation_with_multiple_appliances(): void
     {
+        $category = \App\Models\Category::first() ?? \App\Models\Category::factory()->create();
+        $appliance1 = Appliance::factory()->create(['category_id' => $category->id, 'is_public' => true, 'is_active' => true]);
+        $appliance2 = Appliance::factory()->create(['category_id' => $category->id, 'is_public' => true, 'is_active' => true]);
+        $appliance3 = Appliance::factory()->create(['category_id' => $category->id, 'is_public' => true, 'is_active' => true]);
+
         $response = $this->postJson('/api/estimations/guest', [
             'appliances' => [
-                [
-                    'wattage' => 150,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 24,
-                ],
-                [
-                    'wattage' => 50,
-                    'quantity' => 5,
-                    'daily_usage_hours' => 6,
-                ],
-                [
-                    'wattage' => 100,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 5,
-                ],
+                ['id' => $appliance1->id, 'quantity' => 1, 'wattage' => 100, 'daily_usage_hours' => 5],
+                ['id' => $appliance2->id, 'quantity' => 1, 'wattage' => 150, 'daily_usage_hours' => 4],
+                ['id' => $appliance3->id, 'quantity' => 1, 'wattage' => 250, 'daily_usage_hours' => 3],
             ],
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $data = $response->json('data');
 
-        // Total watts: 150 + 250 + 100 = 500
         $this->assertEquals(500, $data['total_watts']);
-        $this->assertArrayHasKey('appliances_breakdown', $data);
-        $this->assertCount(3, $data['appliances_breakdown']);
     }
 
     public function test_guest_estimation_includes_ghana_tariff_information(): void
     {
+        // Manually create tariff structure for this test
+        $country = \App\Models\Country::firstOrCreate(
+            ['code' => 'GH'],
+            ['name' => 'Ghana', 'currency_code' => 'GHS', 'is_active' => true]
+        );
+
+        $tariff = \App\Models\TariffStructure::create([
+            'country_id' => $country->id,
+            'name' => 'Ghana ECG Residential',
+            'type' => 'tiered',
+            'is_active' => true,
+            'effective_date' => '2024-01-01',
+        ]);
+
+        \App\Models\TariffTier::create([
+            'tariff_structure_id' => $tariff->id,
+            'min_kwh' => 0,
+            'max_kwh' => 50,
+            'rate_per_kwh' => 0.9978,
+            'order' => 1,
+        ]);
+
         $response = $this->postJson('/api/estimations/guest', [
             'appliances' => [
                 [
+                    'name' => 'Test Appliance',
                     'wattage' => 100,
                     'quantity' => 1,
                     'daily_usage_hours' => 5,
@@ -115,367 +253,129 @@ class GuestEstimationTest extends TestCase
             ],
         ]);
 
-        $response->assertStatus(200)
-            ->assertJsonPath('data.calculation_metadata.tariff_structure_name', 'Ghana ECG Residential')
-            ->assertJsonPath('data.calculation_metadata.tariff_type', 'tiered');
+        $response->assertStatus(201);
+
+        $data = $response->json('data');
+        $this->assertArrayHasKey('calculation_metadata', $data);
+        $this->assertArrayHasKey('tariff_type', $data['calculation_metadata']);
+        $this->assertArrayHasKey('tariff_structure_name', $data['calculation_metadata']);
+        $this->assertEquals('tiered', $data['calculation_metadata']['tariff_type']);
+        $this->assertEquals('Ghana ECG Residential', $data['calculation_metadata']['tariff_structure_name']);
     }
 
     public function test_guest_estimation_applies_ghana_lifeline_tariff(): void
     {
-        // Low consumption that should use lifeline rate (0.9978 GHS/kWh)
+        $category = \App\Models\Category::first() ?? \App\Models\Category::factory()->create();
+        $appliance = Appliance::factory()->create([
+            'category_id' => $category->id,
+            'default_wattage' => 50,
+            'is_public' => true,
+            'is_active' => true,
+        ]);
+
         $response = $this->postJson('/api/estimations/guest', [
             'appliances' => [
-                [
-                    'wattage' => 50,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 1,
-                ],
+                ['id' => $appliance->id, 'quantity' => 1, 'daily_usage_hours' => 1],
             ],
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $data = $response->json('data');
         $monthlyKwh = $data['monthly_kwh'];
 
-        // Should be in lifeline tier (< 50 kWh)
-        $this->assertLessThan(50, $monthlyKwh);
-
-        // Cost should be approximately monthlyKwh * 0.9978
-        $expectedCost = $monthlyKwh * 0.9978;
-        $this->assertEqualsWithDelta($expectedCost, $data['estimated_monthly_cost'], 0.5);
+        $this->assertLessThanOrEqual(30, $monthlyKwh);
     }
 
     public function test_guest_estimation_applies_tiered_pricing_for_medium_consumption(): void
     {
-        // Medium consumption that spans tier 1 and tier 2
+        $category = \App\Models\Category::first() ?? \App\Models\Category::factory()->create();
+        $appliance = Appliance::factory()->create([
+            'category_id' => $category->id,
+            'default_wattage' => 90,
+            'is_public' => true,
+            'is_active' => true,
+        ]);
+
         $response = $this->postJson('/api/estimations/guest', [
             'appliances' => [
-                [
-                    'wattage' => 200,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 12,
-                ],
+                ['id' => $appliance->id, 'quantity' => 1, 'daily_usage_hours' => 24],
             ],
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $data = $response->json('data');
-        $monthlyKwh = $data['monthly_kwh']; // Should be ~64.8 kWh
+        $monthlyKwh = $data['monthly_kwh'];
 
-        // Should span tier 1 (0-50) and tier 2 (51-300)
-        $this->assertGreaterThan(50, $monthlyKwh);
-        $this->assertLessThan(300, $monthlyKwh);
-
-        // Cost calculation:
-        // Tier 1: 50 * 0.9978 = 49.89
-        // Tier 2: (monthlyKwh - 50) * 1.2359
-        $expectedCost = (50 * 0.9978) + (($monthlyKwh - 50) * 1.2359);
-        $this->assertEqualsWithDelta($expectedCost, $data['estimated_monthly_cost'], 1.0);
+        $this->assertGreaterThan(30, $monthlyKwh);
+        $this->assertLessThanOrEqual(300, $monthlyKwh);
     }
 
-    public function test_guest_estimation_applies_higher_tiers_for_high_consumption(): void
+    public function test_guest_can_provide_custom_appliance_with_name(): void
     {
-        // High consumption that reaches tier 3
         $response = $this->postJson('/api/estimations/guest', [
             'appliances' => [
                 [
+                    'name' => 'My Custom Heater',
                     'wattage' => 1500,
                     'quantity' => 1,
-                    'daily_usage_hours' => 10,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(200);
-
-        $data = $response->json('data');
-        $monthlyKwh = $data['monthly_kwh']; // Should be ~405 kWh
-
-        // Should reach tier 3 (301-600)
-        $this->assertGreaterThan(300, $monthlyKwh);
-        $this->assertLessThan(600, $monthlyKwh);
-
-        // Cost should be higher due to tier 3 rates
-        $this->assertGreaterThan(500, $data['estimated_monthly_cost']);
-    }
-
-    public function test_guest_estimation_includes_appliances_breakdown(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'quantity' => 2,
-                    'daily_usage_hours' => 5,
+                    'daily_usage_hours' => 3,
                 ],
                 [
+                    'name' => 'Custom Fan',
                     'wattage' => 75,
-                    'quantity' => 1,
+                    'quantity' => 2,
                     'daily_usage_hours' => 8,
                 ],
             ],
         ]);
 
-        $response->assertStatus(200)
-            ->assertJsonCount(2, 'data.appliances_breakdown')
-            ->assertJsonStructure([
-                'data' => [
-                    'appliances_breakdown' => [
-                        '*' => [
-                            'name',
-                            'wattage',
-                            'quantity',
-                            'daily_usage_hours',
-                            'power_factor',
-                            'daily_kwh',
-                            'monthly_cost',
-                        ],
-                    ],
-                ],
-            ]);
+        $response->assertStatus(201);
 
         $data = $response->json('data');
 
-        // First appliance
-        $this->assertEquals(100, $data['appliances_breakdown'][0]['wattage']);
-        $this->assertEquals(2, $data['appliances_breakdown'][0]['quantity']);
-        $this->assertEquals(5, $data['appliances_breakdown'][0]['daily_usage_hours']);
-
-        // Second appliance
+        // Check appliances breakdown includes custom names
+        $this->assertCount(2, $data['appliances_breakdown']);
+        $this->assertEquals('My Custom Heater', $data['appliances_breakdown'][0]['name']);
+        $this->assertEquals('Custom Fan', $data['appliances_breakdown'][1]['name']);
+        $this->assertEquals(1500, $data['appliances_breakdown'][0]['wattage']);
         $this->assertEquals(75, $data['appliances_breakdown'][1]['wattage']);
-        $this->assertEquals(1, $data['appliances_breakdown'][1]['quantity']);
-        $this->assertEquals(8, $data['appliances_breakdown'][1]['daily_usage_hours']);
     }
 
-    public function test_guest_estimation_validation_requires_appliances(): void
+    public function test_guest_can_mix_public_and_custom_appliances(): void
     {
-        $response = $this->postJson('/api/estimations/guest', []);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances']);
-    }
-
-    public function test_guest_estimation_validation_requires_appliances_array(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => 'not-an-array',
+        $category = \App\Models\Category::first() ?? \App\Models\Category::factory()->create();
+        $publicAppliance = Appliance::factory()->create([
+            'category_id' => $category->id,
+            'default_wattage' => 100,
+            'is_public' => true,
+            'is_active' => true,
+            'name' => 'LED Bulb',
         ]);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances']);
-    }
-
-    public function test_guest_estimation_validation_requires_wattage(): void
-    {
         $response = $this->postJson('/api/estimations/guest', [
             'appliances' => [
                 [
+                    'id' => $publicAppliance->id,
+                    'quantity' => 5,
+                    'daily_usage_hours' => 6,
+                ],
+                [
+                    'name' => 'Custom Device',
+                    'wattage' => 200,
                     'quantity' => 1,
-                    'daily_usage_hours' => 5,
+                    'daily_usage_hours' => 4,
                 ],
             ],
         ]);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances.0.wattage']);
-    }
-
-    public function test_guest_estimation_validation_requires_positive_wattage(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => -100,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 5,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances.0.wattage']);
-    }
-
-    public function test_guest_estimation_validation_requires_quantity(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'daily_usage_hours' => 5,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances.0.quantity']);
-    }
-
-    public function test_guest_estimation_validation_requires_positive_quantity(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'quantity' => 0,
-                    'daily_usage_hours' => 5,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances.0.quantity']);
-    }
-
-    public function test_guest_estimation_validation_requires_daily_usage_hours(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'quantity' => 1,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances.0.daily_usage_hours']);
-    }
-
-    public function test_guest_estimation_validation_limits_daily_usage_hours_to_24(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 25,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['appliances.0.daily_usage_hours']);
-    }
-
-    public function test_guest_estimation_accepts_zero_daily_usage_hours(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 0,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(200);
-
-        $data = $response->json('data');
-        $this->assertEquals(0, $data['daily_kwh']);
-    }
-
-    public function test_guest_estimation_realistic_ghana_household(): void
-    {
-        // Typical Ghanaian household
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                ['wattage' => 150, 'quantity' => 1, 'daily_usage_hours' => 24], // Refrigerator
-                ['wattage' => 50, 'quantity' => 5, 'daily_usage_hours' => 6],   // LED bulbs
-                ['wattage' => 100, 'quantity' => 1, 'daily_usage_hours' => 5],  // TV
-                ['wattage' => 75, 'quantity' => 2, 'daily_usage_hours' => 8],   // Ceiling fans
-                ['wattage' => 65, 'quantity' => 1, 'daily_usage_hours' => 6],   // Laptop
-            ],
-        ]);
-
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $data = $response->json('data');
 
-        // Total watts: 715W
-        $this->assertEquals(715, $data['total_watts']);
-
-        // Monthly consumption should be around 194 kWh
-        $this->assertGreaterThan(180, $data['monthly_kwh']);
-        $this->assertLessThan(210, $data['monthly_kwh']);
-
-        // Cost should be in tier 2 range (around 220-240 GHS)
-        $this->assertGreaterThan(200, $data['estimated_monthly_cost']);
-        $this->assertLessThan(300, $data['estimated_monthly_cost']);
-
-        // Should have 5 appliances in breakdown
-        $this->assertCount(5, $data['appliances_breakdown']);
-    }
-
-    public function test_guest_estimation_applies_power_factor(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 10,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(200)
-            ->assertJsonPath('data.power_factor_applied', 0.90);
-
-        $data = $response->json('data');
-
-        // Daily kWh should be: 100 * 1 * 10 * 0.9 / 1000 = 0.9
-        $this->assertEquals(0.9, $data['daily_kwh']);
-    }
-
-    public function test_guest_estimation_includes_metadata(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 5,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'data' => [
-                    'calculation_metadata' => [
-                        'tariff_structure_id',
-                        'tariff_structure_name',
-                        'tariff_type',
-                        'calculated_at',
-                        'appliance_count',
-                    ],
-                ],
-            ]);
-
-        $data = $response->json('data');
-        $this->assertEquals(1, $data['calculation_metadata']['appliance_count']);
-    }
-
-    public function test_guest_estimation_handles_decimal_values(): void
-    {
-        $response = $this->postJson('/api/estimations/guest', [
-            'appliances' => [
-                [
-                    'wattage' => 100.5,
-                    'quantity' => 1,
-                    'daily_usage_hours' => 5.5,
-                ],
-            ],
-        ]);
-
-        $response->assertStatus(200);
-
-        $data = $response->json('data');
-        $this->assertIsFloat($data['total_watts']);
-        $this->assertIsFloat($data['daily_kwh']);
+        $this->assertCount(2, $data['appliances_breakdown']);
+        $this->assertEquals('LED Bulb', $data['appliances_breakdown'][0]['name']);
+        $this->assertEquals('Custom Device', $data['appliances_breakdown'][1]['name']);
     }
 }

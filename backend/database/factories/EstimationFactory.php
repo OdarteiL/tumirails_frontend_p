@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\TariffStructure;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -30,7 +31,7 @@ class EstimationFactory extends Factory
             'daily_kwh' => $dailyKwh,
             'monthly_kwh' => $monthlyKwh,
             'estimated_monthly_cost' => $monthlyKwh * $ratePerKwh,
-            'tariff_structure_id' => \App\Models\TariffStructure::factory(),
+            'tariff_structure_id' => TariffStructure::factory(),
             'power_factor_applied' => $this->faker->randomFloat(2, 0.85, 0.95),
             'seasonal_multiplier' => $this->faker->randomFloat(2, 0.90, 1.15),
             'appliances_snapshot' => [
@@ -48,6 +49,8 @@ class EstimationFactory extends Factory
                 'location_multiplier' => 1.0,
             ],
             'created_by' => \App\Models\User::factory(),
+            'reference_code' => null,
+            'expires_at' => null,
         ];
     }
 
@@ -59,6 +62,21 @@ class EstimationFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'owner_id' => \App\Models\Organisation::factory(),
             'owner_type' => \App\Models\Organisation::class,
+        ]);
+    }
+
+    /**
+     * Indicate that the estimation is for a guest.
+     */
+    public function forGuest(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'owner_id' => null,
+            'owner_type' => null,
+            'site_id' => null,
+            'created_by' => null,
+            'reference_code' => $this->faker->unique()->regexify('[A-Z0-9]{10}'),
+            'expires_at' => now()->addDays(config('features.guest_estimation_ttl_days', 30)),
         ]);
     }
 
