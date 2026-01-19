@@ -41,6 +41,52 @@
                 </div>
             </div>
         </div>
+        <!-- Reference Code Success Modal -->
+        <div *ngIf="showSuccessModal()"
+            class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 backdrop-blur-lg p-4">
+            <div
+                class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-500">
+                <button (click)="showSuccessModal.set(false)"
+                    class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+                    <lucide-icon [img]="X" class="w-6 h-6"></lucide-icon>
+                </button>
+
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 rounded-full mb-6">
+                        <lucide-icon [img]="Zap" class="w-10 h-10 text-emerald-600"></lucide-icon>
+                    </div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Estimation Ready!</h2>
+                    <p class="text-slate-500 mt-3 font-medium text-lg leading-relaxed">
+                        We've calculated your energy profile and generated a reference code for you.
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <div
+                        class="p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-primary/20 text-center relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 relative z-10">
+                            Your Reference Code</p>
+                        <p class="text-4xl font-mono font-black text-primary tracking-[0.2em] relative z-10">{{
+                            refCode() }}</p>
+                    </div>
+
+                    <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-100 flex items-start gap-3">
+                        <lucide-icon [img]="Sun" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></lucide-icon>
+                        <p class="text-sm text-emerald-800 font-medium">
+                            Please save this code securely. You'll need it to retrieve this estimation later or when
+                            finalizing your installation.
+                        </p>
+                    </div>
+
+                    <button (click)="showSuccessModal.set(false)"
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        Got it, thanks!
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Left: Appliance Configuration (2 cols on large) -->
         <div class="lg:col-span-2 space-y-6">
@@ -271,7 +317,8 @@
                 </div>
 
                 <button [disabled]="!estimationResult()" [class.opacity-50]="!estimationResult()"
-                    [class.cursor-not-allowed]="!estimationResult()"
+                    [class.cursor-not-allowed]="!estimationResult()" routerLink="/login"
+                    [queryParams]="{ refCode: refCode() }"
                     class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-6 rounded-2xl text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
                     Get Certified Installer Quotes
                 </button>

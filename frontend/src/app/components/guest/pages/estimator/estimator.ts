@@ -1,6 +1,7 @@
 import { Component, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { LucideAngularModule, DollarSign, Zap, Sun, Loader2, Plus, Trash2, X, Hash } from 'lucide-angular';
 import { EstimationsService } from '../../../../services/estimations.service';
 import { GuestEstimationRequest, GuestEstimationResponse, GuestEstimation } from '../../../../models/estimation.model';
@@ -16,7 +17,7 @@ interface Appliance {
 @Component({
   selector: 'app-estimator',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, RouterModule, LucideAngularModule],
   templateUrl: './estimator.html',
   styleUrl: './estimator.css'
 })
@@ -35,6 +36,7 @@ export class EstimatorComponent {
 
   // Modal and Ref Code state
   showRefCodeModal = signal(true);
+  showSuccessModal = signal(false);
   tempRefCode = '';
   refCode = signal<string | null>(null);
 
@@ -79,6 +81,11 @@ export class EstimatorComponent {
   estimatedOutput = computed(() => {
     const usage = Number(this.monthlyUsage());
     return Math.round(usage * 0.616);
+  });
+
+  estimatedOutputDaily = computed(() => {
+    const usageDaily = Number(this.dailyKwh());
+    return usageDaily.toFixed(2);
   });
 
   estimatedCost = computed(() => {
@@ -126,9 +133,16 @@ export class EstimatorComponent {
     ).subscribe(result => {
       this.isLoading.set(false);
       if (result && result.success) {
+        console.log('Estimation result:', result);
         this.estimationResult.set(result.data);
-        if (result.data.ref_code) {
-          this.refCode.set(result.data.ref_code);
+        const code = result.data.reference_code || result.data.ref_code;
+        if (code) {
+          this.refCode.set(code);
+
+          // Show success modal after 3 seconds
+          setTimeout(() => {
+            this.showSuccessModal.set(true);
+          }, 3000);
         }
       }
     });
@@ -193,7 +207,8 @@ export class EstimatorComponent {
         this.isLoading.set(false);
         if (res.success) {
           this.estimationResult.set(res.data);
-          this.refCode.set(res.data.ref_code || this.tempRefCode);
+          const code = res.data.reference_code || res.data.ref_code || this.tempRefCode;
+          this.refCode.set(code);
 
           if (res.data.appliances_breakdown) {
             this.appliances.set(res.data.appliances_breakdown.map((a: { name: string; watts: number; quantity: number; daily_usage_hours: number }) => ({
