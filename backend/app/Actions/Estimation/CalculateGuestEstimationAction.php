@@ -12,13 +12,12 @@ class CalculateGuestEstimationAction
      */
     public function execute(array $appliances): array
     {
-        // For guests, we'll use the default active tariff structure.
-        // A more robust solution might determine this based on user's location if provided.
-        $tariffStructure = TariffStructure::where('is_active', true)->orderBy('effective_date', 'desc')->first();
+        $tariffStructure = TariffStructure::with('tariffTiers')
+            ->where('is_active', true)
+            ->orderBy('effective_date', 'desc')
+            ->first();
 
         if (! $tariffStructure) {
-            // It's crucial to handle the case where no active tariff structure is found.
-            // This could be returning an error or a default (zero) estimation.
             Log::error('No active tariff structure found for guest estimation.');
 
             return $this->emptyEstimation();
@@ -27,20 +26,37 @@ class CalculateGuestEstimationAction
         $totalWatts = 0;
         $dailyKwh = 0;
         $appliancesBreakdown = [];
-        $powerFactor = 0.90; // Default power factor for guest estimations
+        $powerFactor = 0.90;
 
-        foreach ($appliances as $appliance) {
-            $watts = $appliance['wattage'] * $appliance['quantity'];
+        foreach ($appliances as $applianceData) {
+            if (isset($applianceData['id'])) {
+                $appliance = \App\Models\Appliance::where('id', $applianceData['id'])
+                    ->where('is_public', true)
+                    ->where('is_active', true)
+                    ->first();
+
+                if (! $appliance) {
+                    continue;
+                }
+
+                $wattage = $applianceData['wattage'] ?? $appliance->default_wattage;
+                $name = $appliance->name;
+            } else {
+                $wattage = $applianceData['wattage'];
+                $name = $applianceData['name'] ?? 'Appliance';
+            }
+
+            $watts = $wattage * $applianceData['quantity'];
             $totalWatts += $watts;
 
-            $applianceDailyKwh = ($appliance['wattage'] * $appliance['quantity'] * $appliance['daily_usage_hours'] * $powerFactor) / 1000;
+            $applianceDailyKwh = ($wattage * $applianceData['quantity'] * $applianceData['daily_usage_hours'] * $powerFactor) / 1000;
             $dailyKwh += $applianceDailyKwh;
 
             $appliancesBreakdown[] = [
-                'name' => $appliance['name'] ?? 'Appliance', // Generic name for guest appliances
-                'wattage' => (float) $appliance['wattage'],
-                'quantity' => (int) $appliance['quantity'],
-                'daily_usage_hours' => (float) $appliance['daily_usage_hours'],
+                'name' => $name,
+                'wattage' => (float) $wattage,
+                'quantity' => (int) $applianceData['quantity'],
+                'daily_usage_hours' => (float) $applianceData['daily_usage_hours'],
                 'power_factor' => (float) $powerFactor,
                 'daily_kwh' => round($applianceDailyKwh, 2),
             ];
@@ -61,7 +77,7 @@ class CalculateGuestEstimationAction
             'total_watts' => round($totalWatts, 2),
             'daily_kwh' => round($dailyKwh, 2),
             'monthly_kwh' => round($monthlyKwh, 2),
-            'adjusted_monthly_kwh' => round($monthlyKwh, 2), // No adjustments for guests yet
+            'adjusted_monthly_kwh' => round($monthlyKwh, 2),
             'estimated_daily_cost' => round($cost / 30, 2),
             'estimated_monthly_cost' => round($cost, 2),
             'power_factor_applied' => $powerFactor,
