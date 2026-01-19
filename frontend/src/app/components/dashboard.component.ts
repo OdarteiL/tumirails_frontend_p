@@ -1,58 +1,83 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { User } from '../models/user.model';
+import { AdminLayoutComponent } from './admin/admin-layout/admin-layout';
+import { LucideAngularModule, LayoutDashboard, ShoppingBag, Package, Users, Settings } from 'lucide-angular';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule, AdminLayoutComponent, LucideAngularModule],
   template: `
-    <div class="min-h-screen bg-gray-50">
-      <nav style="background: white; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 1rem 0;">
-        <div class="container flex" style="justify-content: space-between; align-items: center;">
-          <h1 style="font-size: 1.25rem; font-weight: 600; color: #333;">Tumi Configurator</h1>
-          <div class="flex" style="align-items: center; gap: 1rem;">
-            <span style="color: #6b7280;">Welcome, {{ currentUser()?.first_name }}!</span>
-            <button
-              (click)="logout()"
-              class="btn"
-              style="background-color: #dc2626; color: white;"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
+    <app-admin-layout 
+      pageTitle="Admin Dashboard" 
+      [userName]="currentUser()?.first_name + ' ' + currentUser()?.last_name"
+      [userRole]="currentUser()?.role || ''"
+      [userInitials]="(currentUser()?.first_name?.[0] || 'U') + (currentUser()?.last_name?.[0] || '')">
+      
+      <!-- Dynamic Sidebar Menu -->
+      <ng-container sidebarMenu>
+        <a routerLink="/admin/dashboard" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="LayoutDashboard" [size]="20" class="group-hover:scale-110 transition-transform"></lucide-icon>
+          <span>Overview</span>
+        </a>
+        <a routerLink="/admin/orders" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="ShoppingBag" [size]="20" class="group-hover:scale-110 transition-transform"></lucide-icon>
+          <span>Recent Orders</span>
+        </a>
+        <a routerLink="/admin/products" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="Package" [size]="20" class="group-hover:scale-110 transition-transform"></lucide-icon>
+          <span>Inventory</span>
+        </a>
+        <a routerLink="/admin/customers" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="Users" [size]="20" class="group-hover:scale-110 transition-transform"></lucide-icon>
+          <span>User Management</span>
+        </a>
+        <a routerLink="/admin/settings" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="Settings" [size]="20" class="group-hover:scale-110 transition-transform"></lucide-icon>
+          <span>System Settings</span>
+        </a>
+      </ng-container>
 
-      <main class="container" style="padding: 2rem 1rem;">
-        <div class="text-center">
-          <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1rem;">Dashboard</h2>
-          <p style="color: #6b7280; margin-bottom: 2rem;">Welcome to your Tumi Solar Configurator dashboard!</p>
-          
-          <div class="card" style="max-width: 400px; margin: 0 auto;">
-            <h3 style="font-size: 1.125rem; font-weight: 500; margin-bottom: 1rem;">Your Profile</h3>
-            <div style="text-align: left; display: flex; flex-direction: column; gap: 0.5rem;">
-              <p><span style="font-weight: 500;">Name:</span> {{ currentUser()?.first_name }} {{ currentUser()?.last_name }}</p>
-              <p><span style="font-weight: 500;">Email:</span> {{ currentUser()?.email }}</p>
-              <p><span style="font-weight: 500;">Role:</span> {{ currentUser()?.role }}</p>
-              <p><span style="font-weight: 500;">Status:</span> 
-                <span style="display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;"
-                      [style.background-color]="getStatusColor(currentUser()?.status)"
-                      [style.color]="getStatusTextColor(currentUser()?.status)">
-                  {{ currentUser()?.status }}
-                </span>
-              </p>
-            </div>
-          </div>
+
+      <!-- Main Page Content -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+           <h3 class="text-lg font-bold mb-4">Welcome Back!</h3>
+           <p class="text-slate-500">You are logged in as {{ currentUser()?.email }}</p>
+           <div class="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
+              <span class="text-xs font-bold uppercase tracking-wider text-primary">Status</span>
+              <p class="font-bold text-slate-700 capitalize">{{ currentUser()?.status }}</p>
+           </div>
         </div>
-      </main>
-    </div>
+
+        <!-- Placeholder for more stats -->
+        <div class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center opacity-50 border-dashed">
+            <p class="text-slate-400">Total Revenue Chart</p>
+        </div>
+        <div class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center opacity-50 border-dashed">
+            <p class="text-slate-400">User Growth Chart</p>
+        </div>
+      </div>
+    </app-admin-layout>
   `
 })
 export class DashboardComponent implements OnInit {
   currentUser = signal<User | null>(null);
+
+  // Icons for template
+  readonly LayoutDashboard = LayoutDashboard;
+  readonly ShoppingBag = ShoppingBag;
+  readonly Package = Package;
+  readonly Users = Users;
+  readonly Settings = Settings;
 
   constructor(
     private authService: AuthService,
@@ -64,7 +89,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     // Optionally refresh user data
     this.authService.getCurrentUser().subscribe({
-      error: (error) => {
+      error: (error: unknown) => {
         console.error('Failed to fetch user data:', error);
       }
     });
@@ -75,36 +100,10 @@ export class DashboardComponent implements OnInit {
       next: () => {
         this.router.navigate(['/login']);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         console.error('Logout error:', error);
         this.router.navigate(['/login']);
       }
     });
-  }
-
-  getStatusColor(status?: string): string {
-    switch (status) {
-      case 'active':
-        return '#dcfce7';
-      case 'inactive':
-        return '#f3f4f6';
-      case 'suspended':
-        return '#fee2e2';
-      default:
-        return '#f3f4f6';
-    }
-  }
-
-  getStatusTextColor(status?: string): string {
-    switch (status) {
-      case 'active':
-        return '#166534';
-      case 'inactive':
-        return '#374151';
-      case 'suspended':
-        return '#991b1b';
-      default:
-        return '#374151';
-    }
   }
 }

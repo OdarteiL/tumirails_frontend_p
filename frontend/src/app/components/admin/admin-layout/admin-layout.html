@@ -1,0 +1,97 @@
+<div class="admin-container">
+    <!-- Sidebar Overlay (Mobile) -->
+    <div *ngIf="isSidebarOpen()" (click)="toggleSidebar()" (keydown.enter)="toggleSidebar()"
+        (keydown.space)="toggleSidebar()" tabindex="0" role="button" aria-label="Close sidebar"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden text-transparent">Close</div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" [class.mobile-open]="isSidebarOpen()">
+        <div class="sidebar-header flex items-center justify-between">
+            <div class="logo-text tracking-tighter">TUMI_ADMIN</div>
+            <button class="p-2 text-white/50 hover:text-white lg:hidden" (click)="toggleSidebar()">
+                <lucide-icon [img]="X" size="20"></lucide-icon>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav mt-8">
+            <!-- DYNAMIC SIDEBAR CONTENT SLOT -->
+            <ng-content select="[sidebarMenu]"></ng-content>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" (click)="logout($event)"
+                class="nav-item group text-red-200/70 hover:text-red-100 hover:bg-red-500/10">
+                <lucide-icon [img]="LogOut" [size]="20"></lucide-icon>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Headerbar -->
+        <header class="headerbar">
+            <div class="header-left">
+                <button class="p-2 -ml-2 text-slate-500 lg:hidden hover:bg-slate-100 rounded-lg transition-colors"
+                    (click)="toggleSidebar()">
+                    <lucide-icon [img]="Menu" size="24"></lucide-icon>
+                </button>
+
+                <h2 class="text-xl font-black text-slate-900 hidden xl:block mr-2">{{ pageTitle() }}</h2>
+
+                <div class="search-bar hidden sm:flex items-center">
+                    <lucide-icon [img]="Search" [size]="18" class="absolute left-4 text-slate-400 z-10"></lucide-icon>
+                    <input type="text" placeholder="Search for anything..." class="search-input">
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- Header Actions Slot (Optional) -->
+                <div class="hidden md:flex items-center gap-2">
+                    <ng-content select="[headerActions]"></ng-content>
+                </div>
+
+                <button class="relative p-2.5 text-slate-500 hover:bg-slate-100 rounded-2xl transition-all group">
+                    <lucide-icon [img]="Bell" [size]="22"
+                        class="group-hover:rotate-12 transition-transform"></lucide-icon>
+                    <span
+                        class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+
+                <div class="h-10 w-[1px] bg-slate-100 mx-2 hidden sm:block"></div>
+
+                <div class="user-profile group">
+                    <div class="user-avatar bg-gradient-to-br from-primary to-indigo-600">
+                        {{ userInitials() }}
+                    </div>
+                    <div class="user-info hidden md:flex">
+                        <span class="user-name">{{ userName() }}</span>
+                        <span class="user-role">{{ userRole() }}</span>
+                    </div>
+                    <lucide-icon [img]="ChevronDown" [size]="16"
+                        class="text-slate-300 group-hover:text-primary transition-colors ml-1"></lucide-icon>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content Slot -->
+        <section class="page-content bg-[#f8fafc]">
+            <div class="max-w-[1600px] mx-auto min-h-[calc(100vh-160px)]">
+                <!-- DYNAMIC PAGE CONTENT SLOT -->
+                <ng-content></ng-content>
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <div class="text-slate-400">
+                &copy; 2024 <span class="font-bold text-primary">TUMI</span> Configurator.
+            </div>
+            <div class="flex gap-6 font-medium">
+                <a href="#" class="hover:text-primary transition-colors">Support</a>
+                <a href="#" class="hover:text-primary transition-colors">Documentation</a>
+            </div>
+        </footer>
+    </main>
+</div>
