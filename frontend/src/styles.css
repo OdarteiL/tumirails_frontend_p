@@ -27,13 +27,14 @@
 body {
   font-family: var(--font-primary);
   line-height: 1.8;
-  /* Increased line-height for better readability */
   color: #4a5568;
-  /* Softer text color than #333 */
-  background-color: #FFFFFF;
+  background-color: #f8fafc;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Page padding for fixed nav - to be applied on layouts that need it */
+.has-fixed-nav {
   padding-top: 80px;
-  /* Account for fixed navbar height (h-20 = 5rem = 80px) */
 }
 
 h1,
@@ -161,5 +162,6 @@ h6 {
 .text-gradient {
   background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }

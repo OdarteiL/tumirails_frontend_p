@@ -16,6 +16,7 @@ export interface GuestEstimation {
     estimated_monthly_cost: string;
     estimated_daily_cost: string;
     ref_code?: string;
+    reference_code?: string;
     power_factor_applied: string | null;
     seasonal_multiplier: string | null;
     appliances_breakdown: Array<{

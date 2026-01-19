@@ -42,9 +42,15 @@ export class LoginComponent {
       this.backendErrors.set({});
 
       this.authService.login(this.loginForm.value).subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard']);
+        next: (response) => {
+          const user = response.data.user;
+          if (user.role === 'customer' || user.role === 'consumer') {
+            this.router.navigate(['/admin/consumer/dashboard']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
         },
+
         error: (error) => {
           // Set field-specific errors if available
           if (error.error?.errors) {

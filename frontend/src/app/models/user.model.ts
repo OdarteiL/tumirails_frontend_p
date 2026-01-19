@@ -6,7 +6,7 @@ export interface User {
   email: string;
   phone?: string;
   address?: string;
-  role: 'customer' | 'installer' | 'provider' | 'admin' | 'verifier';
+  role: 'customer' | 'consumer' | 'installer' | 'provider' | 'admin' | 'verifier';
   status: 'active' | 'inactive' | 'suspended';
   created_at: string;
   updated_at: string;
