@@ -1,110 +1,278 @@
-<div class="min-h-screen bg-slate-50 font-sans text-slate-800 py-20 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="min-h-screen bg-slate-50 font-sans text-slate-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        <!-- Left Card: Energy Profile -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-10">
-            <h2 class="text-2xl font-bold text-slate-900 mb-8">Your Energy Profile</h2>
-
-            <!-- Usage Slider -->
-            <div class="mb-10">
-                <label for="monthly-usage" class="block text-sm font-semibold text-slate-700 mb-4 flex justify-between">
-                    Monthly Electricity Usage (kWh)
-                    <span class="text-primary font-bold">{{ monthlyUsage() }} kWh</span>
-                </label>
-                <input id="monthly-usage" type="range" min="100" max="2000" step="50" [value]="monthlyUsage()"
-                    (input)="onUsageChange($event)"
-                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary">
-            </div>
-
-            <!-- Bill Input -->
-            <div class="mb-10">
-                <label for="monthly-bill" class="block text-sm font-semibold text-slate-700 mb-3">Average Monthly
-                    Electricity Bill
-                    (GH₵)</label>
-                <div class="relative">
-                    <input id="monthly-bill" type="number" [ngModel]="monthlyBill()"
-                        (ngModelChange)="monthlyBill.set($event)"
-                        class="block w-full pl-4 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary text-slate-900 placeholder-slate-400 transition-colors"
-                        placeholder="200">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none hidden">
-                        <!-- Optional Prefix styling if needed, currently inside input placeholder/value roughly -->
+        <!-- Reference Code Modal -->
+        <div *ngIf="showRefCodeModal()"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4">
+            <div
+                class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300">
+                <button (click)="closeModal()"
+                    class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+                    <lucide-icon [img]="X" class="w-6 h-6"></lucide-icon>
+                </button>
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+                        <lucide-icon [img]="Hash" class="w-8 h-8 text-primary"></lucide-icon>
                     </div>
+                    <h2 class="text-2xl font-bold text-slate-900">Welcome Back?</h2>
+                    <p class="text-slate-500 mt-2">Enter your estimation reference code to continue where you left off.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <input type="text" [(ngModel)]="tempRefCode" placeholder="e.g. 1D3DH34"
+                        class="block w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary text-center font-mono text-xl uppercase tracking-widest placeholder:text-slate-300 transition-all">
+
+                    <div *ngIf="error()"
+                        class="p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg text-center">
+                        {{ error() }}
+                    </div>
+
+                    <button (click)="handleRefCodeSubmit()" [disabled]="!tempRefCode || isLoading()"
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                        <lucide-icon *ngIf="isLoading()" [img]="Loader2" class="w-5 h-5 animate-spin"></lucide-icon>
+                        {{ isLoading() ? 'Fetching...' : 'Continue Estimation' }}
+                    </button>
+
+                    <button (click)="closeModal()"
+                        class="w-full bg-secondary hover:bg-slate-50 text-slate-600 font-semibold py-3 rounded-xl transition-colors border border-slate-200">
+                        Start Fresh Estimation
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Appliances -->
-            <div>
-                <div class="block text-sm font-semibold text-slate-700 mb-4">Common Appliance Usage</div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div *ngFor="let app of appliances()" class="flex items-start">
-                        <div class="flex items-center h-5">
-                            <input type="checkbox" [checked]="app.checked" (change)="app.checked = !app.checked"
-                                class="w-5 h-5 border-slate-300 rounded text-primary focus:ring-primary cursor-pointer">
+        <!-- Left: Appliance Configuration (2 cols on large) -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-white">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Power Inventory</h2>
+                        <p class="text-sm text-slate-500">List the appliances you want to power with solar.</p>
+                    </div>
+                    <button (click)="addAppliance()"
+                        class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all">
+                        <lucide-icon [img]="Plus" class="w-4 h-4"></lucide-icon>
+                        Add Custom
+                    </button>
+                </div>
+
+                <div class="p-8 relative min-h-[400px]">
+                    <!-- Error Display -->
+                    <div *ngIf="error() && !showRefCodeModal()"
+                        class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-center gap-3">
+                        <lucide-icon [img]="X" class="w-5 h-5"></lucide-icon>
+                        <p class="font-medium">{{ error() }}</p>
+                    </div>
+
+                    <!-- Loading Overlay -->
+                    <div *ngIf="isLoading()"
+                        class="absolute inset-0 bg-white/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
+                        <div
+                            class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center gap-3">
+                            <lucide-icon [img]="Loader2" class="w-10 h-10 text-primary animate-spin"></lucide-icon>
+                            <span class="text-slate-600 font-medium">Syncing with backend...</span>
                         </div>
-                        <div class="ml-3 text-sm">
-                            <span class="text-slate-600 cursor-pointer select-none">
-                                {{ app.name }} <span class="text-slate-400 text-xs ml-1">({{ app.power }})</span>
-                            </span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div *ngIf="appliances().length === 0"
+                            class="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                            <p class="text-slate-400 font-medium">No appliances added yet.</p>
+                            <button (click)="addAppliance()" class="mt-4 text-primary font-bold hover:underline">Add
+                                your first appliance</button>
                         </div>
+
+                        <div *ngFor="let app of appliances(); let i = index"
+                            class="group grid grid-cols-1 md:grid-cols-12 gap-4 p-5 bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl transition-all items-center">
+
+                            <!-- Name -->
+                            <!-- Name -->
+                            <div class="md:col-span-4">
+                                <label [for]="'name-' + i"
+                                    class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Appliance
+                                    Name</label>
+                                <input type="text" [id]="'name-' + i" required [ngModel]="app.name"
+                                    (ngModelChange)="updateAppliance(i, 'name', $event)"
+                                    [class.border-red-500]="showValidation() && !app.name.trim()"
+                                    class="w-full bg-white border-slate-200 rounded-xl focus:ring-primary py-2.5 px-4 font-medium transition-colors"
+                                    placeholder="e.g. Fridge">
+                                <p *ngIf="showValidation() && !app.name.trim()"
+                                    class="text-[9px] text-red-500 mt-1 font-bold">Name required</p>
+                            </div>
+
+                            <!-- Wattage -->
+                            <div class="md:col-span-2">
+                                <label [for]="'wattage-' + i"
+                                    class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Watts
+                                    (W)</label>
+                                <input type="number" [id]="'wattage-' + i" min="0" step="0.01" required
+                                    [ngModel]="app.wattage" (ngModelChange)="updateAppliance(i, 'wattage', $event)"
+                                    [class.border-red-500]="showValidation() && app.wattage <= 0"
+                                    class="w-full bg-white border-slate-200 rounded-xl focus:ring-primary py-2.5 px-4 font-medium transition-colors">
+                                <p *ngIf="showValidation() && app.wattage <= 0"
+                                    class="text-[9px] text-red-500 mt-1 font-bold">Invalid wattage</p>
+                            </div>
+
+                            <!-- Qty -->
+                            <div class="md:col-span-2">
+                                <label [for]="'quantity-' + i"
+                                    class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Quantity</label>
+                                <input type="number" [id]="'quantity-' + i" min="1" required [ngModel]="app.quantity"
+                                    (ngModelChange)="updateAppliance(i, 'quantity', $event)"
+                                    [class.border-red-500]="showValidation() && app.quantity < 1"
+                                    class="w-full bg-white border-slate-200 rounded-xl focus:ring-primary py-2.5 px-4 font-medium transition-colors">
+                                <p *ngIf="showValidation() && app.quantity < 1"
+                                    class="text-[9px] text-red-500 mt-1 font-bold">Invalid qty</p>
+                            </div>
+
+                            <!-- Hours -->
+                            <div class="md:col-span-3">
+                                <label [for]="'hours-' + i"
+                                    class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Avg.
+                                    Usage
+                                    (Hrs/Day)</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="range" [id]="'hours-' + i" min="1" max="24" required
+                                        [ngModel]="app.daily_usage_hours"
+                                        (ngModelChange)="updateAppliance(i, 'daily_usage_hours', $event)"
+                                        class="flex-1 accent-primary h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                                    <span
+                                        class="text-sm font-bold text-slate-700 min-w-[20px]">{{app.daily_usage_hours}}h</span>
+                                </div>
+                                <p *ngIf="showValidation() && (app.daily_usage_hours < 1 || app.daily_usage_hours > 24)"
+                                    class="text-[9px] text-red-500 mt-1 font-bold">Invalid hours</p>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="md:col-span-1 flex justify-end">
+                                <button (click)="removeAppliance(i)"
+                                    class="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                                    <lucide-icon [img]="Trash2" class="w-5 h-5"></lucide-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="mt-8 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div>
+                            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Quick Suggestions
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <button *ngFor="let suggestion of commonAppliances" (click)="addAppliance(suggestion)"
+                                    class="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-600 hover:border-primary hover:text-primary transition-all flex items-center gap-2 shadow-sm">
+                                    <lucide-icon [img]="Plus" class="w-3.5 h-3.5"></lucide-icon>
+                                    {{suggestion.name}}
+                                </button>
+                            </div>
+                        </div>
+
+                        <button (click)="calculateEstimation()" [disabled]="isLoading() || appliances().length === 0"
+                            class="w-full md:w-auto bg-primary hover:bg-primary/80 text-white font-bold py-2 px-6 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-3">
+                            <lucide-icon *ngIf="isLoading()" [img]="Loader2" class="w-5 h-5 animate-spin"></lucide-icon>
+                            {{ isLoading() ? 'Calculating...' : 'Submit' }}
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right Card: Solar Potential -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-10 flex flex-col justify-between">
-            <div>
-                <h2 class="text-2xl font-bold text-slate-900 mb-12">Your Solar Potential</h2>
+        <!-- Right: Real-time Results -->
+        <div class="space-y-6">
+            <div class="bg-primary rounded-3xl shadow-2xl shadow-primary/30 p-8 text-white relative overflow-hidden">
+                <!-- Background decoration -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12 blur-xl"></div>
 
-                <div class="space-y-10">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-start mb-12">
+                        <div>
+                            <h3 class="text-primary-foreground/80 font-bold text-xs uppercase tracking-widest mb-1">
+                                Estimated Monthly Cost</h3>
+                            <p class="text-5xl font-black tracking-tight flex items-center gap-2">
+                                <span class="text-2xl font-medium opacity-80">GH₵</span>
+                                {{ monthlyBill() }}
+                            </p>
+                        </div>
+                        <lucide-icon [img]="Zap" class="w-10 h-10 text-white opacity-40"></lucide-icon>
+                    </div>
 
+                    <div class="space-y-6">
+                        <div
+                            class="flex items-center justify-between p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10">
+                            <div>
+                                <p class="text-[10px] font-bold text-white/60 uppercase tracking-wider">Reference Code
+                                </p>
+                                <p class="text-lg font-mono font-bold">{{ refCode() || 'FRESH-EST' }}</p>
+                            </div>
+                            <lucide-icon [img]="Hash" class="w-6 h-6 opacity-40"></lucide-icon>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-white/10 rounded-2xl border border-white/10">
+                                <p class="text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">Monthly
+                                    Usage</p>
+                                <p class="text-xl font-bold">{{ monthlyUsage() }} <span
+                                        class="text-xs opacity-60">kWh</span></p>
+                            </div>
+                            <div class="p-4 bg-white/10 rounded-2xl border border-white/10">
+                                <p class="text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">System Size
+                                </p>
+                                <p class="text-xl font-bold">{{ dailyKwh() }} <span
+                                        class="text-xs opacity-60">kWh/day</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Savings & Solar Potential -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 space-y-10">
+                <h3 class="text-lg font-bold text-slate-900">Your Solar Potential</h3>
+
+                <div class="space-y-8">
                     <!-- Monthly Savings -->
                     <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 mt-1">
-                            <lucide-icon [img]="DollarSign" class="w-8 h-8 text-primary"
-                                strokeWidth="2.5"></lucide-icon>
+                        <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <lucide-icon [img]="DollarSign" class="w-6 h-6 text-emerald-600"></lucide-icon>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-500 font-medium mb-1">Estimated Monthly Savings</p>
-                            <p class="text-4xl font-bold text-primary">
-                                GH₵ {{ estimatedSavings() }}
-                            </p>
+                            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Projected Monthly
+                                Savings</p>
+                            <p class="text-2xl font-bold text-slate-900 tracking-tight">GH₵ {{ estimatedSavings() }}</p>
                         </div>
                     </div>
 
                     <!-- Solar Output -->
                     <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 mt-1">
-                            <lucide-icon [img]="Zap" class="w-8 h-8 text-primary" strokeWidth="2.5"></lucide-icon>
+                        <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <lucide-icon [img]="Sun" class="w-6 h-6 text-amber-600"></lucide-icon>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-500 font-medium mb-1">Estimated Solar Output</p>
-                            <p class="text-4xl font-bold text-primary">
-                                {{ estimatedOutput() }} <span
-                                    class="text-2xl font-medium text-slate-500">kWh/month</span>
-                            </p>
+                            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Estimated Solar
+                                Output</p>
+                            <p class="text-2xl font-bold text-slate-900 tracking-tight">{{ estimatedOutput() }} <span
+                                    class="text-sm font-medium text-slate-400">kWh/month</span></p>
                         </div>
                     </div>
 
                     <!-- Installation Cost -->
                     <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 mt-1">
-                            <lucide-icon [img]="Sun" class="w-8 h-8 text-primary" strokeWidth="2.5"></lucide-icon>
+                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <lucide-icon [img]="Zap" class="w-6 h-6 text-blue-600"></lucide-icon>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-500 font-medium mb-1">Estimated Installation Cost</p>
-                            <p class="text-4xl font-bold text-primary">
-                                GH₵ {{ estimatedCost() }}
-                            </p>
+                            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Estimated
+                                Installation Cost</p>
+                            <p class="text-2xl font-bold text-slate-900 tracking-tight">GH₵ {{ estimatedCost() }}</p>
                         </div>
                     </div>
-
                 </div>
-            </div>
 
-            <div class="mt-12">
-                <button
-                    class="w-full bg-primary hover:bg-primary text-white font-bold py-4 px-6 rounded-lg text-lg transition-all duration-300 shadow-md hover:shadow-lg">
+                <button [disabled]="!estimationResult()" [class.opacity-50]="!estimationResult()"
+                    [class.cursor-not-allowed]="!estimationResult()"
+                    class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-6 rounded-2xl text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
                     Get Certified Installer Quotes
                 </button>
             </div>
