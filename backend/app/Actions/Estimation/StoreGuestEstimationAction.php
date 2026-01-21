@@ -8,10 +8,17 @@ use Illuminate\Support\Str;
 
 class StoreGuestEstimationAction
 {
+    protected CalculateGuestEstimationAction $calculateGuestEstimationAction;
+
+    public function __construct(
+        ?CalculateGuestEstimationAction $calculateGuestEstimationAction = null
+    ) {
+        $this->calculateGuestEstimationAction = $calculateGuestEstimationAction ?? app(CalculateGuestEstimationAction::class);
+    }
+
     public function execute(array $data): Estimation
     {
-        $calculateAction = new CalculateGuestEstimationAction();
-        $estimationData = $calculateAction->execute($data['appliances']);
+        $estimationData = $this->calculateGuestEstimationAction->execute($data['appliances']);
 
         $estimation = Estimation::create([
             'reference_code' => $this->generateReferenceCode(),

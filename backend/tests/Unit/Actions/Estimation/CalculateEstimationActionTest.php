@@ -12,6 +12,7 @@ use App\Models\Site;
 use App\Models\SiteAppliance;
 use App\Models\TariffStructure;
 use App\Models\TariffTier;
+use App\Services\TariffService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -28,13 +29,13 @@ class CalculateEstimationActionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new CalculateEstimationAction();
 
         // Create base test data
         $this->country = Country::factory()->create([
             'name' => 'Ghana',
             'code' => 'GH',
             'currency_code' => 'GHS',
+            'is_active' => true,
         ]);
 
         // Create tiered tariff structure
@@ -42,6 +43,7 @@ class CalculateEstimationActionTest extends TestCase
             'country_id' => $this->country->id,
             'name' => 'Ghana ECG Residential',
             'type' => 'tiered',
+            'is_active' => true,
         ]);
 
         // Create ECG Ghana tariff tiers
@@ -76,6 +78,15 @@ class CalculateEstimationActionTest extends TestCase
             'rate_per_kwh' => 1.8539,
             'order' => 4,
         ]);
+
+        // Mock TariffService to always return our test tariff
+        $mockTariffService = $this->createMock(TariffService::class);
+        $mockTariffService->method('getLatestActiveTariffOrFail')
+            ->willReturn($this->tariffStructure);
+        $mockTariffService->method('getLatestActiveTariff')
+            ->willReturn($this->tariffStructure);
+
+        $this->action = new CalculateEstimationAction($mockTariffService);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -104,7 +115,7 @@ class CalculateEstimationActionTest extends TestCase
         ]);
 
         // Execute calculation
-        $result = $this->action->execute($site, $this->tariffStructure);
+        $result = $this->action->execute($site);
 
         // Verify calculations
         // Daily kWh = (150W * 1 qty * 24h * 0.85 PF) / 1000 = 3.06 kWh
@@ -172,7 +183,7 @@ class CalculateEstimationActionTest extends TestCase
         ]);
 
         // Execute calculation
-        $result = $this->action->execute($site, $this->tariffStructure);
+        $result = $this->action->execute($site);
 
         // Refrigerators: (150 * 2 * 24 * 0.85) / 1000 = 6.12 kWh/day
         // LED Bulbs: (15 * 10 * 6 * 0.95) / 1000 = 0.855 kWh/day
@@ -212,7 +223,7 @@ class CalculateEstimationActionTest extends TestCase
             'daily_usage_hours' => 24,
         ]);
 
-        $result = $this->action->execute($site, $this->tariffStructure);
+        $result = $this->action->execute($site);
 
         // Daily: (500 * 1 * 24 * 0.90) / 1000 = 10.8 kWh
         // Monthly: 10.8 * 30 = 324 kWh
@@ -253,7 +264,7 @@ class CalculateEstimationActionTest extends TestCase
             'multiplier' => 1.15,
         ]);
 
-        $result = $this->action->execute($site, $this->tariffStructure, $seasonalAdjustment);
+        $result = $this->action->execute($site, $seasonalAdjustment);
 
         // Daily: (100 * 1 * 10 * 0.90) / 1000 = 0.9 kWh
         // Monthly before seasonal: 0.9 * 30 = 27 kWh
@@ -291,7 +302,7 @@ class CalculateEstimationActionTest extends TestCase
             'multiplier' => 0.85,
         ]);
 
-        $result = $this->action->execute($site, $this->tariffStructure, null, $locationMultiplier);
+        $result = $this->action->execute($site, null, $locationMultiplier);
 
         // Monthly before location: 27 kWh
         // After location: 27 * 0.85 = 22.95 kWh
@@ -305,7 +316,7 @@ class CalculateEstimationActionTest extends TestCase
         $site = Site::factory()->create();
         // No appliances added to site
 
-        $result = $this->action->execute($site, $this->tariffStructure);
+        $result = $this->action->execute($site);
 
         $this->assertEquals(0, $result['total_watts']);
         $this->assertEquals(0, $result['daily_kwh']);
@@ -332,7 +343,7 @@ class CalculateEstimationActionTest extends TestCase
             'daily_usage_hours' => 0, // Not used at all
         ]);
 
-        $result = $this->action->execute($site, $this->tariffStructure);
+        $result = $this->action->execute($site);
 
         $this->assertEquals(100.00, $result['total_watts']); // Watts calculated
         $this->assertEquals(0, $result['daily_kwh']); // But no kWh
@@ -357,7 +368,7 @@ class CalculateEstimationActionTest extends TestCase
             'daily_usage_hours' => 24,
         ]);
 
-        $result = $this->action->execute($site, $this->tariffStructure);
+        $result = $this->action->execute($site);
 
         // Daily: (5000 * 1 * 24 * 0.90) / 1000 = 108 kWh
         // Monthly: 108 * 30 = 3240 kWh
@@ -401,7 +412,7 @@ class CalculateEstimationActionTest extends TestCase
             'city' => 'Test City',
         ]);
 
-        $result = $this->action->execute($site, $this->tariffStructure, $seasonalAdjustment, $locationMultiplier);
+        $result = $this->action->execute($site, $seasonalAdjustment, $locationMultiplier);
 
         $metadata = $result['calculation_metadata'];
 
@@ -435,9 +446,9 @@ class CalculateEstimationActionTest extends TestCase
         ]);
 
         // Run calculation multiple times
-        $result1 = $this->action->execute($site, $this->tariffStructure);
-        $result2 = $this->action->execute($site, $this->tariffStructure);
-        $result3 = $this->action->execute($site, $this->tariffStructure);
+        $result1 = $this->action->execute($site);
+        $result2 = $this->action->execute($site);
+        $result3 = $this->action->execute($site);
 
         // All results should be identical (excluding metadata timestamps)
         $this->assertEquals($result1['total_watts'], $result2['total_watts']);
@@ -496,7 +507,7 @@ class CalculateEstimationActionTest extends TestCase
             'daily_usage_hours' => 10,
         ]);
 
-        $result = $this->action->execute($site, $this->tariffStructure);
+        $result = $this->action->execute($site);
 
         $breakdown = collect($result['appliances_breakdown']);
         $acBreakdown = $breakdown->firstWhere('name', 'AC Unit');
