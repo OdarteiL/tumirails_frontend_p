@@ -9,7 +9,6 @@ use App\Models\Estimation;
 use App\Models\Organisation;
 use App\Models\SeasonalAdjustment;
 use App\Models\Site;
-use App\Models\TariffStructure;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -48,23 +47,6 @@ class EstimationService
         // For now, let's get the first active country (Ghana) as default
         $country = Country::where('is_active', true)->firstOrFail();
 
-        // Get active tariff structure for the country
-        $tariffStructure = TariffStructure::where('country_id', $country->id)
-            ->where('is_active', true)
-            ->where('effective_date', '<=', now())
-            ->where(function ($query) {
-                $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', now());
-            })
-            ->first();
-
-        if (! $tariffStructure) {
-            throw new \Exception("No active tariff structure found for country: {$country->name}");
-        }
-
-        // Load tariff tiers
-        $tariffStructure->load('tariffTiers');
-
         // Get current seasonal adjustment
         $seasonalAdjustment = SeasonalAdjustment::where('country_id', $country->id)
             ->where('is_active', true)
@@ -80,7 +62,6 @@ class EstimationService
         // Calculate estimation
         $calculationResults = $this->calculateAction->execute(
             $site,
-            $tariffStructure,
             $seasonalAdjustment,
             $locationMultiplier
         );

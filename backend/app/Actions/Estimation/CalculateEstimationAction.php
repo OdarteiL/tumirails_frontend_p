@@ -6,9 +6,18 @@ use App\Models\LocationMultiplier;
 use App\Models\SeasonalAdjustment;
 use App\Models\Site;
 use App\Models\TariffStructure;
+use App\Services\TariffService;
 
 class CalculateEstimationAction
 {
+    protected TariffService $tariffService;
+
+    public function __construct(
+        ?TariffService $tariffService = null
+    ) {
+        $this->tariffService = $tariffService ?? app(TariffService::class);
+    }
+
     /**
      * Execute the estimation calculation.
      *
@@ -16,10 +25,12 @@ class CalculateEstimationAction
      */
     public function execute(
         Site $site,
-        TariffStructure $tariffStructure,
         ?SeasonalAdjustment $seasonalAdjustment = null,
         ?LocationMultiplier $locationMultiplier = null
     ): array {
+        // Retrieve tariff using TariffService (handles default country and not found exception)
+        $tariffStructure = $this->tariffService->getLatestActiveTariffOrFail();
+
         // Load site appliances with their appliance and category data
         $siteAppliances = $site->siteAppliances()
             ->with(['appliance.category'])

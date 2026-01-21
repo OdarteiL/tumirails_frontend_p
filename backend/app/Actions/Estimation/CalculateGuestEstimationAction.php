@@ -3,19 +3,26 @@
 namespace App\Actions\Estimation;
 
 use App\Models\TariffStructure;
+use App\Services\TariffService;
 use Illuminate\Support\Facades\Log;
 
 class CalculateGuestEstimationAction
 {
+    protected TariffService $tariffService;
+
+    public function __construct(
+        ?TariffService $tariffService = null
+    ) {
+        $this->tariffService = $tariffService ?? app(TariffService::class);
+    }
+
     /**
      * Execute the guest estimation calculation.
      */
     public function execute(array $appliances): array
     {
-        $tariffStructure = TariffStructure::with('tariffTiers')
-            ->where('is_active', true)
-            ->orderBy('effective_date', 'desc')
-            ->first();
+        // Guest estimation uses the default/latest tariff without country context
+        $tariffStructure = $this->tariffService->getLatestActiveTariff();
 
         if (! $tariffStructure) {
             Log::error('No active tariff structure found for guest estimation.');

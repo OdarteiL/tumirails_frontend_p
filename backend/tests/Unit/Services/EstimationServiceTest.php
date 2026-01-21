@@ -2,8 +2,6 @@
 
 namespace Tests\Unit\Services;
 
-use App\Actions\Estimation\CalculateEstimationAction;
-use App\Actions\Estimation\StoreEstimationAction;
 use App\Models\Appliance;
 use App\Models\Category;
 use App\Models\Country;
@@ -35,10 +33,7 @@ class EstimationServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new EstimationService(
-            new CalculateEstimationAction(),
-            new StoreEstimationAction()
-        );
+        $this->service = app(EstimationService::class);
 
         $this->user = User::factory()->create();
 
@@ -228,7 +223,7 @@ class EstimationServiceTest extends TestCase
         $site = $this->createSiteWithAppliances($this->user);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('No active tariff structure found for country');
+        $this->expectExceptionMessage('No active tariff structure found.');
 
         $this->service->createEstimation(
             $site->id,
