@@ -2,6 +2,7 @@
 
 namespace App\Actions\Estimation;
 
+use App\Actions\Tariff\CalculateTariffCostAction;
 use App\Models\LocationMultiplier;
 use App\Models\SeasonalAdjustment;
 use App\Models\Site;
@@ -12,10 +13,14 @@ class CalculateEstimationAction
 {
     protected TariffService $tariffService;
 
+    protected CalculateTariffCostAction $calculateTariffCostAction;
+
     public function __construct(
-        ?TariffService $tariffService = null
+        ?TariffService $tariffService = null,
+        ?CalculateTariffCostAction $calculateTariffCostAction = null
     ) {
         $this->tariffService = $tariffService ?? app(TariffService::class);
+        $this->calculateTariffCostAction = $calculateTariffCostAction ?? app(CalculateTariffCostAction::class);
     }
 
     /**
@@ -85,7 +90,7 @@ class CalculateEstimationAction
         $finalMonthlyKwh = $adjustedMonthlyKwh * $locationMultiplierValue;
 
         // Calculate cost using tiered pricing
-        $cost = $this->calculateTieredCost($finalMonthlyKwh, $tariffStructure);
+        $cost = $this->calculateTariffCostAction->execute($finalMonthlyKwh, $tariffStructure);
 
         // Calculate cost per appliance for breakdown
         foreach ($appliancesBreakdown as &$breakdown) {
@@ -126,53 +131,6 @@ class CalculateEstimationAction
                 'appliance_count' => $siteAppliances->count(),
             ],
         ];
-    }
-
-    /**
-     * Calculate cost using tiered pricing structure.
-     */
-    protected function calculateTieredCost(float $kwh, TariffStructure $tariffStructure): float
-    {
-        // For flat rate, use first tier's rate
-        if ($tariffStructure->type === 'flat') {
-            $firstTier = $tariffStructure->tariffTiers()->ordered()->first();
-
-            return $firstTier ? $kwh * $firstTier->rate_per_kwh : 0;
-        }
-
-        // For tiered pricing, calculate cost per tier
-        $tiers = $tariffStructure->tariffTiers()->ordered()->get();
-        $totalCost = 0;
-        $remainingKwh = $kwh;
-
-        foreach ($tiers as $tier) {
-            if ($remainingKwh <= 0) {
-                break;
-            }
-
-            // Calculate kWh in this tier
-            $tierKwh = 0;
-
-            if ($tier->max_kwh === null) {
-                // Unlimited tier - use all remaining
-                $tierKwh = $remainingKwh;
-            } else {
-                // Calculate usage in this tier range
-                $tierMin = $tier->min_kwh;
-                $tierMax = $tier->max_kwh;
-
-                // Tier capacity
-                $tierCapacity = $tierMax - $tierMin;
-
-                // Use minimum of remaining kWh or tier capacity
-                $tierKwh = min($remainingKwh, $tierCapacity);
-            }
-
-            $totalCost += $tierKwh * $tier->rate_per_kwh;
-            $remainingKwh -= $tierKwh;
-        }
-
-        return $totalCost;
     }
 
     /**

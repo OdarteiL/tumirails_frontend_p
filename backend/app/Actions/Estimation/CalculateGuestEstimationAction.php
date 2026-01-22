@@ -2,7 +2,7 @@
 
 namespace App\Actions\Estimation;
 
-use App\Models\TariffStructure;
+use App\Actions\Tariff\CalculateTariffCostAction;
 use App\Services\TariffService;
 use Illuminate\Support\Facades\Log;
 
@@ -10,10 +10,14 @@ class CalculateGuestEstimationAction
 {
     protected TariffService $tariffService;
 
+    protected CalculateTariffCostAction $calculateTariffCostAction;
+
     public function __construct(
-        ?TariffService $tariffService = null
+        ?TariffService $tariffService = null,
+        ?CalculateTariffCostAction $calculateTariffCostAction = null
     ) {
         $this->tariffService = $tariffService ?? app(TariffService::class);
+        $this->calculateTariffCostAction = $calculateTariffCostAction ?? app(CalculateTariffCostAction::class);
     }
 
     /**
@@ -70,7 +74,7 @@ class CalculateGuestEstimationAction
         }
 
         $monthlyKwh = $dailyKwh * 30;
-        $cost = $this->calculateTieredCost($monthlyKwh, $tariffStructure);
+        $cost = $this->calculateTariffCostAction->execute($monthlyKwh, $tariffStructure);
 
         foreach ($appliancesBreakdown as &$breakdown) {
             if ($monthlyKwh > 0) {
@@ -99,38 +103,6 @@ class CalculateGuestEstimationAction
                 'appliance_count' => count($appliances),
             ],
         ];
-    }
-
-    protected function calculateTieredCost(float $kwh, TariffStructure $tariffStructure): float
-    {
-        if ($tariffStructure->type === 'flat') {
-            $firstTier = $tariffStructure->tariffTiers()->ordered()->first();
-
-            return $firstTier ? $kwh * $firstTier->rate_per_kwh : 0;
-        }
-
-        $tiers = $tariffStructure->tariffTiers()->ordered()->get();
-        $totalCost = 0;
-        $remainingKwh = $kwh;
-
-        foreach ($tiers as $tier) {
-            if ($remainingKwh <= 0) {
-                break;
-            }
-
-            $tierKwh = 0;
-            if ($tier->max_kwh === null) {
-                $tierKwh = $remainingKwh;
-            } else {
-                $tierCapacity = $tier->max_kwh - $tier->min_kwh;
-                $tierKwh = min($remainingKwh, $tierCapacity);
-            }
-
-            $totalCost += $tierKwh * $tier->rate_per_kwh;
-            $remainingKwh -= $tierKwh;
-        }
-
-        return $totalCost;
     }
 
     protected function emptyEstimation(): array
