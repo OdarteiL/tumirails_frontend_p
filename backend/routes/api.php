@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\FetchGuestEstimationController;
 use App\Http\Controllers\Api\GuestEstimationController;
 use App\Http\Controllers\Api\OrganisationController;
 use App\Http\Controllers\Api\RecommendationController;
+use App\Http\Controllers\Api\ReverseEstimationController;
 use App\Http\Controllers\Api\SiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,7 @@ Route::prefix('auth')->group(function () {
 // Guest estimation
 Route::post('/estimations/guest', GuestEstimationController::class)->middleware('throttle:10,1');
 Route::get('/estimations/guest/{referenceCode}', FetchGuestEstimationController::class)->middleware('throttle:10,1');
+Route::post('/estimations/reverse', ReverseEstimationController::class)->middleware('throttle:10,1');
 
 // Contact form
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1');
