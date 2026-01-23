@@ -920,6 +920,88 @@ components:
           calculated_at: '2025-12-14T10:30:00Z'
           appliance_count: 2
 
+    # ---------------------- REVERSE ESTIMATION ----------------------
+    ReverseEstimationRequest:
+      type: object
+      required:
+        - amount
+        - type
+      properties:
+        amount:
+          type: number
+          format: float
+          description: The monetary amount to convert to energy.
+          example: 100.00
+        type:
+          type: string
+          enum: [prepaid, postpaid]
+          description: The payment type determining the estimation logic.
+        month:
+          type: string
+          pattern: '^\d{4}-\d{2}$'
+          description: Required if type is postpaid. The month for the estimation (YYYY-MM).
+          example: "2024-01"
+        start_date:
+          type: string
+          format: date
+          description: Required if type is prepaid. The start date of the period.
+          example: "2024-01-01"
+        end_date:
+          type: string
+          format: date
+          description: Required if type is prepaid. The end date of the period.
+          example: "2024-01-10"
+
+    ReverseEstimationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Reverse estimation calculated successfully
+        data:
+          type: object
+          properties:
+            estimated_kwh:
+              type: number
+              format: float
+              description: The estimated energy in kWh.
+              example: 200.0
+            effective_rate:
+              type: number
+              format: float
+              description: The effective rate per kWh applied.
+              example: 0.5
+            metadata:
+              type: object
+              properties:
+                tariff_type:
+                  type: string
+                  example: flat
+                calculation_date:
+                  type: string
+                  format: date-time
+                period:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: postpaid
+                    month:
+                      type: string
+                      example: "2024-01"
+                    start:
+                      type: string
+                      format: date
+                      example: "2024-01-01"
+                    end:
+                      type: string
+                      format: date
+                      example: "2024-01-31"
+
+
     # ---------------------- RECOMMENDED HARDWARE ----------------------
     RecommendedHardware:
       type: object
@@ -3836,6 +3918,36 @@ paths:
                 success: false
                 error: 'No active tariff structure found for country: Ghana'
 
+  /estimations/reverse:
+    post:
+      summary: Calculate energy from cost (Reverse Estimation)
+      description: Estimate the amount of energy (kWh) that can be purchased for a given monetary amount based on the active tariff. Supports both prepaid (date range) and postpaid (month) scenarios.
+      operationId: reverseEstimation
+      tags:
+        - Estimations
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReverseEstimationRequest'
+      responses:
+        '200':
+          description: Successful calculation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReverseEstimationResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  
   /estimations:
     post:
       summary: Create energy estimation for a site
