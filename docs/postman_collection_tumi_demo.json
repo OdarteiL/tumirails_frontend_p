@@ -26,10 +26,9 @@
               "script": {
                 "exec": [
                   "var j = pm.response.json();",
-                  "if(j && Array.isArray(j.data) && j.data.length >= 3) {",
+                  "if(j && Array.isArray(j.data) && j.data.length >= 2) {",
                   "  pm.environment.set('public_appliance_1', j.data[0].id);",
                   "  pm.environment.set('public_appliance_2', j.data[1].id);",
-                  "  pm.environment.set('public_appliance_3', j.data[2].id);",
                   "}"
                 ]
               }
@@ -37,13 +36,13 @@
           ]
         },
         {
-          "name": "G2 - Create Guest Estimation (Mixed)",
+          "name": "G2 - Guest Estimation (Public + Override)",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"appliances\": [\n    {\n      \"id\": {{public_appliance_1}},\n      \"quantity\": 2,\n      \"daily_usage_hours\": 6\n    },\n    {\n      \"id\": {{public_appliance_2}},\n      \"wattage\": 150,\n      \"quantity\": 1,\n      \"daily_usage_hours\": 8\n    },\n    {\n      \"id\": {{public_appliance_3}},\n      \"quantity\": 3,\n      \"daily_usage_hours\": 4\n    },\n    {\n      \"name\": \"Custom Heater\",\n      \"wattage\": 2000,\n      \"quantity\": 1,\n      \"daily_usage_hours\": 3\n    },\n    {\n      \"wattage\": 500,\n      \"quantity\": 2,\n      \"daily_usage_hours\": 5\n    }\n  ]\n}"
+              "raw": "{\n  \"appliances\": [\n    {\n      \"id\": {{public_appliance_1}},\n      \"quantity\": 2,\n      \"daily_usage_hours\": 6\n    },\n    {\n      \"id\": {{public_appliance_2}},\n      \"wattage\": 200,\n      \"quantity\": 1,\n      \"daily_usage_hours\": 8\n    }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/estimations/guest",
@@ -58,7 +57,8 @@
                 "exec": [
                   "var j = pm.response.json();",
                   "if(j && j.data && j.data.reference_code) {",
-                  "  pm.environment.set('guest_reference_code', j.data.reference_code);",
+                  "  pm.environment.set('guest_estimation_ref', j.data.reference_code);",
+                  "  pm.environment.set('guest_monthly_cost', j.data.estimated_monthly_cost);",
                   "  pm.test('estimation created', function() { pm.response.to.have.status(201); });",
                   "}"
                 ]
@@ -72,9 +72,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/estimations/guest/{{guest_reference_code}}",
+              "raw": "{{baseUrl}}/api/estimations/guest/{{guest_estimation_ref}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "estimations", "guest", "{{guest_reference_code}}"]
+              "path": ["api", "estimations", "guest", "{{guest_estimation_ref}}"]
             }
           },
           "event": [
@@ -84,7 +84,115 @@
                 "exec": [
                   "pm.test('estimation retrieved', function() { pm.response.to.have.status(200); });",
                   "var j = pm.response.json();",
-                  "pm.test('has reference code', function() { pm.expect(j.data.reference_code).to.eql(pm.environment.get('guest_reference_code')); });"
+                  "pm.test('has reference code', function() { pm.expect(j.data.reference_code).to.eql(pm.environment.get('guest_estimation_ref')); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "G4 - Guest Reverse Estimation (Postpaid)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"payment_type\": \"postpaid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/estimations/reverse/guest",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "estimations", "reverse", "guest"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var j = pm.response.json();",
+                  "if(j && j.data && j.data.reference_code) {",
+                  "  pm.environment.set('guest_reverse_postpaid_ref', j.data.reference_code);",
+                  "  pm.test('reverse estimation created', function() { pm.response.to.have.status(201); });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "G5 - Fetch Guest Reverse Postpaid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estimations/guest/{{guest_reverse_postpaid_ref}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "estimations", "guest", "{{guest_reverse_postpaid_ref}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('reverse estimation retrieved', function() { pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "pm.test('has correct amount', function() { pm.expect(j.data.estimated_monthly_cost).to.eql(500); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "G6 - Guest Reverse Estimation (Prepaid)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 300,\n  \"payment_type\": \"prepaid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/estimations/reverse/guest",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "estimations", "reverse", "guest"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var j = pm.response.json();",
+                  "if(j && j.data && j.data.reference_code) {",
+                  "  pm.environment.set('guest_reverse_prepaid_ref', j.data.reference_code);",
+                  "  pm.test('reverse estimation created', function() { pm.response.to.have.status(201); });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "G7 - Fetch Guest Reverse Prepaid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estimations/guest/{{guest_reverse_prepaid_ref}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "estimations", "guest", "{{guest_reverse_prepaid_ref}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('reverse estimation retrieved', function() { pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "pm.test('has correct amount', function() { pm.expect(j.data.estimated_monthly_cost).to.eql(300); });"
                 ]
               }
             }
