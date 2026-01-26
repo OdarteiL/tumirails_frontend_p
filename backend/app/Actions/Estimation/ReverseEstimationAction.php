@@ -37,6 +37,7 @@ class ReverseEstimationAction
 
         // Append period to metadata
         $result['metadata']['period'] = $period;
+        $result['amount'] = $amount;
 
         return $result;
     }

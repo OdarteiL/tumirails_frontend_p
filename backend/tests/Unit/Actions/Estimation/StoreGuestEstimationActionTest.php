@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Actions;
+namespace Tests\Unit\Actions\Estimation;
 
 use App\Actions\Estimation\StoreGuestEstimationAction;
 use App\Models\Estimation;
