@@ -3918,6 +3918,33 @@ paths:
                 success: false
                 error: 'No active tariff structure found for country: Ghana'
 
+  /estimations/guest/{reference_code}:
+    get:
+      summary: Get guest estimation by reference code
+      tags:
+        - Estimations
+      parameters:
+        - name: reference_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Guest estimation details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/GuestEstimation'
+        '404':
+          description: Estimation not found
+
   /estimations/reverse:
     post:
       summary: Calculate energy from cost (Reverse Estimation)
@@ -3939,14 +3966,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReverseEstimationResponse'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Estimation'
         '422':
           description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   
   /estimations:
     post:
