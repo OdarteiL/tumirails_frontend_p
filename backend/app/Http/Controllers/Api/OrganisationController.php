@@ -7,18 +7,25 @@ use App\Http\Requests\CreateOrganisationRequest;
 use App\Http\Requests\InviteOrganisationMemberRequest;
 use App\Http\Requests\UpdateOrganisationMemberRequest;
 use App\Http\Requests\UpdateOrganisationRequest;
+use App\Http\Resources\AuditLogResource;
 use App\Http\Resources\OrganisationInvitationResource;
 use App\Http\Resources\OrganisationMemberResource;
 use App\Http\Resources\OrganisationResource;
 use App\Models\Organisation;
 use App\Models\OrganisationMember;
+use App\Services\AuditLogService;
+use App\Services\OrganisationAdministrationService;
 use App\Services\OrganisationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrganisationController extends Controller
 {
-    public function __construct(private OrganisationService $organisationService) {}
+    public function __construct(
+        private OrganisationService $organisationService,
+        private OrganisationAdministrationService $organisationAdministrationService,
+        private AuditLogService $auditLogService
+    ) {}
 
     /**
      * Get all organisations the user belongs to.
@@ -144,9 +151,9 @@ class OrganisationController extends Controller
     }
 
     /**
-     * Get members of an organisation.
+     * Get members of an organisation with filtering.
      */
-    public function members(Request $request, Organisation $organisation): JsonResponse
+    public function members(Request $request, Organisation $organisation): \Illuminate\Http\Resources\Json\AnonymousResourceCollection|JsonResponse
     {
         // Check if user belongs to organisation
         if (! $request->user()->belongsToOrganisation($organisation->id)) {
@@ -156,12 +163,23 @@ class OrganisationController extends Controller
             ], 403);
         }
 
-        $members = $organisation->members()->with('user')->get();
+        $members = $organisation->members()
+            ->when($request->role, fn ($q, $role) => $q->where('role', $role))
+            ->when($request->status, fn ($q, $status) => $q->where('status', $status))
+            ->when($request->search, function ($q, $search) {
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('first_name', 'ilike', "%{$search}%")
+                        ->orWhere('last_name', 'ilike', "%{$search}%")
+                        ->orWhere('email', 'ilike', "%{$search}%");
+                });
+            })
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->per_page ?? 15);
 
-        return response()->json([
+        return OrganisationMemberResource::collection($members)->additional([
             'success' => true,
             'message' => 'Organisation members retrieved successfully',
-            'data' => OrganisationMemberResource::collection($members),
         ]);
     }
 
@@ -327,5 +345,83 @@ class OrganisationController extends Controller
                 'error' => $e->getMessage(),
             ], 422);
         }
+    }
+
+    /**
+     * Update an organisation member's status.
+     */
+    public function updateMemberStatus(
+        \App\Http\Requests\Organisation\UpdateOrganisationMemberStatusRequest $request,
+        Organisation $organisation,
+        OrganisationMember $member
+    ): JsonResponse {
+        // Verify member belongs to this organisation
+        if ($member->organisation_id !== $organisation->id) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Member does not belong to this organisation',
+            ], 404);
+        }
+
+        try {
+            $updatedMember = $this->organisationAdministrationService->updateOrganisationMemberStatus(
+                member: $member,
+                newStatus: $request->validated('status'),
+                performer: $request->user(),
+                reason: $request->validated('reason')
+            );
+
+            return (new OrganisationMemberResource($updatedMember))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Member status updated successfully',
+                ])
+                ->response()
+                ->setStatusCode(200);
+
+        } catch (\App\Exceptions\User\InvalidStatusTransitionException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 400);
+        } catch (\App\Exceptions\UnauthorizedException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'An unexpected error occurred while updating the member status.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Get paginated audit logs for a specific organisation member (Admin only).
+     */
+    public function memberAuditLogs(Request $request, Organisation $organisation, OrganisationMember $member): \Illuminate\Http\Resources\Json\AnonymousResourceCollection|JsonResponse
+    {
+        // Enforce admin-only access
+        if ($request->user()->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'error' => 'Only administrators can view member audit logs.',
+            ], 403);
+        }
+
+        if ($member->organisation_id !== $organisation->id) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Member does not belong to this organisation',
+            ], 404);
+        }
+
+        $logs = $this->auditLogService->getLogsForAuditable($member, $request->only(['action', 'date_from', 'date_to', 'per_page']));
+
+        return AuditLogResource::collection($logs)->additional([
+            'success' => true,
+            'message' => 'Member audit logs retrieved successfully',
+        ]);
     }
 }

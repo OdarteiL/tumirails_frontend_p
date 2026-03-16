@@ -15,10 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 // Public auth routes (no CSRF)
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/register/installer', [AuthController::class, 'registerInstaller']);
-    Route::post('/register/provider', [AuthController::class, 'registerProvider']);
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1');
+    Route::post('/register/installer', [AuthController::class, 'registerInstaller'])->middleware('throttle:10,1');
+    Route::post('/register/provider', [AuthController::class, 'registerProvider'])->middleware('throttle:10,1');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:5,1');
 });
 
 // Guest estimation
@@ -30,18 +32,37 @@ Route::post('/estimations/reverse', ReverseEstimationController::class)->middlew
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1');
 
 // Protected routes
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'active.user'])->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/change-password', [AuthController::class, 'changePassword']);
     });
 
-    // Admin appliance routes (must come before user routes)
+    // Admin routes
     Route::middleware('isAdmin')->prefix('admin')->group(function () {
+        // User management
+        Route::get('/users', [\App\Http\Controllers\Api\Admin\UserController::class, 'index'])
+            ->name('admin.users.index');
+        Route::patch('/users/{user}/status', [\App\Http\Controllers\Api\Admin\UserController::class, 'updateStatus'])
+            ->name('admin.users.updateStatus');
+        Route::get('/users/{user}/audit-logs', [\App\Http\Controllers\Api\Admin\UserController::class, 'auditLogs'])
+            ->name('admin.users.auditLogs');
+
+        // Organisation management
+        Route::get('/organisations', [\App\Http\Controllers\Api\Admin\OrganisationController::class, 'index'])
+            ->name('admin.organisations.index');
+        Route::patch('/organisations/{organisation}/status', [\App\Http\Controllers\Api\Admin\OrganisationController::class, 'updateStatus'])
+            ->name('admin.organisations.updateStatus');
+        Route::get('/organisations/{organisation}/audit-logs', [\App\Http\Controllers\Api\Admin\OrganisationController::class, 'auditLogs'])
+            ->name('admin.organisations.auditLogs');
+
+        // Appliances
         Route::post('/appliances', [AdminApplianceController::class, 'store']);
         Route::put('/appliances/{appliance}', [AdminApplianceController::class, 'update']);
         Route::delete('/appliances/{appliance}', [AdminApplianceController::class, 'destroy']);
 
+        // Contacts
         Route::get('/contacts', [ContactController::class, 'index']);
         Route::get('/contacts/{contact}', [ContactController::class, 'show']);
     });
@@ -59,11 +80,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Organisation routes
     Route::apiResource('organisations', OrganisationController::class);
-    Route::prefix('organisations')->group(function () {
-        Route::get('/{organisation}/members', [OrganisationController::class, 'members']);
+    Route::prefix('organisations')->middleware('active.organisation')->group(function () {
+        Route::get('/{organisation}/members', [OrganisationController::class, 'members'])
+            ->name('organisations.members.index');
         Route::post('/{organisation}/invite', [OrganisationController::class, 'inviteMember']);
-        Route::patch('/{organisation}/members/{member}', [OrganisationController::class, 'updateMember']);
+        Route::patch('/{organisation}/members/{member}', [OrganisationController::class, 'updateMember'])
+            ->name('organisations.members.update');
+        Route::patch('/{organisation}/members/{member}/status', [OrganisationController::class, 'updateMemberStatus'])
+            ->name('organisations.members.updateStatus');
         Route::delete('/{organisation}/members/{member}', [OrganisationController::class, 'removeMember']);
+        Route::get('/{organisation}/members/{member}/audit-logs', [OrganisationController::class, 'memberAuditLogs'])
+            ->name('organisations.members.auditLogs');
 
         // Organisation sites
         Route::get('/{organisation}/sites', [SiteController::class, 'organisationIndex']);
