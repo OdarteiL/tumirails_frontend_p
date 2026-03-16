@@ -1,7 +1,8 @@
 import { Component, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { LucideAngularModule,Menu,X,ChevronDown } from 'lucide-angular';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -14,15 +15,26 @@ export class NavbarComponent {
   isMenuOpen = false;
   isServicesDropdownOpen = false;
   isScrolled = false;
+  isHomePage = false;
   readonly Menu = Menu;
   readonly X = X;
   readonly ChevronDown = ChevronDown;
 
   @ViewChild('servicesDropdown') servicesDropdown?: ElementRef;
 
+  constructor(private router: Router) {
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
+      this.isHomePage = e.urlAfterRedirects === '/';
+    });
+  }
+
   @HostListener('window:scroll')
   onScroll() {
     this.isScrolled = window.scrollY > 10;
+  }
+
+  get isTransparent(): boolean {
+    return this.isHomePage && !this.isScrolled;
   }
 
   toggleMenu() {
