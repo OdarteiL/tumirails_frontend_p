@@ -1,104 +1,77 @@
 <div class="auth-page">
-  <div class="auth-card">
 
-    <!-- Left Panel -->
-    <div class="auth-left">
-      <div class="auth-logo">
-        <img src="assets/tumi_new.png" alt="Tumirails" class="auth-logo-img">
-      </div>
+  <!-- Left: Form -->
+  <div class="auth-left">
+    <div class="auth-inner">
+      <a routerLink="/" class="auth-logo">
+        <img src="assets/tumi_new.png" alt="Tumirails">
+      </a>
 
       <h1 class="auth-heading">create account</h1>
-      <p class="auth-subtext">Join Tumirails today. Fill in your details below to get started:</p>
+      <p class="auth-subtext">Join Tumirails today and start your solar journey.</p>
 
       @if (errorMessage()) {
         <div class="auth-error">{{ errorMessage() }}</div>
       }
 
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
-        <!-- Name row -->
-        <div class="input-group">
-          <div class="input-row">
-            <div class="input-field">
-              <label>First Name</label>
-              <input type="text" formControlName="first_name" placeholder="John">
-              @if (getFieldError('first_name')) {
-                <span class="field-error">{{ getFieldError('first_name') }}</span>
-              }
-            </div>
-            <div class="input-field">
-              <label>Last Name</label>
-              <input type="text" formControlName="last_name" placeholder="Doe">
-              @if (getFieldError('last_name')) {
-                <span class="field-error">{{ getFieldError('last_name') }}</span>
-              }
-            </div>
-          </div>
-          <div class="input-divider"></div>
-          <div class="input-field">
-            <label>Email Address</label>
-            <input type="email" formControlName="email" placeholder="coolname@name.com">
-            @if (getFieldError('email')) {
-              <span class="field-error">{{ getFieldError('email') }}</span>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="field-row">
+          <div class="field">
+            <label>First Name</label>
+            <input type="text" formControlName="first_name" placeholder="John">
+            @if (getFieldError('first_name')) {
+              <span class="field-error">{{ getFieldError('first_name') }}</span>
             }
           </div>
-          <div class="input-divider"></div>
-          <div class="input-field">
-            <label>Phone (optional)</label>
-            <input type="tel" formControlName="phone" placeholder="+233 XX XXX XXXX">
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text" formControlName="last_name" placeholder="Doe">
+            @if (getFieldError('last_name')) {
+              <span class="field-error">{{ getFieldError('last_name') }}</span>
+            }
           </div>
-          <div class="input-divider"></div>
-          <div class="input-field">
+        </div>
+
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" formControlName="email" placeholder="you@example.com">
+          @if (getFieldError('email')) {
+            <span class="field-error">{{ getFieldError('email') }}</span>
+          }
+        </div>
+
+        <div class="field">
+          <label>Phone (optional)</label>
+          <input type="tel" formControlName="phone" placeholder="+233 XX XXX XXXX">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
             <label>Password</label>
-            <input type="password" formControlName="password" placeholder="••••••••••••">
+            <input type="password" formControlName="password" placeholder="••••••••">
             @if (getFieldError('password')) {
               <span class="field-error">{{ getFieldError('password') }}</span>
             }
           </div>
-          <div class="input-divider"></div>
-          <div class="input-field">
+          <div class="field">
             <label>Confirm Password</label>
-            <input type="password" formControlName="password_confirmation" placeholder="••••••••••••">
+            <input type="password" formControlName="password_confirmation" placeholder="••••••••">
             @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('password_confirmation')?.touched) {
               <span class="field-error">Passwords do not match</span>
             }
           </div>
         </div>
 
-        <div class="auth-buttons">
-          <button type="submit" class="btn-login" [disabled]="isLoading()">
-            {{ isLoading() ? 'CREATING...' : 'SIGN UP' }}
-          </button>
-          <a routerLink="/login" class="btn-secondary">LOGIN</a>
-        </div>
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          {{ isLoading() ? 'Creating account...' : 'Create Account' }}
+        </button>
+
+        <p class="auth-switch">Already have an account? <a routerLink="/login">Login</a></p>
       </form>
     </div>
-
-    <!-- Right Panel -->
-    <div class="auth-right">
-      <div class="botanical-overlay">
-        <svg viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg" class="botanical-svg">
-          <ellipse cx="80" cy="120" rx="120" ry="80" fill="#1a5c2a" opacity="0.9" transform="rotate(-30 80 120)"/>
-          <ellipse cx="80" cy="120" rx="90" ry="55" fill="#2d7a3a" opacity="0.7" transform="rotate(-30 80 120)"/>
-          <ellipse cx="30" cy="90" rx="25" ry="15" fill="#0d2b1a" transform="rotate(-30 30 90)"/>
-          <ellipse cx="110" cy="75" rx="20" ry="12" fill="#0d2b1a" transform="rotate(-20 110 75)"/>
-          <path d="M500 0 Q380 80 300 200 Q350 150 420 100 Q460 60 500 0Z" fill="#2d7a3a" opacity="0.85"/>
-          <path d="M500 20 Q400 100 340 220 Q380 170 450 110 Q480 70 500 20Z" fill="#1a5c2a" opacity="0.7"/>
-          <path d="M0 300 Q60 250 40 150 Q50 200 20 280 Q10 290 0 300Z" fill="#3a8c4a" opacity="0.8"/>
-          <path d="M0 350 Q80 280 60 160 Q70 230 30 330 Q15 340 0 350Z" fill="#1a5c2a" opacity="0.9"/>
-          <ellipse cx="250" cy="380" rx="160" ry="100" fill="#2d7a3a" opacity="0.6" transform="rotate(15 250 380)"/>
-          <ellipse cx="250" cy="380" rx="120" ry="70" fill="#4aad5a" opacity="0.4" transform="rotate(15 250 380)"/>
-          <path d="M500 700 Q380 600 300 480 Q360 540 440 620 Q470 660 500 700Z" fill="#1a5c2a" opacity="0.9"/>
-          <path d="M500 680 Q400 580 320 460 Q370 530 450 610 Q475 645 500 680Z" fill="#3a8c4a" opacity="0.7"/>
-          <path d="M0 700 Q100 620 160 500 Q120 560 60 650 Q30 675 0 700Z" fill="#2d7a3a" opacity="0.85"/>
-          <path d="M0 680 Q90 600 150 480 Q110 545 50 635 Q25 658 0 680Z" fill="#4aad5a" opacity="0.6"/>
-          <path d="M150 500 Q200 420 180 320 Q190 380 170 470 Q160 485 150 500Z" fill="#3a8c4a" opacity="0.75"/>
-          <path d="M350 200 Q420 150 460 60 Q440 120 390 180 Q370 190 350 200Z" fill="#1a5c2a" opacity="0.8"/>
-        </svg>
-      </div>
-      <div class="auth-right-logo">
-        <img src="assets/tumi_new.png" alt="Tumirails" class="auth-right-logo-img">
-      </div>
-    </div>
-
   </div>
+
+  <!-- Right: Image -->
+  <div class="auth-right"></div>
+
 </div>

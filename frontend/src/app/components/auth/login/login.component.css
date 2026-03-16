@@ -1,111 +1,90 @@
-/* Page */
 .auth-page {
-    min-height: 100vh;
-    background-color: #c8e63c;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-}
-
-/* Card */
-.auth-card {
-    display: flex;
-    width: 100%;
-    max-width: 900px;
-    min-height: 560px;
-    border: 2px solid white;
-    border-radius: 4px;
+    height: 100vh;
     overflow: hidden;
 }
 
-/* Left Panel */
+/* Left */
 .auth-left {
-    flex: 1;
-    background: white;
-    padding: 2.5rem 2.5rem;
+    width: 50%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    background: #fff;
+    overflow-y: auto;
 }
 
-.auth-logo {
-    margin-bottom: 1.5rem;
+.auth-inner {
+    width: 100%;
+    max-width: 420px;
+    padding: 2.5rem 2rem;
 }
 
-.auth-logo-img {
-    height: 40px;
+.auth-logo img {
+    height: 38px;
     width: auto;
+    display: block;
+    margin-bottom: 2.5rem;
 }
 
 .auth-heading {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: #1a5c2a;
-    margin: 0 0 0.75rem 0;
+    margin: 0 0 0.5rem;
     line-height: 1.1;
 }
 
 .auth-subtext {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: #888;
-    margin: 0 0 1.5rem 0;
-    line-height: 1.5;
+    margin: 0 0 2rem;
 }
 
 .auth-error {
     background: #fee2e2;
     color: #dc2626;
     font-size: 0.8rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-}
-
-/* Input Group */
-.input-group {
-    border: 1px solid #e0e0e0;
+    padding: 0.6rem 0.75rem;
     border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
 }
 
-.input-field {
-    padding: 0.75rem 1rem 0.75rem 1.25rem;
-    border-left: 3px solid #1a5c2a;
+.field {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    margin-bottom: 1.25rem;
 }
 
-.input-field label {
-    font-size: 0.7rem;
-    color: #aaa;
+.field label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 0.4rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.input-field input {
-    border: none;
-    outline: none;
+.field input {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
     font-size: 0.9rem;
     color: #222;
-    background: transparent;
-    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
 }
 
-.input-divider {
-    height: 1px;
-    background: #f0f0f0;
+.field input:focus {
+    border-color: #1a5c2a;
 }
 
 .field-error {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #dc2626;
+    margin-top: 0.3rem;
 }
 
-/* Options */
 .auth-options {
     display: flex;
     justify-content: space-between;
@@ -117,102 +96,59 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.78rem;
-    color: #888;
+    font-size: 0.8rem;
+    color: #666;
     cursor: pointer;
 }
 
-.remember-me input[type="checkbox"] {
-    width: 13px;
-    height: 13px;
-    accent-color: #1a5c2a;
-}
+.remember-me input { accent-color: #1a5c2a; }
 
 .forgot-link {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #222;
+    font-size: 0.8rem;
+    color: #1a5c2a;
     text-decoration: none;
+    font-weight: 600;
 }
 
-/* Buttons */
-.auth-buttons {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.btn-login {
-    flex: 1;
+.btn-primary {
+    width: 100%;
     background: #1a5c2a;
     color: white;
     border: none;
-    padding: 0.7rem;
-    font-size: 0.78rem;
+    padding: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s;
+    letter-spacing: 0.5px;
 }
 
-.btn-login:hover:not(:disabled) { background: #144820; }
-.btn-login:disabled { opacity: 0.7; cursor: not-allowed; }
+.btn-primary:hover:not(:disabled) { background: #144820; }
+.btn-primary:disabled { opacity: 0.65; cursor: not-allowed; }
 
-.btn-signup {
-    flex: 1;
-    background: white;
-    color: #222;
-    border: 1.5px solid #333;
-    padding: 0.7rem;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    border-radius: 4px;
+.auth-switch {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #888;
+    margin-top: 1.25rem;
+}
+
+.auth-switch a {
+    color: #1a5c2a;
+    font-weight: 600;
     text-decoration: none;
-    text-align: center;
-    transition: background 0.2s;
 }
 
-.btn-signup:hover { background: #f5f5f5; }
-
-/* Right Panel */
+/* Right */
 .auth-right {
-    flex: 1;
-    background: #0d1b2a;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    width: 50%;
+    background-image: url('/assets/aerial-shot-solar-panels-cascade-field-florida.jpg');
+    background-size: cover;
+    background-position: center;
 }
 
-.botanical-overlay {
-    position: absolute;
-    inset: 0;
-}
-
-.botanical-svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.auth-right-logo {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-}
-
-.auth-right-logo-img {
-    height: 48px;
-    width: auto;
-    filter: brightness(0) invert(1);
-}
-
-/* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .auth-right { display: none; }
-    .auth-card { max-width: 420px; }
+    .auth-left { width: 100%; }
 }
