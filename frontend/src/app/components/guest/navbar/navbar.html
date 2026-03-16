@@ -3,43 +3,59 @@
 
         <!-- Logo -->
         <a routerLink="/" class="flex items-center space-x-2 group">
-            <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            </div>
-            <span class="text-2xl font-bold text-primary font-secondary tracking-tight">Tumirails</span>
+            <img src="assets/tumi_logo.png" alt="Tumirails Logo" class="h-16 lg:h-20">
         </a>
 
-        <!-- Desktop Menu -->
-        <div class="hidden lg:flex items-center space-x-5">
-            <a routerLink="/" routerLinkActive="text-primary underline font-semibold"
-                [routerLinkActiveOptions]="{exact: true}"
-                class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">Home</a>
-            <a routerLink="/about" routerLinkActive="text-primary underline font-semibold"
-                class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">About
-                Us</a>
-            <a routerLink="/how-it-works" routerLinkActive="text-primary underline font-semibold"
-                class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">How It
-                Works</a>
-            <a routerLink="/consumers" routerLinkActive="text-primary underline font-semibold"
-                class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">Consumers</a>
-            <a routerLink="/estimator" routerLinkActive="text-primary underline font-semibold"
-                class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">Estimator</a>
-            <a routerLink="/installers" routerLinkActive="text-primary underline font-semibold"
-                class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">Installers
-                & Vendors</a>
-            <a routerLink="/contact" routerLinkActive="text-primary underline font-semibold"
-                class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">Contact
-                & FAQ</a>
-        </div>
+        <div class="flex items-center gap-8">
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center space-x-5">
+                <a routerLink="/" routerLinkActive="text-primary underline font-semibold"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">Home</a>
+                <a routerLink="/about" routerLinkActive="text-primary underline font-semibold"
+                    class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">About
+                    Us</a>
+                <a routerLink="/how-it-works" routerLinkActive="text-primary underline font-semibold"
+                    class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">How It
+                    Works</a>
+                
+                <!-- Services Dropdown -->
+                <div class="relative" #servicesDropdown>
+                    <button (click)="toggleServicesDropdown()" 
+                        class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px] flex items-center gap-1">
+                        Services
+                        <i-lucide [img]="ChevronDown" [size]="16"></i-lucide>
+                    </button>
+                    <div *ngIf="isServicesDropdownOpen" 
+                        class="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                        <a routerLink="/consumers" routerLinkActive="bg-gray-50 text-primary font-semibold"
+                            (click)="isServicesDropdownOpen = false"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors">
+                            Consumers
+                        </a>
+                        <a routerLink="/estimator" routerLinkActive="bg-gray-50 text-primary font-semibold"
+                            (click)="isServicesDropdownOpen = false"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors">
+                            Estimator
+                        </a>
+                        <a routerLink="/installers" routerLinkActive="bg-gray-50 text-primary font-semibold"
+                            (click)="isServicesDropdownOpen = false"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors">
+                            Installers & Vendors
+                        </a>
+                    </div>
+                </div>
 
-        <!-- Auth Buttons -->
-        <div class="hidden lg:flex items-center gap-4">
-            <a routerLink="/login" class="btn btn-secondary btn-sm h-10">Sign In</a>
-            <a routerLink="/register" class="btn btn-primary btn-sm h-10">Sign Up</a>
+                <a routerLink="/contact" routerLinkActive="text-primary underline font-semibold"
+                    class="text-gray-600 hover:text-primary transition-colors font-medium text-[15px]">Contact
+                    & FAQ</a>
+            </div>
+
+            <!-- Auth Buttons -->
+            <div class="hidden lg:flex items-center gap-4">
+                <a routerLink="/login" class="btn btn-secondary btn-sm h-10">Sign In</a>
+                <a routerLink="/register" class="btn btn-primary btn-sm h-10">Sign Up</a>
+            </div>
         </div>
 
         <!-- Mobile Hamburger Button -->
