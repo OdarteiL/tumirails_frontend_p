@@ -167,7 +167,7 @@
             <div class="flex-1 space-y-2">
               <div class="flex items-center gap-3 flex-wrap">
                 <h4 class="font-bold text-slate-900 capitalize">{{ a.property_type }} Property</h4>
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold capitalize {{ statusClass(a.status) }}">{{ a.status }}</span>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold capitalize" [ngClass]="statusClass(a.status)">{{ a.status }}</span>
               </div>
               <div class="flex flex-wrap gap-4 text-sm text-slate-500">
                 <span class="flex items-center gap-1.5"><lucide-icon [img]="MapPin" [size]="14"></lucide-icon>{{ a.address }}</span>

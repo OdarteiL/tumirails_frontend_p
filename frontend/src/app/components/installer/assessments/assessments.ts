@@ -18,6 +18,11 @@ export class InstallerAssessmentsComponent implements OnInit {
 
     assessments = signal<SiteAssessment[]>([]);
     filter = signal<'all' | 'pending' | 'accepted' | 'declined'>('pending');
+    readonly filterTabs: Array<'all' | 'pending' | 'accepted' | 'declined'> = ['all', 'pending', 'accepted', 'declined'];
+
+    setFilter(tab: 'all' | 'pending' | 'accepted' | 'declined'): void {
+        this.filter.set(tab);
+    }
     respondingId = signal<number | null>(null);
 
     filtered = computed(() => {
