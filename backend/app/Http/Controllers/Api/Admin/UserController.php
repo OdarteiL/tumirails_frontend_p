@@ -30,9 +30,9 @@ class UserController extends Controller
             ->when(
                 $request->search,
                 fn ($q, $search) => $q->where(function ($query) use ($search) {
-                    $query->where('first_name', 'ilike', "%{$search}%")
-                        ->orWhere('last_name', 'ilike', "%{$search}%")
-                        ->orWhere('email', 'ilike', "%{$search}%");
+                    $query->where('first_name', $this->likeOperator(), "%{$search}%")
+                        ->orWhere('last_name', $this->likeOperator(), "%{$search}%")
+                        ->orWhere('email', $this->likeOperator(), "%{$search}%");
                 })
             )
             ->with(['installerDetail', 'providerDetail'])

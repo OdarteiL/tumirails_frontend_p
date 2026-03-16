@@ -168,9 +168,9 @@ class OrganisationController extends Controller
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->when($request->search, function ($q, $search) {
                 $q->whereHas('user', function ($userQuery) use ($search) {
-                    $userQuery->where('first_name', 'ilike', "%{$search}%")
-                        ->orWhere('last_name', 'ilike', "%{$search}%")
-                        ->orWhere('email', 'ilike', "%{$search}%");
+                    $userQuery->where('first_name', $this->likeOperator(), "%{$search}%")
+                        ->orWhere('last_name', $this->likeOperator(), "%{$search}%")
+                        ->orWhere('email', $this->likeOperator(), "%{$search}%");
                 });
             })
             ->with('user')

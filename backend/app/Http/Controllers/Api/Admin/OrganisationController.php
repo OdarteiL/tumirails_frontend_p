@@ -30,8 +30,8 @@ class OrganisationController extends Controller
             ->when(
                 $request->search,
                 fn ($q, $search) => $q->where(function ($query) use ($search) {
-                    $query->where('name', 'ilike', "%{$search}%")
-                        ->orWhere('email', 'ilike', "%{$search}%");
+                    $query->where('name', $this->likeOperator(), "%{$search}%")
+                        ->orWhere('email', $this->likeOperator(), "%{$search}%");
                 })
             )
             ->with(['installerDetail', 'providerDetail'])
