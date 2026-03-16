@@ -105,7 +105,7 @@ class OrganisationSiteControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -134,7 +134,7 @@ class OrganisationSiteControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -180,7 +180,7 @@ class OrganisationSiteControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 

@@ -149,7 +149,7 @@ class EstimationServiceTest extends TestCase
         $organisation = Organisation::factory()->create();
         $organisation->members()->create([
             'user_id' => $this->user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'invited_by' => $this->user->id,
             'joined_at' => now(),
         ]);
@@ -289,7 +289,7 @@ class EstimationServiceTest extends TestCase
         $organisation = Organisation::factory()->create();
         $organisation->members()->create([
             'user_id' => $this->user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'invited_by' => $this->user->id,
             'joined_at' => now(),
         ]);
@@ -401,7 +401,7 @@ class EstimationServiceTest extends TestCase
         // Add regular customer
         $organisation->members()->create([
             'user_id' => $this->user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'invited_by' => $admin->id,
             'joined_at' => now(),
         ]);

@@ -129,7 +129,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -195,7 +195,7 @@ class AcceptOrganisationInvitationActionTest extends TestCase
         $user = User::factory()->create();
         $organisation = Organisation::factory()->create();
 
-        $roles = ['admin', 'installer', 'provider', 'customer'];
+        $roles = ['admin', 'member'];
 
         foreach ($roles as $role) {
             $invitation = OrganisationInvitation::create([

@@ -2,18 +2,23 @@
 
 namespace Tests\Unit\Services;
 
+use App\Actions\Auth\ChangePasswordAction;
+use App\Actions\Auth\ForgotPasswordAction;
 use App\Actions\Auth\GenerateAuthTokenAction;
 use App\Actions\Auth\GetAuthenticatedUserAction;
 use App\Actions\Auth\LoginUserAction;
 use App\Actions\Auth\RegisterInstallerAction;
 use App\Actions\Auth\RegisterProviderAction;
 use App\Actions\Auth\RegisterUserAction;
+use App\Actions\Auth\ResetPasswordAction;
 use App\Actions\Auth\RevokeAuthTokenAction;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\EmailService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AuthServiceTest extends TestCase
@@ -36,9 +41,16 @@ class AuthServiceTest extends TestCase
 
     private GetAuthenticatedUserAction $getAuthenticatedUserAction;
 
+    private ForgotPasswordAction $forgotPasswordAction;
+
+    private ResetPasswordAction $resetPasswordAction;
+
+    private ChangePasswordAction $changePasswordAction;
+
     protected function setUp(): void
     {
         parent::setUp();
+        Mail::fake();
 
         $this->registerUserAction = app(RegisterUserAction::class);
         $this->registerInstallerAction = app(RegisterInstallerAction::class);
@@ -47,6 +59,9 @@ class AuthServiceTest extends TestCase
         $this->generateAuthTokenAction = app(GenerateAuthTokenAction::class);
         $this->revokeAuthTokenAction = app(RevokeAuthTokenAction::class);
         $this->getAuthenticatedUserAction = app(GetAuthenticatedUserAction::class);
+        $this->forgotPasswordAction = app(ForgotPasswordAction::class);
+        $this->resetPasswordAction = app(ResetPasswordAction::class);
+        $this->changePasswordAction = app(ChangePasswordAction::class);
 
         $this->service = new AuthService(
             $this->registerUserAction,
@@ -55,7 +70,11 @@ class AuthServiceTest extends TestCase
             $this->loginUserAction,
             $this->generateAuthTokenAction,
             $this->revokeAuthTokenAction,
-            $this->getAuthenticatedUserAction
+            $this->getAuthenticatedUserAction,
+            $this->forgotPasswordAction,
+            $this->resetPasswordAction,
+            $this->changePasswordAction,
+            app(EmailService::class),
         );
     }
 
