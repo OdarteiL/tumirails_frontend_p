@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { NavbarComponent } from '../../guest/navbar/navbar';
-import { FooterComponent } from '../../guest/footer/footer';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, NavbarComponent, FooterComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -64,8 +62,14 @@ export class RegisterComponent {
       };
 
       this.authService.register(payload).subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard']);
+        next: (response) => {
+          const user = response.data.user;
+          // Customers go to dashboard, others to their respective dashboards
+          if (user.role === 'customer' || user.role === 'consumer') {
+            this.router.navigate(['/customer/dashboard']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
         },
         error: (error) => {
           // Set field-specific errors if available

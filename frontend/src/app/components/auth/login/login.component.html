@@ -1,67 +1,97 @@
-<div class="min-h-screen flex flex-col bg-gray-50">
-    <app-navbar></app-navbar>
-    <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full bg-white rounded-3xl p-8 lg:p-12 shadow-xl border border-slate-100">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-slate-900 mb-2">
-                    Sign in to Tumi Configurator
-                </h2>
-                <p class="text-slate-600">
-                    Welcome back! Please enter your details.
-                </p>
-            </div>
+<div class="auth-page">
+  <div class="auth-card">
 
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-                <!-- Email -->
-                <div>
-                    <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                    <input id="email" type="email" formControlName="email" placeholder="your.email@example.com"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="(loginForm.get('email')?.invalid && loginForm.get('email')?.touched) || getFieldError('email')" />
-                    <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-                        class="mt-1 text-sm text-red-500">
-                        Email is required and must be valid
-                    </div>
-                    <div *ngIf="getFieldError('email')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('email') }}
-                    </div>
-                </div>
+    <!-- Left Panel -->
+    <div class="auth-left">
+      <!-- Logo -->
+      <div class="auth-logo">
+        <img src="assets/tumi_new.png" alt="Tumirails" class="auth-logo-img">
+      </div>
 
-                <!-- Password -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
-                    <input id="password" type="password" formControlName="password" placeholder="••••••••"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="(loginForm.get('password')?.invalid && loginForm.get('password')?.touched) || getFieldError('password')" />
-                    <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-                        class="mt-1 text-sm text-red-500">
-                        Password is required
-                    </div>
-                    <div *ngIf="getFieldError('password')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('password') }}
-                    </div>
-                </div>
+      <h1 class="auth-heading">welcome back</h1>
+      <p class="auth-subtext">Thank you for getting back, please login to your account by filling these form:</p>
 
-                <div *ngIf="errorMessage()" class="text-center p-3 rounded-lg bg-red-50 text-red-600 text-sm">
-                    {{ errorMessage() }}
-                </div>
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="auth-error">{{ errorMessage() }}</div>
+      }
 
-                <button type="submit" [disabled]="loginForm.invalid || isLoading()"
-                    class="w-full bg-primary hover:bg-primary disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg text-lg transition-all duration-300 shadow-md">
-                    {{ isLoading() ? 'Signing in...' : 'Sign in' }}
-                </button>
-
-                <div class="text-center mt-6">
-                    <p class="text-slate-600">
-                        Don't have an account?
-                        <a routerLink="/register"
-                            class="text-primary hover:text-primary font-medium hover:underline transition-colors">
-                            Sign up
-                        </a>
-                    </p>
-                </div>
-            </form>
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+        <div class="input-group">
+          <div class="input-field">
+            <label>Email Address</label>
+            <input type="email" formControlName="email" placeholder="coolname@name.com">
+            @if (getFieldError('email')) {
+              <span class="field-error">{{ getFieldError('email') }}</span>
+            }
+          </div>
+          <div class="input-divider"></div>
+          <div class="input-field">
+            <label>Password</label>
+            <input type="password" formControlName="password" placeholder="••••••••••••">
+            @if (getFieldError('password')) {
+              <span class="field-error">{{ getFieldError('password') }}</span>
+            }
+          </div>
         </div>
+
+        <div class="auth-options">
+          <label class="remember-me">
+            <input type="checkbox"> Remember me
+          </label>
+          <a routerLink="/forgot-password" class="forgot-link">Forgot password</a>
+        </div>
+
+        <div class="auth-buttons">
+          <button type="submit" class="btn-login" [disabled]="isLoading()">
+            {{ isLoading() ? 'LOGGING IN...' : 'LOGIN' }}
+          </button>
+          <a routerLink="/register" class="btn-signup">SIGN UP</a>
+        </div>
+      </form>
     </div>
-    <app-footer></app-footer>
+
+    <!-- Right Panel -->
+    <div class="auth-right">
+      <div class="botanical-overlay">
+        <svg viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg" class="botanical-svg">
+          <!-- Large monstera leaf top-left -->
+          <ellipse cx="80" cy="120" rx="120" ry="80" fill="#1a5c2a" opacity="0.9" transform="rotate(-30 80 120)"/>
+          <ellipse cx="80" cy="120" rx="90" ry="55" fill="#2d7a3a" opacity="0.7" transform="rotate(-30 80 120)"/>
+          <!-- Monstera cuts -->
+          <ellipse cx="30" cy="90" rx="25" ry="15" fill="#0d2b1a" transform="rotate(-30 30 90)"/>
+          <ellipse cx="110" cy="75" rx="20" ry="12" fill="#0d2b1a" transform="rotate(-20 110 75)"/>
+
+          <!-- Palm frond top-right -->
+          <path d="M500 0 Q380 80 300 200 Q350 150 420 100 Q460 60 500 0Z" fill="#2d7a3a" opacity="0.85"/>
+          <path d="M500 20 Q400 100 340 220 Q380 170 450 110 Q480 70 500 20Z" fill="#1a5c2a" opacity="0.7"/>
+
+          <!-- Long blade leaves left -->
+          <path d="M0 300 Q60 250 40 150 Q50 200 20 280 Q10 290 0 300Z" fill="#3a8c4a" opacity="0.8"/>
+          <path d="M0 350 Q80 280 60 160 Q70 230 30 330 Q15 340 0 350Z" fill="#1a5c2a" opacity="0.9"/>
+
+          <!-- Center large leaf -->
+          <ellipse cx="250" cy="380" rx="160" ry="100" fill="#2d7a3a" opacity="0.6" transform="rotate(15 250 380)"/>
+          <ellipse cx="250" cy="380" rx="120" ry="70" fill="#4aad5a" opacity="0.4" transform="rotate(15 250 380)"/>
+
+          <!-- Bottom right leaves -->
+          <path d="M500 700 Q380 600 300 480 Q360 540 440 620 Q470 660 500 700Z" fill="#1a5c2a" opacity="0.9"/>
+          <path d="M500 680 Q400 580 320 460 Q370 530 450 610 Q475 645 500 680Z" fill="#3a8c4a" opacity="0.7"/>
+
+          <!-- Bottom left leaves -->
+          <path d="M0 700 Q100 620 160 500 Q120 560 60 650 Q30 675 0 700Z" fill="#2d7a3a" opacity="0.85"/>
+          <path d="M0 680 Q90 600 150 480 Q110 545 50 635 Q25 658 0 680Z" fill="#4aad5a" opacity="0.6"/>
+
+          <!-- Mid accent leaves -->
+          <path d="M150 500 Q200 420 180 320 Q190 380 170 470 Q160 485 150 500Z" fill="#3a8c4a" opacity="0.75"/>
+          <path d="M350 200 Q420 150 460 60 Q440 120 390 180 Q370 190 350 200Z" fill="#1a5c2a" opacity="0.8"/>
+        </svg>
+      </div>
+      <div class="auth-right-logo">
+        <img src="assets/tumi_new.png" alt="Tumirails" class="auth-right-logo-img">
+      </div>
+    </div>
+
+  </div>
 </div>

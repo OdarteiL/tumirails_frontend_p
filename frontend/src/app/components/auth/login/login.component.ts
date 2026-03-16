@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { NavbarComponent } from '../../guest/navbar/navbar';
-import { FooterComponent } from '../../guest/footer/footer';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, NavbarComponent, FooterComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -44,10 +42,24 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
           const user = response.data.user;
-          if (user.role === 'customer' || user.role === 'consumer') {
-            this.router.navigate(['/admin/consumer/dashboard']);
-          } else {
-            this.router.navigate(['/dashboard']);
+          
+          // Route based on user role
+          switch (user.role) {
+            case 'customer':
+            case 'consumer':
+              this.router.navigate(['/customer/dashboard']);
+              break;
+            case 'provider':
+              this.router.navigate(['/vendor/dashboard']);
+              break;
+            case 'installer':
+              this.router.navigate(['/installer/dashboard']);
+              break;
+            case 'admin':
+              this.router.navigate(['/admin/dashboard']);
+              break;
+            default:
+              this.router.navigate(['/customer/dashboard']);
           }
         },
 
