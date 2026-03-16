@@ -18,6 +18,7 @@ class Organisation extends Model
         'email',
         'phone',
         'address',
+        'status',
     ];
 
     protected $casts = [
@@ -111,5 +112,21 @@ class Organisation extends Model
     public function isCustomer(): bool
     {
         return $this->type === 'customer';
+    }
+
+    /**
+     * Check if organisation is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if organisation is suspended.
+     */
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
     }
 }
