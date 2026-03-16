@@ -23,7 +23,7 @@ export class NavbarComponent {
   @ViewChild('servicesDropdown') servicesDropdown?: ElementRef;
 
   constructor(private router: Router) {
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: NavigationEnd) => {
       this.isHomePage = e.urlAfterRedirects === '/';
     });
   }

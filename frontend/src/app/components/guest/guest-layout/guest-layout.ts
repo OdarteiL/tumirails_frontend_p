@@ -16,7 +16,7 @@ export class GuestLayoutComponent {
   isHomePage = false;
 
   constructor(private router: Router) {
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: NavigationEnd) => {
       this.isHomePage = e.urlAfterRedirects === '/';
     });
   }

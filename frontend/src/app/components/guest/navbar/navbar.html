@@ -34,8 +34,8 @@
 </nav>
 
 <!-- Mobile Drawer -->
-<div *ngIf="isMenuOpen" class="mobile-overlay" (click)="toggleMenu()" tabindex="0" role="dialog" aria-modal="true">
-    <div class="mobile-drawer" (click)="$event.stopPropagation()" tabindex="-1">
+<div *ngIf="isMenuOpen" class="mobile-overlay" (click)="toggleMenu()" (keydown.escape)="toggleMenu()" tabindex="0" role="dialog" aria-modal="true">
+    <div class="mobile-drawer" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
         <div class="mobile-drawer-header">
             <span class="logo-text">TUMIRAILS</span>
             <button (click)="toggleMenu()" aria-label="Close menu">
