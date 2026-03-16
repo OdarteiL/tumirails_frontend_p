@@ -1,148 +1,77 @@
-<div class="min-h-screen flex flex-col bg-gray-50">
-    <app-navbar></app-navbar>
-    <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl w-full bg-white rounded-3xl p-8 lg:p-12 shadow-xl border border-slate-100">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-slate-900 mb-2">
-                    Create your account
-                </h2>
-                <p class="text-slate-600">
-                    Join us today! Please fill in your details below.
-                </p>
-            </div>
+<div class="auth-page">
 
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Left: Form -->
+  <div class="auth-left">
+    <div class="auth-inner">
+      <a routerLink="/" class="auth-logo">
+        <img src="assets/tumi_logo.png" alt="Tumirails">
+      </a>
 
-                <!-- First Name -->
-                <div>
-                    <label for="first_name" class="block text-sm font-medium text-slate-700 mb-2">First Name</label>
-                    <input id="first_name" type="text" formControlName="first_name" placeholder="John"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="(registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched) || getFieldError('first_name')" />
-                    <div *ngIf="getFieldError('first_name')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('first_name') }}
-                    </div>
-                </div>
+      <h1 class="auth-heading">create account</h1>
+      <p class="auth-subtext">Join Tumirails today and start your solar journey.</p>
 
-                <!-- Last Name -->
-                <div>
-                    <label for="last_name" class="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
-                    <input id="last_name" type="text" formControlName="last_name" placeholder="Doe"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="(registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched) || getFieldError('last_name')" />
-                    <div *ngIf="getFieldError('last_name')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('last_name') }}
-                    </div>
-                </div>
+      @if (errorMessage()) {
+        <div class="auth-error">{{ errorMessage() }}</div>
+      }
 
-                <!-- Other Names -->
-                <div>
-                    <label for="other_names" class="block text-sm font-medium text-slate-700 mb-2">Other Names
-                        (Optional)</label>
-                    <input id="other_names" type="text" formControlName="other_names" placeholder="Middle Name"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="getFieldError('other_names')" />
-                    <div *ngIf="getFieldError('other_names')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('other_names') }}
-                    </div>
-                </div>
-
-                <!-- Phone -->
-                <div>
-                    <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">Phone (Optional)</label>
-                    <input id="phone" type="tel" formControlName="phone" placeholder="+233 20 123 4567"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="getFieldError('phone')" />
-                    <div *ngIf="getFieldError('phone')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('phone') }}
-                    </div>
-                </div>
-
-                <!-- Email (Full Width) -->
-                <div class="md:col-span-2">
-                    <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                    <input id="email" type="email" formControlName="email" placeholder="john.doe@example.com"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="(registerForm.get('email')?.invalid && registerForm.get('email')?.touched) || getFieldError('email')" />
-                    <div *ngIf="getFieldError('email')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('email') }}
-                    </div>
-                </div>
-
-                <!-- Address (Full Width) -->
-                <div class="md:col-span-2">
-                    <label for="address" class="block text-sm font-medium text-slate-700 mb-2">Address
-                        (Optional)</label>
-                    <textarea id="address" formControlName="address" rows="2" placeholder="Your Residential Address"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="getFieldError('address')"></textarea>
-                    <div *ngIf="getFieldError('address')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('address') }}
-                    </div>
-                </div>
-
-                <!-- Password -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
-                    <input id="password" type="password" formControlName="password" placeholder="••••••••"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="(registerForm.get('password')?.invalid && registerForm.get('password')?.touched) || getFieldError('password')" />
-                    <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-                        class="mt-1 text-sm text-red-500">
-                        Password must be at least 8 characters
-                    </div>
-                    <div *ngIf="getFieldError('password')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('password') }}
-                    </div>
-                </div>
-
-                <!-- Confirm Password -->
-                <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-2">Confirm
-                        Password</label>
-                    <input id="password_confirmation" type="password" formControlName="password_confirmation"
-                        placeholder="••••••••"
-                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#0E6C8B] focus:border-transparent outline-none transition-all"
-                        [class.border-red-500]="(registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched) || getFieldError('password_confirmation')" />
-                    <div *ngIf="registerForm.get('password_confirmation')?.invalid && registerForm.get('password_confirmation')?.touched"
-                        class="mt-1 text-sm text-red-500">
-                        Please confirm your password
-                    </div>
-                    <div *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('password_confirmation')?.touched"
-                        class="mt-1 text-sm text-red-500">
-                        Passwords do not match
-                    </div>
-                    <div *ngIf="getFieldError('password_confirmation')" class="mt-1 text-sm text-red-500">
-                        {{ getFieldError('password_confirmation') }}
-                    </div>
-                </div>
-
-                <!-- Error Message (Full Width) -->
-                <div *ngIf="errorMessage()"
-                    class="md:col-span-2 text-center p-3 rounded-lg bg-red-50 text-red-600 text-sm">
-                    {{ errorMessage() }}
-                </div>
-
-                <!-- Submit Button (Full Width) -->
-                <div class="md:col-span-2">
-                    <button type="submit" [disabled]="registerForm.invalid || isLoading()"
-                        class="w-full bg-primary hover:bg-primary disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg text-lg transition-all duration-300 shadow-md">
-                        {{ isLoading() ? 'Creating account...' : 'Create account' }}
-                    </button>
-                </div>
-
-                <!-- Sign In Link (Full Width) -->
-                <div class="md:col-span-2 text-center mt-4">
-                    <p class="text-slate-600">
-                        Already have an account?
-                        <a routerLink="/login"
-                            class="text-primary hover:text-primary font-medium hover:underline transition-colors">
-                            Sign in
-                        </a>
-                    </p>
-                </div>
-            </form>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="field-row">
+          <div class="field">
+            <label for="first_name">First Name</label>
+            <input id="first_name" type="text" formControlName="first_name" placeholder="John">
+            @if (getFieldError('first_name')) {
+              <span class="field-error">{{ getFieldError('first_name') }}</span>
+            }
+          </div>
+          <div class="field">
+            <label for="last_name">Last Name</label>
+            <input id="last_name" type="text" formControlName="last_name" placeholder="Doe">
+            @if (getFieldError('last_name')) {
+              <span class="field-error">{{ getFieldError('last_name') }}</span>
+            }
+          </div>
         </div>
+
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input id="email" type="email" formControlName="email" placeholder="you@example.com">
+          @if (getFieldError('email')) {
+            <span class="field-error">{{ getFieldError('email') }}</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone (optional)</label>
+          <input id="phone" type="tel" formControlName="phone" placeholder="+233 XX XXX XXXX">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" type="password" formControlName="password" placeholder="••••••••">
+            @if (getFieldError('password')) {
+              <span class="field-error">{{ getFieldError('password') }}</span>
+            }
+          </div>
+          <div class="field">
+            <label for="password_confirmation">Confirm Password</label>
+            <input id="password_confirmation" type="password" formControlName="password_confirmation" placeholder="••••••••">
+            @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('password_confirmation')?.touched) {
+              <span class="field-error">Passwords do not match</span>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          {{ isLoading() ? 'Creating account...' : 'Create Account' }}
+        </button>
+
+        <p class="auth-switch">Already have an account? <a routerLink="/login">Login</a></p>
+      </form>
     </div>
-    <app-footer></app-footer>
+  </div>
+
+  <!-- Right: Image -->
+  <div class="auth-right"></div>
+
 </div>

@@ -90,19 +90,25 @@ export class HomeComponent implements OnInit, OnDestroy {
       id: 1,
       heading: 'Decentralized Energy Trading',
       description: 'Tumi connects households and institutions across Ghana in a regulated marketplace where energy flows freely and savings run deep. Buy local. Sell surplus. Keep the grid steady.',
-      backgroundImage: '/assets/hero-slide-1.png'
+      backgroundImage: '/assets/solar-panels-roof-solar-cell.jpg'
     },
     {
       id: 2,
       heading: 'Smart Energy Management',
       description: 'Monitor your energy consumption in real-time and optimize your usage with our intelligent platform. Save money while contributing to a sustainable future.',
-      backgroundImage: '/assets/hero-slide-2.png'
+      backgroundImage: '/assets/aerial-shot-solar-panels-cascade-field-florida.jpg'
     },
     {
       id: 3,
       heading: 'Renewable Energy Solutions',
       description: 'Join thousands of households generating clean energy and earning from their surplus. Be part of Ghana\'s renewable energy revolution.',
-      backgroundImage: '/assets/hero-slide-3.png'
+      backgroundImage: '/assets/side-view-hand-choosing-charging-options.jpg'
+    },
+    {
+      id: 4,
+      heading: 'Build Your Solar Future',
+      description: 'From planning to installation, Tumi guides you through every step of your solar journey with expert recommendations and certified professionals.',
+      backgroundImage: '/assets/3d-rendering-house-model.jpg'
     }
   ];
 

@@ -37,7 +37,7 @@
 
     <!-- Dot Indicators -->
     <div class="dot-indicators">
-        @for (slide of [0, 1, 2]; track slide; let i = $index) {
+        @for (slide of [0, 1, 2, 3]; track slide; let i = $index) {
         <button class="dot" [class.active]="currentSlideIndex() === i" (click)="goToSlide(i)"
             [attr.aria-label]="'Go to slide ' + (i + 1)"></button>
         }

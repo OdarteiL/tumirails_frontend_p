@@ -1,1 +1,154 @@
-/* CSS removed in favor of Tailwind utility classes */
+.auth-page {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Left */
+.auth-left {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    overflow-y: auto;
+}
+
+.auth-inner {
+    width: 100%;
+    max-width: 420px;
+    padding: 2.5rem 2rem;
+}
+
+.auth-logo img {
+    height: 80px;
+    width: auto;
+    display: block;
+    margin: 0 auto 2.5rem;
+}
+
+.auth-heading {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1F2050;
+    margin: 0 0 0.5rem;
+    line-height: 1.1;
+    text-align: center;
+}
+
+.auth-subtext {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0 0 2rem;
+    text-align: center;
+}
+
+.auth-error {
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 0.8rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+}
+
+.field label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.field input {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.field input:focus { border-color: #304597; }
+
+.field-error {
+    font-size: 0.75rem;
+    color: #dc2626;
+    margin-top: 0.3rem;
+}
+
+.auth-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #666;
+    cursor: pointer;
+}
+
+.remember-me input { accent-color: #304597; }
+
+.forgot-link {
+    font-size: 0.8rem;
+    color: #304597;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-primary {
+    width: 100%;
+    background: #304597;
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover:not(:disabled) { background: #1F2050; }
+.btn-primary:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.auth-switch {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #888;
+    margin-top: 1.25rem;
+}
+
+.auth-switch a {
+    color: #304597;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Right */
+.auth-right {
+    width: 50%;
+    background-image: url('/assets/aerial-shot-solar-panels-cascade-field-florida.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+@media (max-width: 768px) {
+    .auth-right { display: none; }
+    .auth-left { width: 100%; }
+}
