@@ -5,6 +5,15 @@ import { DashboardComponent } from './components/dashboard.component';
 import { AuthGuard } from './guards/auth.guard';
 import { GuestLayoutComponent } from './components/guest/guest-layout/guest-layout';
 import { ConsumerDashboardComponent } from './components/admin/consumer/dashboard/dashboard';
+import { VendorDashboardComponent } from './components/vendor/dashboard/dashboard';
+import { VendorProductsComponent } from './components/vendor/products/products';
+import { VendorOrdersComponent } from './components/vendor/orders/orders';
+import { InstallerDashboardComponent } from './components/installer/dashboard/dashboard';
+import { InstallerJobsComponent } from './components/installer/jobs/jobs';
+import { InstallerScheduleComponent } from './components/installer/schedule/schedule';
+import { InstallerAssessmentsComponent } from './components/installer/assessments/assessments';
+import { AdminOrdersComponent } from './components/admin/orders/orders';
+import { AdminCustomersComponent } from './components/admin/customers/customers';
 import { MarketplaceComponent } from './components/admin/consumer/marketplace/marketplace';
 import { ProductDetailComponent } from './components/admin/consumer/product-detail/product-detail';
 import { HomeComponent } from './components/guest/pages/home/home';
@@ -14,6 +23,9 @@ import { InstallersComponent } from './components/guest/pages/installers/install
 import { EstimatorComponent } from './components/guest/pages/estimator/estimator';
 import { ContactComponent } from './components/guest/pages/contact/contact';
 import { HowItWorksComponent } from './components/guest/pages/how-it-works/how-it-works';
+import { CustomerEstimationsComponent } from './components/admin/consumer/estimations/estimations';
+import { CustomerSettingsComponent } from './components/admin/consumer/settings/settings';
+import { SiteAssessmentsComponent } from './components/admin/consumer/site-assessments/site-assessments';
 
 export const routes: Routes = [
   {
@@ -30,31 +42,58 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'customer',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'dashboard', component: ConsumerDashboardComponent },
+      { path: 'marketplace', component: MarketplaceComponent },
+      { path: 'product-detail/:id', component: ProductDetailComponent },
+      { path: 'estimations', component: CustomerEstimationsComponent },
+      { path: 'site-assessments', component: SiteAssessmentsComponent },
+      { path: 'settings', component: CustomerSettingsComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
+  {
+    path: 'vendor',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'dashboard', component: VendorDashboardComponent },
+      { path: 'products', component: VendorProductsComponent },
+      { path: 'orders', component: VendorOrdersComponent },
+      { path: 'inventory', component: VendorProductsComponent },
+      { path: 'settings', component: VendorDashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
+  {
+    path: 'installer',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'dashboard', component: InstallerDashboardComponent },
+      { path: 'assessments', component: InstallerAssessmentsComponent },
+      { path: 'jobs', component: InstallerJobsComponent },
+      { path: 'schedule', component: InstallerScheduleComponent },
+      { path: 'availability', component: InstallerDashboardComponent },
+      { path: 'settings', component: InstallerDashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
+  {
     path: 'admin',
     canActivate: [AuthGuard],
     children: [
-      {
-        path: 'consumer',
-        children: [
-          { path: 'dashboard', component: ConsumerDashboardComponent },
-          { path: 'marketplace', component: MarketplaceComponent },
-          { path: 'product-detail/:id', component: ProductDetailComponent },
-          { path: 'orders', component: ConsumerDashboardComponent }, // Placeholder
-          { path: 'settings', component: ConsumerDashboardComponent }, // Placeholder
-          { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-        ]
-      },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'orders', component: DashboardComponent },
+      { path: 'orders', component: AdminOrdersComponent },
       { path: 'products', component: DashboardComponent },
-      { path: 'customers', component: DashboardComponent },
+      { path: 'customers', component: AdminCustomersComponent },
       { path: 'settings', component: DashboardComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'dashboard', redirectTo: 'admin/dashboard' },
+  { path: 'dashboard', redirectTo: 'customer/dashboard' },
   { path: '**', redirectTo: '' }
 ];
 

@@ -1,0 +1,189 @@
+<app-admin-layout
+  pageTitle="Site Assessments"
+  [userName]="userName()"
+  [userRole]="userRole()"
+  [userInitials]="userInitials()">
+
+  <!-- Sidebar -->
+  <ng-container sidebarMenu>
+    <a routerLink="/customer/dashboard" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" [routerLinkActiveOptions]="{exact:false}"
+       class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon><span>Dashboard</span>
+    </a>
+    <a routerLink="/customer/marketplace" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" [routerLinkActiveOptions]="{exact:false}"
+       class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="ShoppingBag" [size]="20"></lucide-icon><span>Marketplace</span>
+    </a>
+    <a routerLink="/customer/estimations" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" [routerLinkActiveOptions]="{exact:false}"
+       class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="History" [size]="20"></lucide-icon><span>My Estimations</span>
+    </a>
+    <a routerLink="/customer/site-assessments" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" [routerLinkActiveOptions]="{exact:false}"
+       class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="ClipboardCheck" [size]="20"></lucide-icon><span>Site Assessments</span>
+    </a>
+    <a routerLink="/customer/settings" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" [routerLinkActiveOptions]="{exact:false}"
+       class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="Settings" [size]="20"></lucide-icon><span>Settings</span>
+    </a>
+  </ng-container>
+
+  <!-- Content -->
+  <div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900">Site Assessments</h2>
+        <p class="text-sm text-slate-500 mt-1">Request a site visit from a certified installer or assessment engineer</p>
+      </div>
+      <button (click)="showForm.set(true)" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-deep-primary transition-colors">
+        <lucide-icon [img]="Plus" [size]="16"></lucide-icon> Request Assessment
+      </button>
+    </div>
+
+    <!-- Success / Error -->
+    @if (successMessage()) {
+      <div class="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-sm font-medium">
+        <lucide-icon [img]="CheckCircle" [size]="18"></lucide-icon> {{ successMessage() }}
+      </div>
+    }
+    @if (errorMessage()) {
+      <div class="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+        <lucide-icon [img]="AlertCircle" [size]="18"></lucide-icon> {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+        <div class="p-3 bg-amber-50 text-amber-600 rounded-xl"><lucide-icon [img]="Clock" [size]="22"></lucide-icon></div>
+        <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending</p><h3 class="text-2xl font-black text-slate-900">{{ pendingCount() }}</h3></div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+        <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><lucide-icon [img]="Calendar" [size]="22"></lucide-icon></div>
+        <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Accepted</p><h3 class="text-2xl font-black text-slate-900">{{ acceptedCount() }}</h3></div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><lucide-icon [img]="ClipboardCheck" [size]="22"></lucide-icon></div>
+        <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Completed</p><h3 class="text-2xl font-black text-slate-900">{{ completedCount() }}</h3></div>
+      </div>
+    </div>
+
+    <!-- Request Form Modal -->
+    @if (showForm()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div class="flex items-center justify-between p-6 border-b border-slate-100">
+            <h3 class="text-lg font-black text-slate-900">Request Site Assessment</h3>
+            <button (click)="showForm.set(false)" (keydown.enter)="showForm.set(false)" class="p-2 hover:bg-slate-100 rounded-lg transition-colors" aria-label="Close">
+              <lucide-icon [img]="X" [size]="18"></lucide-icon>
+            </button>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="submitRequest()" class="p-6 space-y-4">
+
+            <div class="form-field">
+              <label for="property_type">Property Type</label>
+              <select id="property_type" formControlName="property_type">
+                <option value="">Select property type</option>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+                <option value="industrial">Industrial</option>
+                <option value="agricultural">Agricultural</option>
+              </select>
+              @if (form.get('property_type')?.invalid && form.get('property_type')?.touched) {
+                <span class="field-error">Property type is required</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="address">Property Address / Location</label>
+              <input id="address" type="text" formControlName="address" placeholder="e.g. 12 Accra Road, East Legon, Accra">
+              @if (form.get('address')?.invalid && form.get('address')?.touched) {
+                <span class="field-error">Address is required</span>
+              }
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-field">
+                <label for="preferred_date">Preferred Date</label>
+                <input id="preferred_date" type="date" formControlName="preferred_date">
+                @if (form.get('preferred_date')?.invalid && form.get('preferred_date')?.touched) {
+                  <span class="field-error">Date is required</span>
+                }
+              </div>
+              <div class="form-field">
+                <label for="preferred_time">Preferred Time</label>
+                <input id="preferred_time" type="time" formControlName="preferred_time">
+                @if (form.get('preferred_time')?.invalid && form.get('preferred_time')?.touched) {
+                  <span class="field-error">Time is required</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="purchased_equipment">Equipment Already Purchased (optional)</label>
+              <input id="purchased_equipment" type="text" formControlName="purchased_equipment" placeholder="e.g. 4x 400W panels, 2x 200Ah batteries from marketplace">
+            </div>
+
+            <div class="form-field">
+              <label for="notes">Additional Notes (optional)</label>
+              <textarea id="notes" formControlName="notes" rows="3" placeholder="Any specific requirements or information for the installer..."></textarea>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button type="button" (click)="showForm.set(false)" class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" [disabled]="isSubmitting()" class="flex-1 px-4 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-deep-primary transition-colors disabled:opacity-60">
+                {{ isSubmitting() ? 'Submitting...' : 'Submit Request' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <!-- Assessments List -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="p-6 border-b border-slate-50">
+        <h3 class="text-lg font-black text-slate-900">My Assessment Requests</h3>
+      </div>
+
+      @if (assessments().length === 0) {
+        <div class="p-12 text-center">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-full mb-4">
+            <lucide-icon [img]="ClipboardCheck" [size]="28" class="text-slate-400"></lucide-icon>
+          </div>
+          <p class="text-slate-600 font-semibold">No assessment requests yet</p>
+          <p class="text-sm text-slate-400 mt-1">Click "Request Assessment" to get started</p>
+        </div>
+      }
+
+      @for (a of assessments(); track a.id) {
+        <div class="p-6 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h4 class="font-bold text-slate-900 capitalize">{{ a.property_type }} Property</h4>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold capitalize {{ statusClass(a.status) }}">{{ a.status }}</span>
+              </div>
+              <div class="flex flex-wrap gap-4 text-sm text-slate-500">
+                <span class="flex items-center gap-1.5"><lucide-icon [img]="MapPin" [size]="14"></lucide-icon>{{ a.address }}</span>
+                <span class="flex items-center gap-1.5"><lucide-icon [img]="Calendar" [size]="14"></lucide-icon>{{ a.preferred_date }}</span>
+                <span class="flex items-center gap-1.5"><lucide-icon [img]="Clock" [size]="14"></lucide-icon>{{ a.preferred_time }}</span>
+              </div>
+              @if (a.installer_name) {
+                <p class="text-sm text-slate-500">Assigned to: <span class="font-semibold text-slate-700">{{ a.installer_name }}</span></p>
+              }
+              @if (a.purchased_equipment) {
+                <p class="text-sm text-slate-500">Equipment: {{ a.purchased_equipment }}</p>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</app-admin-layout>
