@@ -474,7 +474,7 @@ class EstimationControllerTest extends TestCase
         // Add customer
         $organisation->members()->create([
             'user_id' => $this->user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'invited_by' => $admin->id,
             'joined_at' => now(),
         ]);

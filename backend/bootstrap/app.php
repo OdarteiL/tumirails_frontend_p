@@ -29,6 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register custom middleware aliases
         $middleware->alias([
             'isAdmin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'active.user' => \App\Http\Middleware\EnsureUserIsActive::class,
+            'active.organisation' => \App\Http\Middleware\EnsureActiveOrganisationContext::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

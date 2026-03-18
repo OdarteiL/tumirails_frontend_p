@@ -16,14 +16,14 @@ class InviteOrganisationMemberRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email', 'max:255'],
-            'role' => ['required', Rule::in(['admin', 'installer', 'provider', 'customer'])],
+            'role' => ['required', Rule::in(['admin', 'member'])],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'role.in' => 'Role must be one of: admin, installer, provider, customer.',
+            'role.in' => 'Role must be one of: admin, member.',
         ];
     }
 }

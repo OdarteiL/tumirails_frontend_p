@@ -14,6 +14,7 @@ class OrganisationMember extends Model
         'organisation_id',
         'user_id',
         'role',
+        'status',
         'joined_at',
     ];
 
@@ -61,5 +62,21 @@ class OrganisationMember extends Model
     public function isOwnerOrAdmin(): bool
     {
         return in_array($this->role, ['owner', 'admin']);
+    }
+
+    /**
+     * Check if the member is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if the member is suspended.
+     */
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
     }
 }

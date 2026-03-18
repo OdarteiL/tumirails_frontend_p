@@ -32,7 +32,7 @@ class OrganisationControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $org2->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -182,7 +182,7 @@ class OrganisationControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -242,7 +242,7 @@ class OrganisationControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -321,7 +321,7 @@ class OrganisationControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $member2->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -347,7 +347,7 @@ class OrganisationControllerTest extends TestCase
 
         $response = $this->actingAs($user)->postJson("/api/organisations/{$organisation->id}/invite", [
             'email' => 'newmember@example.com',
-            'role' => 'customer',
+            'role' => 'member',
         ]);
 
         $response->assertCreated()
@@ -356,7 +356,7 @@ class OrganisationControllerTest extends TestCase
         $this->assertDatabaseHas('organisation_invitations', [
             'organisation_id' => $organisation->id,
             'email' => 'newmember@example.com',
-            'role' => 'customer',
+            'role' => 'member',
         ]);
     }
 
@@ -369,13 +369,13 @@ class OrganisationControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
         $response = $this->actingAs($user)->postJson("/api/organisations/{$organisation->id}/invite", [
             'email' => 'newmember@example.com',
-            'role' => 'customer',
+            'role' => 'member',
         ]);
 
         $response->assertForbidden();
@@ -391,7 +391,7 @@ class OrganisationControllerTest extends TestCase
         $invitation = OrganisationInvitation::create([
             'organisation_id' => $organisation->id,
             'email' => $user->email,
-            'role' => 'customer',
+            'role' => 'member',
             'token' => 'test-token-123',
             'invited_by' => $inviter->id,
             'expires_at' => now()->addDays(7),
@@ -423,7 +423,7 @@ class OrganisationControllerTest extends TestCase
         $memberRecord = OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $member->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -454,7 +454,7 @@ class OrganisationControllerTest extends TestCase
         $memberRecord = OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $member->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
@@ -482,14 +482,14 @@ class OrganisationControllerTest extends TestCase
         OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 
         $memberRecord = OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $member->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 

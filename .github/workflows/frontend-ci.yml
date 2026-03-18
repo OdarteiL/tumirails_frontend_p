@@ -1,0 +1,70 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ develop, staging ]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [ develop, staging ]
+    types: [ opened, synchronize, reopened ]
+    paths:
+      - 'frontend/**'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  frontend-lint:
+    name: Frontend Code Style (ESLint)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: frontend
+        run: npm run lint
+
+  frontend-build:
+    name: Frontend Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build production bundle
+        working-directory: frontend
+        run: npm run build
+
+      - name: Build production Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.prod
+          push: false
+          tags: tumi-frontend:test

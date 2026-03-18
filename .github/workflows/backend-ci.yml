@@ -1,21 +1,24 @@
-name: CI Pipeline
+name: Backend CI
 
 on:
   push:
     branches: [ develop, staging ]
+    paths:
+      - 'backend/**'
   pull_request:
     branches: [ develop, staging ]
     types: [ opened, synchronize, reopened ]
+    paths:
+      - 'backend/**'
 
 env:
   PHP_VERSION: '8.3'
-  NODE_VERSION: '20'
 
 jobs:
   backend-lint:
     name: Backend Code Style (Laravel Pint)
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +49,7 @@ jobs:
   backend-test:
     name: Backend Tests (PHPUnit)
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -106,13 +109,11 @@ jobs:
       - name: Set testing environment
         working-directory: backend
         run: |
-          sed -i 's/DB_CONNECTION=pgsql/DB_CONNECTION=pgsql/' .env
           sed -i 's/DB_HOST=postgres/DB_HOST=127.0.0.1/' .env
-          sed -i 's/DB_PORT=5432/DB_PORT=5432/' .env
           sed -i 's/DB_DATABASE=tumi/DB_DATABASE=tumi_test/' .env
-          sed -i 's/DB_USERNAME=tumi/DB_USERNAME=tumi/' .env
-          sed -i 's/DB_PASSWORD=tumi_pwd/DB_PASSWORD=tumi_pwd/' .env
           sed -i 's/REDIS_HOST=redis/REDIS_HOST=127.0.0.1/' .env
+          sed -i 's/MAIL_MAILER=smtp/MAIL_MAILER=array/' .env
+          sed -i 's/MAIL_HOST=mailpit/MAIL_HOST=127.0.0.1/' .env
 
       - name: Run database migrations
         working-directory: backend
@@ -159,7 +160,7 @@ jobs:
   backend-build:
     name: Backend Docker Build & Migration Check
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -218,69 +219,3 @@ jobs:
             -e DB_PASSWORD=tumi_pwd \
             tumi-backend:test \
             php artisan db:show
-
-  frontend-lint:
-    name: Frontend Code Style (ESLint)
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Run ESLint
-        working-directory: frontend
-        run: npm run lint
-
-  frontend-build:
-    name: Frontend Build Check
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Build production bundle
-        working-directory: frontend
-        run: npm run build
-
-      - name: Build production Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile.prod
-          push: false
-          tags: tumi-frontend:test
-
-  integration-check:
-    name: Integration Verification
-    runs-on: ubuntu-latest
-    needs: [backend-lint, backend-test, backend-build, frontend-lint, frontend-build]
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Verify all checks passed
-        run: echo "✅ All CI checks passed successfully!"

@@ -111,11 +111,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user belongs to an organisation.
+     * Check if user belongs to an active organisation and the membership is active.
      */
     public function belongsToOrganisation(int $organisationId): bool
     {
-        return $this->organisations()->where('organisations.id', $organisationId)->exists();
+        return $this->organisations()
+            ->where('organisations.id', $organisationId)
+            ->where('organisations.status', 'active')
+            ->where('organisation_members.status', 'active')
+            ->exists();
     }
 
     /**

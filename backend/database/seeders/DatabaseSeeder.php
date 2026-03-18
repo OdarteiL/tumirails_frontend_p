@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
 
         // Seed tariff and estimation related data first (tariffs may be referenced in estimations)
         $this->call([
+            AdminSeeder::class,
+            OrganisationSeeder::class,
             CountrySeeder::class,
             TariffStructureSeeder::class,
             SeasonalAdjustmentSeeder::class,

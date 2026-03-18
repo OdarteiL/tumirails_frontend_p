@@ -13,6 +13,7 @@ class OrganisationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'type' => $this->type,
+            'status' => $this->status,
             'email' => $this->email,
             'phone' => $this->phone,
             'address' => $this->address,

@@ -90,7 +90,7 @@ class OrganisationServiceTest extends TestCase
         $member = OrganisationMember::create([
             'organisation_id' => $organisation->id,
             'user_id' => $user->id,
-            'role' => 'customer',
+            'role' => 'member',
             'joined_at' => now(),
         ]);
 

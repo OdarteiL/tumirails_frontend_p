@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterInstallerRequest;
 use App\Http\Requests\RegisterProviderRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Resources\InstallerDetailResource;
 use App\Http\Resources\ProviderDetailResource;
 use App\Http\Resources\UserResource;
@@ -106,5 +109,51 @@ class AuthController extends Controller
                 'access_token' => $result['access_token'],
             ],
         ], 201);
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        $this->authService->forgotPassword($request->validated('email'));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'If an account with that email exists, a password reset link has been sent.',
+        ]);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $success = $this->authService->resetPassword($data['email'], $data['token'], $data['password']);
+
+        if (! $success) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Invalid or expired password reset token.',
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password has been reset successfully.',
+        ]);
+    }
+
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $success = $this->authService->changePassword($request->user(), $data['current_password'], $data['password']);
+
+        if (! $success) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Current password is incorrect.',
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully.',
+        ]);
     }
 }

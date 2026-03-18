@@ -4,7 +4,9 @@ namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -580,5 +582,193 @@ class AuthControllerTest extends TestCase
                     ],
                 ],
             ]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function forgot_password_returns_success_for_existing_email(): void
+    {
+        Mail::fake();
+        User::factory()->create(['email' => 'test@example.com']);
+
+        $response = $this->postJson('/api/auth/forgot-password', ['email' => 'test@example.com']);
+
+        $response->assertStatus(200)->assertJson(['success' => true]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function forgot_password_returns_success_for_nonexistent_email(): void
+    {
+        Mail::fake();
+
+        $response = $this->postJson('/api/auth/forgot-password', ['email' => 'nobody@example.com']);
+
+        // Always 200 to prevent email enumeration
+        $response->assertStatus(200)->assertJson(['success' => true]);
+        Mail::assertNothingSent();
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function forgot_password_validates_email_format(): void
+    {
+        $response = $this->postJson('/api/auth/forgot-password', ['email' => 'not-an-email']);
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['email']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function forgot_password_sends_email_for_existing_user(): void
+    {
+        Mail::fake();
+        User::factory()->create(['email' => 'test@example.com']);
+
+        $this->postJson('/api/auth/forgot-password', ['email' => 'test@example.com']);
+
+        Mail::assertSentCount(1);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function reset_password_succeeds_with_valid_token(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['email' => 'test@example.com']);
+        $plainToken = 'valid-reset-token';
+        DB::table('password_reset_tokens')->insert([
+            'email' => 'test@example.com',
+            'token' => Hash::make($plainToken),
+            'created_at' => now(),
+        ]);
+
+        $response = $this->postJson('/api/auth/reset-password', [
+            'email' => 'test@example.com',
+            'token' => $plainToken,
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+
+        $response->assertStatus(200)->assertJson(['success' => true]);
+        $this->assertTrue(Hash::check('newpassword123', $user->fresh()->password));
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function reset_password_fails_with_invalid_token(): void
+    {
+        Mail::fake();
+        User::factory()->create(['email' => 'test@example.com']);
+        DB::table('password_reset_tokens')->insert([
+            'email' => 'test@example.com',
+            'token' => Hash::make('correct-token'),
+            'created_at' => now(),
+        ]);
+
+        $response = $this->postJson('/api/auth/reset-password', [
+            'email' => 'test@example.com',
+            'token' => 'wrong-token',
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+
+        $response->assertStatus(422)->assertJson(['success' => false]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function reset_password_fails_with_expired_token(): void
+    {
+        Mail::fake();
+        User::factory()->create(['email' => 'test@example.com']);
+        $plainToken = 'expired-token';
+        DB::table('password_reset_tokens')->insert([
+            'email' => 'test@example.com',
+            'token' => Hash::make($plainToken),
+            'created_at' => now()->subMinutes(61),
+        ]);
+
+        $response = $this->postJson('/api/auth/reset-password', [
+            'email' => 'test@example.com',
+            'token' => $plainToken,
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+
+        $response->assertStatus(422)->assertJson(['success' => false]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function reset_password_validates_required_fields(): void
+    {
+        $response = $this->postJson('/api/auth/reset-password', []);
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['email', 'token', 'password']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function change_password_succeeds_with_correct_current_password(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['password' => Hash::make('oldpassword')]);
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->postJson('/api/auth/change-password', [
+                'current_password' => 'oldpassword',
+                'password' => 'newpassword123',
+                'password_confirmation' => 'newpassword123',
+            ]);
+
+        $response->assertStatus(200)->assertJson(['success' => true]);
+        $this->assertTrue(Hash::check('newpassword123', $user->fresh()->password));
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function change_password_fails_with_wrong_current_password(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['password' => Hash::make('oldpassword')]);
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->postJson('/api/auth/change-password', [
+                'current_password' => 'wrongpassword',
+                'password' => 'newpassword123',
+                'password_confirmation' => 'newpassword123',
+            ]);
+
+        $response->assertStatus(422)->assertJson(['success' => false]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function change_password_requires_authentication(): void
+    {
+        $response = $this->postJson('/api/auth/change-password', [
+            'current_password' => 'oldpassword',
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function change_password_validates_required_fields(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->postJson('/api/auth/change-password', []);
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['current_password', 'password']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function change_password_sends_confirmation_email(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['password' => Hash::make('oldpassword')]);
+
+        $this->actingAs($user, 'sanctum')
+            ->postJson('/api/auth/change-password', [
+                'current_password' => 'oldpassword',
+                'password' => 'newpassword123',
+                'password_confirmation' => 'newpassword123',
+            ]);
+
+        Mail::assertSentCount(1);
     }
 }
