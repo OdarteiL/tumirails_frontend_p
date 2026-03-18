@@ -1,5 +1,5 @@
 import { Component, signal, input, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
     LucideAngularModule,
     Menu,
@@ -17,7 +17,8 @@ import { AuthService } from '../../../services/auth.service';
     standalone: true,
     imports: [
         CommonModule,
-        LucideAngularModule
+        LucideAngularModule,
+        RouterModule
     ],
     templateUrl: './admin-layout.html',
     styleUrl: './admin-layout.css'

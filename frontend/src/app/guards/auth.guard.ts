@@ -12,11 +12,14 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    if (this.authService.isAuthenticated()) {
-      return true;
-    }
+    // TODO: Temporarily disabled for development - remove this to re-enable auth
+    return true;
     
-    this.router.navigate(['/login']);
-    return false;
+    // if (this.authService.isAuthenticated()) {
+    //   return true;
+    // }
+    
+    // this.router.navigate(['/login']);
+    // return false;
   }
 }

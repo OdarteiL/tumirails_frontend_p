@@ -45,26 +45,27 @@ services:
   backend:
     build: ./backend
     container_name: tumi_backend
+    network_mode: host
     environment:
       APP_ENV: local
       APP_DEBUG: true
-      APP_URL: http://localhost:8000
+      APP_URL: http://localhost:8001
       DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_HOST: localhost
+      DB_PORT: 5433
       DB_DATABASE: tumi
       DB_USERNAME: tumi
       DB_PASSWORD: tumi_pwd
       CACHE_DRIVER: redis
       SESSION_DRIVER: redis
       QUEUE_CONNECTION: redis
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_HOST: localhost
+      REDIS_PORT: 6378
       BROADCAST_DRIVER: pusher
       PUSHER_APP_ID: local
       PUSHER_APP_KEY: local
       PUSHER_APP_SECRET: local
-      PUSHER_HOST: soketi
+      PUSHER_HOST: localhost
       PUSHER_PORT: 6001
       PUSHER_SCHEME: http
       SESSION_DOMAIN: .localhost
@@ -78,6 +79,7 @@ services:
       MAIL_FROM_NAME: Tumi Solar Configurator
       FRONTEND_URL: http://localhost:4200
       PASSWORD_RESET_EXPIRE: 60
+      SERVER_PORT: 8001
     volumes:
       - ./backend:/var/www/html
       - /var/www/html/vendor
@@ -111,7 +113,7 @@ services:
     build: ./frontend
     container_name: tumi_frontend
     environment:
-      API_BASE_URL: http://localhost:8000/api
+      API_BASE_URL: http://localhost:8001/api
       WS_HOST: localhost
       WS_PORT: 6001
     volumes:

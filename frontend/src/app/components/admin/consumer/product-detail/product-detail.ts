@@ -33,22 +33,30 @@ import {
       
       <!-- Consumer Sidebar Menu -->
       <ng-container sidebarMenu>
-        <a routerLink="/admin/consumer/dashboard" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+        <a routerLink="/customer/dashboard" 
+           routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
+           [routerLinkActiveOptions]="{exact: false}" 
            class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
           <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon>
           <span>Dashboard</span>
         </a>
-        <a routerLink="/admin/consumer/marketplace" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+        <a routerLink="/customer/marketplace" 
+           routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
+           [routerLinkActiveOptions]="{exact: false}" 
            class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
           <lucide-icon [img]="ShoppingBag" [size]="20"></lucide-icon>
           <span>Marketplace</span>
         </a>
-        <a routerLink="/admin/consumer/orders" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+        <a routerLink="/customer/estimations" 
+           routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
+           [routerLinkActiveOptions]="{exact: false}" 
            class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
           <lucide-icon [img]="History" [size]="20"></lucide-icon>
-          <span>Orders</span>
+          <span>My Estimations</span>
         </a>
-        <a routerLink="/admin/consumer/settings" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
+        <a routerLink="/customer/settings" 
+           routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
+           [routerLinkActiveOptions]="{exact: false}" 
            class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
           <lucide-icon [img]="Settings" [size]="20"></lucide-icon>
           <span>Settings</span>
@@ -57,7 +65,7 @@ import {
 
       <div class="animate-in fade-in slide-in-from-left-4 duration-500">
         <!-- Back Button -->
-        <button routerLink="/admin/consumer/marketplace" class="flex items-center gap-2 text-slate-500 font-bold hover:text-primary mb-8 transition-colors group">
+        <button routerLink="/customer/marketplace" class="flex items-center gap-2 text-slate-500 font-bold hover:text-primary mb-8 transition-colors group">
           <lucide-icon [img]="ArrowLeft" [size]="20" class="group-hover:-translate-x-1 transition-transform"></lucide-icon>
           Back to Marketplace
         </button>

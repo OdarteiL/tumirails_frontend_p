@@ -55,9 +55,9 @@
                     <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 rounded-full mb-6">
                         <lucide-icon [img]="Zap" class="w-10 h-10 text-emerald-600"></lucide-icon>
                     </div>
-                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Estimation Ready!</h2>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Estimation Complete!</h2>
                     <p class="text-slate-500 mt-3 font-medium text-lg leading-relaxed">
-                        We've calculated your energy profile and generated a reference code for you.
+                        Your token has been generated. Redirecting you to create an account...
                     </p>
                 </div>
 
@@ -67,23 +67,29 @@
                         <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity">
                         </div>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 relative z-10">
-                            Your Reference Code</p>
+                            Your Token</p>
                         <p class="text-4xl font-mono font-black text-primary tracking-[0.2em] relative z-10">{{
                             refCode() }}</p>
                     </div>
 
-                    <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-100 flex items-start gap-3">
-                        <lucide-icon [img]="Sun" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></lucide-icon>
-                        <p class="text-sm text-emerald-800 font-medium">
-                            Please save this code securely. You'll need it to retrieve this estimation later or when
-                            finalizing your installation.
+                    <div class="bg-blue-50 rounded-2xl p-4 border border-blue-100 flex items-start gap-3">
+                        <lucide-icon [img]="Sun" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></lucide-icon>
+                        <p class="text-sm text-blue-800 font-medium">
+                            This token will be available in your customer dashboard. Create an account to view your estimation details.
                         </p>
                     </div>
 
-                    <button (click)="showSuccessModal.set(false)"
-                        class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]">
-                        Got it, thanks!
-                    </button>
+                    <div class="flex gap-3 mt-6">
+                        <button (click)="downloadPDF()"
+                            class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2">
+                            <lucide-icon [img]="Download" class="w-5 h-5"></lucide-icon>
+                            Download PDF
+                        </button>
+                        <button (click)="proceedToLogin(); showSuccessModal.set(false)"
+                            class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all">
+                            Proceed
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -316,12 +322,21 @@
                     </div>
                 </div>
 
-                <button [disabled]="!estimationResult()" [class.opacity-50]="!estimationResult()"
-                    [class.cursor-not-allowed]="!estimationResult()" routerLink="/login"
-                    [queryParams]="{ refCode: refCode() }"
-                    class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-6 rounded-2xl text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
-                    Get Certified Installer Quotes
-                </button>
+                <div class="space-y-3">
+                    <button (click)="downloadPDF()" [disabled]="!estimationResult()" 
+                        [class.opacity-50]="!estimationResult()"
+                        [class.cursor-not-allowed]="!estimationResult()"
+                        class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-2">
+                        <lucide-icon [img]="Download" class="w-5 h-5"></lucide-icon>
+                        Download PDF
+                    </button>
+                    <button (click)="proceedToLogin()" [disabled]="!estimationResult()" 
+                        [class.opacity-50]="!estimationResult()"
+                        [class.cursor-not-allowed]="!estimationResult()"
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-6 rounded-2xl text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
+                        Proceed to Dashboard
+                    </button>
+                </div>
             </div>
         </div>
 
