@@ -35,6 +35,7 @@ docker compose exec backend php artisan migrate
 - Database: PostgreSQL on `localhost:5432`
 - Redis: Cache/Sessions on `localhost:6379`
 - Soketi: WebSocket server on `localhost:6001`
+- Mailpit (email testing): `http://localhost:8025` (web UI), SMTP on `localhost:1025`
 
 **Features:**
 - Hot reload for both frontend and backend
@@ -66,6 +67,9 @@ docker compose exec backend php artisan migrate:fresh
 
 # Check service status
 docker compose ps
+
+# Clear config cache (required after changing .env values)
+docker compose exec backend php artisan config:clear
 ```
 
 **Troubleshooting:**
@@ -163,6 +167,8 @@ ng serve --host 0.0.0.0 --port 4200
 
 ## Environment Variables
 
+> **Important:** Laravel's `.env` file takes precedence over docker-compose environment variables. Always ensure `.env` values match what docker-compose sets, then run `php artisan config:clear` after any `.env` change.
+
 **Backend (.env):**
 ```env
 APP_NAME="Tumi Configurator"
@@ -187,7 +193,16 @@ SESSION_DOMAIN=.localhost
 SESSION_SAME_SITE=lax
 SESSION_SECURE_COOKIE=false
 SANCTUM_STATEFUL_DOMAINS=localhost:4200,127.0.0.1:4200
+
+# Mail — must use smtp + mailpit service name for emails to appear in Mailpit UI
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS=noreply@tumi-configurator.com
+MAIL_FROM_NAME="Tumi Solar Configurator"
 ```
+
+> **Mailpit:** All outgoing emails in local development are caught by Mailpit. View them at `http://localhost:8025`. If emails are not appearing there, check that `MAIL_MAILER=smtp` and `MAIL_HOST=mailpit` are set in `.env`, then run `php artisan config:clear`.
 
 **Frontend (environment.ts):**
 ```typescript
@@ -228,3 +243,9 @@ Refer to the [MVP Roadmap](docs/product/mvp/mvp-roadmap.md) for the complete dev
 **Port Conflicts:**
 - Change ports in docker-compose.yaml if needed
 - Default ports: 4200 (frontend), 8000 (backend), 5432 (postgres), 6379 (redis)
+
+**Emails not appearing in Mailpit (`http://localhost:8025`):**
+- Ensure `.env` has `MAIL_MAILER=smtp`, `MAIL_HOST=mailpit`, `MAIL_PORT=1025`
+- `MAIL_MAILER=log` writes emails to `storage/logs/laravel.log` instead of sending them
+- After fixing `.env`, clear the config cache: `docker compose exec backend php artisan config:clear`
+- Note: forgot password and other email flows only send if the email address exists in the database — use a seeded account (e.g. `demo@tumi.com`) when testing
