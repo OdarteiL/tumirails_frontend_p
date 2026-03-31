@@ -17,7 +17,7 @@ class ReverseEstimationTest extends TestCase
         $tariff = TariffStructure::factory()->create([
             'type' => 'flat',
             'is_active' => true,
-            'effective_date' => now()->subMonth(),
+            'effective_date' => now()->startOfMonth()->subDay(),
         ]);
 
         TariffTier::factory()->create([
