@@ -5,8 +5,7 @@ import { AdminLayoutComponent } from '../../admin-layout/admin-layout';
 import { AuthService } from '../../../../services/auth.service';
 import { EstimationsService } from '../../../../services/estimations.service';
 import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, Download, FileText, ClipboardCheck } from 'lucide-angular';
-import { GuestEstimationResponse, GuestEstimation } from '../../../../models/estimation.model';
-
+import { GuestEstimation } from '../../../../models/estimation.model';
 @Component({
   selector: 'app-customer-estimations',
   standalone: true,
