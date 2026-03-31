@@ -73,7 +73,7 @@ services:
       SESSION_SECURE_COOKIE: false
       SANCTUM_STATEFUL_DOMAINS: localhost:4200,127.0.0.1:4200
       MAIL_MAILER: smtp
-      MAIL_HOST: mailpit
+      MAIL_HOST: localhost
       MAIL_PORT: 1025
       MAIL_FROM_ADDRESS: noreply@tumi-configurator.com
       MAIL_FROM_NAME: Tumi Solar Configurator
@@ -91,10 +91,6 @@ services:
         condition: service_healthy
       mailpit:
         condition: service_started
-    ports:
-      - "8000:8000"
-    networks:
-      - app-net
 
   soketi:
     image: quay.io/soketi/soketi:1.4-16-alpine

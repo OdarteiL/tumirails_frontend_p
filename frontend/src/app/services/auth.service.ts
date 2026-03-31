@@ -88,4 +88,16 @@ export class AuthService {
       catchError(error => throwError(() => error))
     );
   }
+
+  forgotPassword(email: string): Observable<{ success: boolean; message: string }> {
+    return this.apiService.post('/auth/forgot-password', { email });
+  }
+
+  resetPassword(data: { email: string; token: string; password: string; password_confirmation: string }): Observable<{ success: boolean; message: string }> {
+    return this.apiService.post('/auth/reset-password', data);
+  }
+
+  changePassword(data: { current_password: string; password: string; password_confirmation: string }): Observable<{ success: boolean; message: string }> {
+    return this.apiService.post('/auth/change-password', data);
+  }
 }

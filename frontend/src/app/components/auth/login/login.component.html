@@ -10,6 +10,9 @@
       <h1 class="auth-heading">welcome back</h1>
       <p class="auth-subtext">Please login to your account to continue.</p>
 
+      @if (successMessage()) {
+        <div class="auth-success">{{ successMessage() }}</div>
+      }
       @if (errorMessage()) {
         <div class="auth-error">{{ errorMessage() }}</div>
       }

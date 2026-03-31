@@ -1,0 +1,64 @@
+<div class="min-h-screen bg-[#F4F5F7]">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col">
+      <div class="p-6 border-b border-gray-200 flex justify-center">
+        <a routerLink="/" class="block hover:opacity-80 transition-opacity">
+          <img src="/assets/tumi_logo.png" alt="Tumi Solar" class="h-8 w-auto">
+        </a>
+      </div>
+      <div class="p-6 flex-1">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Vendor Portal</h2>
+        <nav class="space-y-1">
+          <a routerLink="/vendor/dashboard" routerLinkActive="!text-blue-600 !bg-blue-50" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded">Dashboard</a>
+          <a routerLink="/vendor/products" routerLinkActive="!text-blue-600 !bg-blue-50" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded">Products</a>
+          <a routerLink="/vendor/orders" routerLinkActive="!text-blue-600 !bg-blue-50" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded">Orders</a>
+          <a routerLink="/vendor/inventory" routerLinkActive="!text-blue-600 !bg-blue-50" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded">Inventory</a>
+        </nav>
+      </div>
+      <div class="p-6 border-t border-gray-200">
+        <button (click)="logout()" class="w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+      <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+        <p class="text-sm text-gray-600 mt-1">Manage your products and inventory</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-white border border-gray-200 rounded p-4">
+          <div class="text-xs font-medium text-gray-500 uppercase mb-1">Total Products</div>
+          <div class="text-2xl font-semibold text-gray-900">{{ stats.totalProducts }}</div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded p-4">
+          <div class="text-xs font-medium text-gray-500 uppercase mb-1">Active Listings</div>
+          <div class="text-2xl font-semibold text-blue-600">{{ stats.activeListings }}</div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded p-4">
+          <div class="text-xs font-medium text-gray-500 uppercase mb-1">Pending Orders</div>
+          <div class="text-2xl font-semibold text-orange-600">{{ stats.pendingOrders }}</div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded p-4">
+          <div class="text-xs font-medium text-gray-500 uppercase mb-1">Total Revenue</div>
+          <div class="text-2xl font-semibold text-green-600">GH₵{{ stats.totalRevenue }}</div>
+        </div>
+      </div>
+
+      <!-- Recent Products -->
+      <div class="bg-white border border-gray-200 rounded">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-base font-semibold text-gray-900">Recent Products</h2>
+        </div>
+        <div class="p-6">
+          <div class="text-center py-12 text-gray-500 text-sm">
+            No products yet. <a routerLink="/vendor/products" class="text-blue-600 hover:underline">Add your first product</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
