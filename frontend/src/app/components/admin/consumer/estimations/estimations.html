@@ -60,15 +60,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-slate-50 rounded-xl p-6">
             <div class="text-xs font-bold text-slate-400 uppercase mb-2">Total Power</div>
-            <div class="text-3xl font-black text-slate-900">{{ estimationData().total_watts }}W</div>
+            <div class="text-3xl font-black text-slate-900">{{ estimationData()!.total_watts }}W</div>
           </div>
           <div class="bg-slate-50 rounded-xl p-6">
             <div class="text-xs font-bold text-slate-400 uppercase mb-2">Monthly Usage</div>
-            <div class="text-3xl font-black text-slate-900">{{ estimationData().monthly_kwh }} kWh</div>
+            <div class="text-3xl font-black text-slate-900">{{ estimationData()!.monthly_kwh }} kWh</div>
           </div>
           <div class="bg-slate-50 rounded-xl p-6">
             <div class="text-xs font-bold text-slate-400 uppercase mb-2">Monthly Cost</div>
-            <div class="text-3xl font-black text-primary">GH₵{{ estimationData().estimated_monthly_cost }}</div>
+            <div class="text-3xl font-black text-primary">GH₵{{ estimationData()!.estimated_monthly_cost }}</div>
           </div>
         </div>
 
@@ -87,9 +87,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let app of estimationData().appliances_breakdown" class="border-b border-slate-100">
+              <tr *ngFor="let app of estimationData()!.appliances_breakdown" class="border-b border-slate-100">
                 <td class="px-6 py-4 text-sm font-medium">{{ app.name }}</td>
-                <td class="px-6 py-4 text-sm">{{ app.wattage }}W</td>
+                <td class="px-6 py-4 text-sm">{{ app.watts }}W</td>
                 <td class="px-6 py-4 text-sm">{{ app.quantity }}</td>
                 <td class="px-6 py-4 text-sm">{{ app.daily_usage_hours }}h</td>
                 <td class="px-6 py-4 text-sm font-medium text-primary">GH₵{{ app.monthly_cost }}</td>

@@ -21,7 +21,7 @@ export class CustomerEstimationsComponent implements OnInit {
   userRole = signal('');
   userInitials = signal('');
   estimationToken = signal<string | null>(null);
-  estimationData = signal<GuestEstimationResponse | null>(null);
+  estimationData = signal<GuestEstimation | null>(null);
 
   readonly LayoutDashboard = LayoutDashboard;
   readonly ShoppingBag = ShoppingBag;
@@ -61,7 +61,7 @@ export class CustomerEstimationsComponent implements OnInit {
     const response = this.estimationData();
     if (!response) return;
 
-    const content = this.generatePDFContent(response.data);
+    const content = this.generatePDFContent(response);
     const blob = new Blob([content], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');

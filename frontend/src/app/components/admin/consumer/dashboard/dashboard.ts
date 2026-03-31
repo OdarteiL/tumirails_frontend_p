@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from '../../admin-layout/admin-layout';
 import { AuthService } from '../../../../services/auth.service';
 import { EstimationsService } from '../../../../services/estimations.service';
+import { Estimation } from '../../../../models/estimation.model';
 import {
     LucideAngularModule,
     LayoutDashboard,
@@ -148,7 +149,7 @@ export class ConsumerDashboardComponent implements OnInit {
     userInitials = signal('');
     estimationToken = signal<string | null>(null);
     monthlyEstimate = signal<string>('0.00');
-    estimations = signal<Record<string, unknown>[]>([]);
+    estimations = signal<Estimation[]>([]);
 
     // Icons for template
     readonly LayoutDashboard = LayoutDashboard;
