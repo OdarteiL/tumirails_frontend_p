@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { User } from '../models/user.model';
-import { AdminLayoutComponent } from './admin/admin-layout/admin-layout';
 import { LucideAngularModule, LayoutDashboard, ShoppingBag, Package, Users, Settings } from 'lucide-angular';
 
 @Component({

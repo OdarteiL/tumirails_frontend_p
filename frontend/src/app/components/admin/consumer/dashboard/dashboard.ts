@@ -148,7 +148,7 @@ export class ConsumerDashboardComponent implements OnInit {
     userInitials = signal('');
     estimationToken = signal<string | null>(null);
     monthlyEstimate = signal<string>('0.00');
-    estimations = signal<any[]>([]);
+    estimations = signal<Record<string, unknown>[]>([]);
 
     // Icons for template
     readonly LayoutDashboard = LayoutDashboard;

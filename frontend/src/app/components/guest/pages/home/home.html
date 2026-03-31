@@ -53,18 +53,47 @@
         </div>
 
         <div class="features-grid">
-            @for (feature of features; track feature.title) {
+            <!-- Card 1: Peer-to-Peer Trading -->
             <div class="feature-card">
-                <div class="feature-icon-wrapper">
-                    <lucide-icon [img]="feature.icon" [size]="48" strokeWidth="1.5" class="feature-icon"></lucide-icon>
+                <div class="feature-img-top">
+                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=80" alt="Peer-to-Peer Trading">
+                    <div class="feature-img-overlay">
+                        <lucide-icon [img]="features[0].icon" [size]="36" strokeWidth="1.5"></lucide-icon>
+                    </div>
                 </div>
-                <h3 class="feature-title">{{ feature.title }}</h3>
-                <p class="feature-description">{{ feature.description }}</p>
-                <div class="feature-image-container">
-                    <img [src]="feature.image" [alt]="feature.title" class="feature-image">
+                <div class="feature-body">
+                    <h3 class="feature-title">{{ features[0].title }}</h3>
+                    <p class="feature-description">{{ features[0].description }}</p>
                 </div>
             </div>
-            }
+
+            <!-- Card 2: Certified Solar Solutions -->
+            <div class="feature-card">
+                <div class="feature-img-top">
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Certified Solar Solutions">
+                    <div class="feature-img-overlay">
+                        <lucide-icon [img]="features[1].icon" [size]="36" strokeWidth="1.5"></lucide-icon>
+                    </div>
+                </div>
+                <div class="feature-body">
+                    <h3 class="feature-title">{{ features[1].title }}</h3>
+                    <p class="feature-description">{{ features[1].description }}</p>
+                </div>
+            </div>
+
+            <!-- Card 3: Utility Integration -->
+            <div class="feature-card">
+                <div class="feature-img-top">
+                    <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80" alt="Utility Integration">
+                    <div class="feature-img-overlay">
+                        <lucide-icon [img]="features[2].icon" [size]="36" strokeWidth="1.5"></lucide-icon>
+                    </div>
+                </div>
+                <div class="feature-body">
+                    <h3 class="feature-title">{{ features[2].title }}</h3>
+                    <p class="feature-description">{{ features[2].description }}</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -86,18 +115,31 @@
             }
         </div>
 
-        <!-- Tab Content -->
+        <!-- Tab Content: image left, text right -->
         <div class="benefits-content">
-            <div class="benefits-card">
-                <h3 class="benefits-title">{{ currentBenefitTab.title }}</h3>
-                <ul class="benefits-list">
-                    @for (benefit of currentBenefitTab.benefits; track $index) {
-                    <li class="benefit-item">
-                        <span class="bullet">-</span>
-                        <span class="text">{{ benefit }}</span>
-                    </li>
+            <div class="benefits-card-pictorial">
+                <div class="benefits-image-side">
+                    @if (activeTab() === 'consumers') {
+                        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=80" alt="Consumers">
                     }
-                </ul>
+                    @if (activeTab() === 'prosumers') {
+                        <img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=700&q=80" alt="Prosumers">
+                    }
+                    @if (activeTab() === 'utilities') {
+                        <img src="https://images.unsplash.com/photo-1548337138-e87d889cc369?w=700&q=80" alt="Utilities">
+                    }
+                </div>
+                <div class="benefits-text-side">
+                    <h3 class="benefits-title">{{ currentBenefitTab.title }}</h3>
+                    <ul class="benefits-list">
+                        @for (benefit of currentBenefitTab.benefits; track $index) {
+                        <li class="benefit-item">
+                            <span class="bullet">-</span>
+                            <span class="text">{{ benefit }}</span>
+                        </li>
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -130,7 +172,7 @@
             <div class="stats-right-grid">
                 <!-- Image Card -->
                 <div class="stats-card image-card">
-                    <img src="/assets/placeholder-image.svg" alt="Energy Monitoring" class="stat-image-fit">
+                    <img src="https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=600&q=80" alt="Energy Monitoring" class="stat-image-fit">
                 </div>
 
                 <!-- Stat Card -->
@@ -149,7 +191,7 @@
 
                 <!-- Image Card -->
                 <div class="stats-card image-card">
-                    <img src="/assets/placeholder-image.svg" alt="Solar Installation" class="stat-image-fit">
+                    <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&q=80" alt="Solar Installation" class="stat-image-fit">
                 </div>
             </div>
         </div>
@@ -167,7 +209,15 @@
             @for (testimonial of testimonials; track testimonial.author) {
             <div class="testimonial-card">
                 <div class="testimonial-avatar-wrapper">
-                    <img [src]="testimonial.image" [alt]="testimonial.author" class="testimonial-avatar">
+                    @if (testimonial.author === 'Abena Serwaa') {
+                        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=80" [alt]="testimonial.author" class="testimonial-avatar">
+                    }
+                    @if (testimonial.author === 'Kwame Asare') {
+                        <img src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=200&q=80" [alt]="testimonial.author" class="testimonial-avatar">
+                    }
+                    @if (testimonial.author === 'Helena Mensah') {
+                        <img src="https://images.unsplash.com/photo-1589156280159-27698a70f29e?w=200&q=80" [alt]="testimonial.author" class="testimonial-avatar">
+                    }
                 </div>
                 <p class="testimonial-quote">"{{ testimonial.quote }}"</p>
                 <div class="testimonial-footer">

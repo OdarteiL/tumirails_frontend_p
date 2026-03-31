@@ -4,7 +4,6 @@ import { ApiService } from './api.service';
 import {
   GuestEstimationRequest,
   GuestEstimationResponse,
-  Estimation,
   EstimationListResponse,
   EstimationResponse,
   CreateEstimationRequest,

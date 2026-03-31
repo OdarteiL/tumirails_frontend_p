@@ -93,7 +93,7 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class VendorProductsComponent {
   showAddForm = false;
-  products: any[] = [];
+  products: Record<string, unknown>[] = [];
   newProduct = { name: '', price: 0, stock: 0 };
 
   constructor(private authService: AuthService, private router: Router) {}

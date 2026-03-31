@@ -65,24 +65,24 @@ import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, U
           <div class="p-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">First Name</label>
-                <input type="text" [(ngModel)]="profile.firstName" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
+                <label for="firstName" class="block text-sm font-medium text-slate-700 mb-2">First Name</label>
+                <input id="firstName" type="text" [(ngModel)]="profile.firstName" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
-                <input type="text" [(ngModel)]="profile.lastName" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
+                <label for="lastName" class="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                <input id="lastName" type="text" [(ngModel)]="profile.lastName" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                <input type="email" [(ngModel)]="profile.email" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
+                <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                <input id="email" type="email" [(ngModel)]="profile.email" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-                <input type="tel" [(ngModel)]="profile.phone" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
+                <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                <input id="phone" type="tel" [(ngModel)]="profile.phone" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
               </div>
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-slate-700 mb-2">Address</label>
-                <textarea [(ngModel)]="profile.address" rows="3" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                <label for="address" class="block text-sm font-medium text-slate-700 mb-2">Address</label>
+                <textarea id="address" [(ngModel)]="profile.address" rows="3" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
               </div>
             </div>
             <div class="mt-6">
@@ -102,16 +102,16 @@ import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, U
           <div class="p-8">
             <div class="space-y-4 max-w-md">
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
-                <input type="password" [(ngModel)]="password.current" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
+                <label for="currentPassword" class="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
+                <input id="currentPassword" type="password" [(ngModel)]="password.current" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
-                <input type="password" [(ngModel)]="password.new" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
+                <label for="newPassword" class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
+                <input id="newPassword" type="password" [(ngModel)]="password.new" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
-                <input type="password" [(ngModel)]="password.confirm" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
+                <label for="confirmPassword" class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
+                <input id="confirmPassword" type="password" [(ngModel)]="password.confirm" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent">
               </div>
               <button (click)="changePassword()" class="bg-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-primary/90 transition-all">
                 Update Password

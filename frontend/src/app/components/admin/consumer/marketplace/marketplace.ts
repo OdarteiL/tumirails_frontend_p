@@ -95,18 +95,18 @@ interface Product {
             
             <div class="space-y-6">
               <div>
-                <label class="block text-sm font-bold text-slate-700 mb-3">Price Range</label>
+                <span class="block text-sm font-bold text-slate-700 mb-3">Price Range</span>
                 <div class="flex gap-3">
-                  <input type="number" [(ngModel)]="priceMin" placeholder="Min" 
+                  <input type="number" [(ngModel)]="priceMin" placeholder="Min" aria-label="Minimum price"
                          class="flex-1 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary">
-                  <input type="number" [(ngModel)]="priceMax" placeholder="Max" 
+                  <input type="number" [(ngModel)]="priceMax" placeholder="Max" aria-label="Maximum price"
                          class="flex-1 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary">
                 </div>
               </div>
               
               <div>
-                <label class="block text-sm font-bold text-slate-700 mb-3">Minimum Rating</label>
-                <select [(ngModel)]="minRating" 
+                <label for="minRating" class="block text-sm font-bold text-slate-700 mb-3">Minimum Rating</label>
+                <select id="minRating" [(ngModel)]="minRating" 
                         class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary">
                   <option [value]="0">All Ratings</option>
                   <option [value]="4">4+ Stars</option>
