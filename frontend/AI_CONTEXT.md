@@ -2,6 +2,11 @@
 
 Use this file as context whenever requesting AI assistance for frontend work.
 
+## Scope (STRICT)
+- Work ONLY within the `frontend/` directory
+- Do NOT read, modify, or suggest changes to any files outside `frontend/`
+- If a request seems to require backend changes, flag it and stop — do not proceed
+
 ## Architecture and conventions
 - Framework: Angular 17+ (Standalone components preferred)
 - State: Angular Signals for synchronous state (e.g. view models); RxJS for asynchronous events and streams. Use `toSignal` to bridge RxJS to Signals for templates.

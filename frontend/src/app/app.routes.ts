@@ -16,6 +16,13 @@ import { InstallerScheduleComponent } from './components/installer/schedule/sche
 import { InstallerAssessmentsComponent } from './components/installer/assessments/assessments';
 import { AdminOrdersComponent } from './components/admin/orders/orders';
 import { AdminCustomersComponent } from './components/admin/customers/customers';
+import { AdminDashboardComponent } from './components/admin/dashboard/admin-dashboard';
+import { AdminUsersComponent } from './components/admin/users/admin-users';
+import { AdminOrganisationsComponent } from './components/admin/organisations/admin-organisations';
+import { AdminContactsComponent } from './components/admin/contacts/admin-contacts';
+import { AdminAppliancesComponent } from './components/admin/appliances/admin-appliances';
+import { AdminAddUserComponent } from './components/admin/users/admin-add-user';
+import { AdminSettingsComponent } from './components/admin/settings/admin-settings';
 import { MarketplaceComponent } from './components/admin/consumer/marketplace/marketplace';
 import { ProductDetailComponent } from './components/admin/consumer/product-detail/product-detail';
 import { HomeComponent } from './components/guest/pages/home/home';
@@ -85,11 +92,15 @@ export const routes: Routes = [
     path: 'admin',
     canActivate: [AuthGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
+      { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'users', component: AdminUsersComponent },
+      { path: 'users/add', component: AdminAddUserComponent },
+      { path: 'organisations', component: AdminOrganisationsComponent },
+      { path: 'contacts', component: AdminContactsComponent },
       { path: 'orders', component: AdminOrdersComponent },
-      { path: 'products', component: DashboardComponent },
       { path: 'customers', component: AdminCustomersComponent },
-      { path: 'settings', component: DashboardComponent },
+      { path: 'settings', component: AdminSettingsComponent },
+      { path: 'appliances', component: AdminAppliancesComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

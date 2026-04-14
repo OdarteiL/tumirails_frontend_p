@@ -8,11 +8,11 @@
     <aside class="sidebar" [class.mobile-open]="isSidebarOpen()">
         <div class="sidebar-header flex items-center justify-center px-6 py-4">
             <a routerLink="/" class="flex items-center hover:opacity-80 transition-opacity">
-                <img src="/assets/tumi_logo.png" alt="Tumi Solar" class="h-8 w-auto">
+                <img src="/assets/tumi_logo_footer.png" alt="Tumi Solar" class="h-16 w-auto">
             </a>
         </div>
 
-        <nav class="sidebar-nav mt-8">
+        <nav class="sidebar-nav">
             <!-- DYNAMIC SIDEBAR CONTENT SLOT -->
             <ng-content select="[sidebarMenu]"></ng-content>
         </nav>
