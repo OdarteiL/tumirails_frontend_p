@@ -27,6 +27,7 @@ import { MarketplaceComponent } from './components/admin/consumer/marketplace/ma
 import { ProductDetailComponent } from './components/admin/consumer/product-detail/product-detail';
 import { RegisterVendorComponent } from './components/auth/register-vendor/register-vendor.component';
 import { RegisterInstallerComponent } from './components/auth/register-installer/register-installer.component';
+import { CustomerSitesComponent } from './components/admin/consumer/sites/sites';
 import { HomeComponent } from './components/guest/pages/home/home';
 import { AboutComponent } from './components/guest/pages/about/about';
 import { ConsumersComponent } from './components/guest/pages/consumers/consumers';
@@ -57,6 +58,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: ConsumerDashboardComponent },
+      { path: 'sites', component: CustomerSitesComponent },
       { path: 'marketplace', component: MarketplaceComponent },
       { path: 'product-detail/:id', component: ProductDetailComponent },
       { path: 'estimations', component: CustomerEstimationsComponent },

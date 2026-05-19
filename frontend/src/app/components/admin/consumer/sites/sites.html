@@ -1,0 +1,186 @@
+<app-admin-layout
+  [pageTitle]="selectedSite() ? selectedSite()!.name : 'My Sites'"
+  [userName]="userName()"
+  [userRole]="userRole()"
+  [userInitials]="userInitials()">
+
+  <ng-container sidebarMenu>
+    <a routerLink="/customer/dashboard" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon><span>Dashboard</span>
+    </a>
+    <a routerLink="/customer/sites" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="MapPin" [size]="20"></lucide-icon><span>My Sites</span>
+    </a>
+    <a routerLink="/customer/marketplace" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="ShoppingBag" [size]="20"></lucide-icon><span>Marketplace</span>
+    </a>
+    <a routerLink="/customer/estimations" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="History" [size]="20"></lucide-icon><span>My Estimations</span>
+    </a>
+    <a routerLink="/customer/site-assessments" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="ClipboardCheck" [size]="20"></lucide-icon><span>Site Assessments</span>
+    </a>
+    <a routerLink="/customer/settings" routerLinkActive="!bg-white/10 !text-secondary shadow-inner" class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all font-medium text-[0.95rem] mb-2">
+      <lucide-icon [img]="Settings" [size]="20"></lucide-icon><span>Settings</span>
+    </a>
+  </ng-container>
+
+  <div class="space-y-6">
+    @if (error()) {
+      <div class="bg-red-50 text-red-600 p-4 rounded-xl text-sm">{{ error() }}</div>
+    }
+
+    <!-- Site Detail View -->
+    @if (selectedSite()) {
+      <div class="flex items-center gap-4 mb-4">
+        <button (click)="selectedSite.set(null)" class="text-sm text-primary font-semibold hover:underline">← Back to Sites</button>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div><span class="font-semibold text-slate-500">Address:</span> {{ selectedSite()!.address }}</div>
+          <div><span class="font-semibold text-slate-500">Coordinates:</span> {{ selectedSite()!.latitude }}, {{ selectedSite()!.longitude }}</div>
+          @if (selectedSite()!.notes) {
+            <div class="col-span-2"><span class="font-semibold text-slate-500">Notes:</span> {{ selectedSite()!.notes }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- Site Appliances -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+          <h3 class="text-lg font-bold text-slate-900">Appliances</h3>
+          <button (click)="showAddAppliance.set(true)" class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90">
+            <lucide-icon [img]="Plus" [size]="16"></lucide-icon> Add Appliance
+          </button>
+        </div>
+
+        @if (showAddAppliance()) {
+          <div class="p-6 bg-slate-50 border-b">
+            <form [formGroup]="applianceForm" (ngSubmit)="addAppliance()" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <select formControlName="appliance_id" class="border rounded-lg px-3 py-2 text-sm">
+                <option value="">Select appliance</option>
+                @for (a of appliances(); track a.id) {
+                  <option [value]="a.id">{{ a.name }} ({{ a.wattage }}W)</option>
+                }
+              </select>
+              <input type="number" formControlName="quantity" placeholder="Qty" class="border rounded-lg px-3 py-2 text-sm">
+              <input type="number" formControlName="daily_usage_hours" placeholder="Hours/day" step="0.5" class="border rounded-lg px-3 py-2 text-sm">
+              <div class="flex gap-2">
+                <button type="submit" [disabled]="loading()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Add</button>
+                <button type="button" (click)="showAddAppliance.set(false)" class="border px-4 py-2 rounded-lg text-sm">Cancel</button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <div class="p-6">
+          @if (siteAppliances().length === 0) {
+            <p class="text-slate-500 text-center py-4">No appliances added to this site yet.</p>
+          } @else {
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-slate-500 border-b">
+                  <th class="pb-3">Appliance</th>
+                  <th class="pb-3">Wattage</th>
+                  <th class="pb-3">Qty</th>
+                  <th class="pb-3">Hours/Day</th>
+                  <th class="pb-3">Daily kWh</th>
+                  <th class="pb-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (sa of siteAppliances(); track sa.id) {
+                  <tr class="border-b border-slate-50">
+                    <td class="py-3 font-medium">{{ sa.appliance?.name || 'Unknown' }}</td>
+                    <td class="py-3">{{ sa.appliance?.wattage || 0 }}W</td>
+                    <td class="py-3">{{ sa.quantity }}</td>
+                    <td class="py-3">{{ sa.daily_usage_hours }}h</td>
+                    <td class="py-3">{{ ((sa.appliance?.wattage || 0) * sa.quantity * sa.daily_usage_hours / 1000).toFixed(2) }}</td>
+                    <td class="py-3">
+                      <button (click)="removeAppliance(sa.id)" class="text-red-500 hover:text-red-700">
+                        <lucide-icon [img]="Trash2" [size]="16"></lucide-icon>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+      </div>
+
+    } @else {
+      <!-- Sites List -->
+      <div class="flex justify-between items-center">
+        <p class="text-slate-500 text-sm">Manage your properties and their appliances.</p>
+        <button (click)="showCreateForm.set(true)" class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90">
+          <lucide-icon [img]="Plus" [size]="16"></lucide-icon> Add Site
+        </button>
+      </div>
+
+      @if (showCreateForm()) {
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h3 class="text-lg font-bold mb-4">Create New Site</h3>
+          <form [formGroup]="siteForm" (ngSubmit)="createSite()" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Site Name</label>
+                <input type="text" formControlName="name" placeholder="My Home" class="w-full border rounded-lg px-3 py-2 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Address</label>
+                <input type="text" formControlName="address" placeholder="123 Main St, Accra" class="w-full border rounded-lg px-3 py-2 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Latitude</label>
+                <input type="number" formControlName="latitude" step="0.0001" class="w-full border rounded-lg px-3 py-2 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Longitude</label>
+                <input type="number" formControlName="longitude" step="0.0001" class="w-full border rounded-lg px-3 py-2 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Timezone</label>
+                <input type="text" formControlName="timezone" class="w-full border rounded-lg px-3 py-2 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Notes (optional)</label>
+                <input type="text" formControlName="notes" placeholder="Any additional info" class="w-full border rounded-lg px-3 py-2 text-sm">
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" [disabled]="loading()" class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-semibold">
+                {{ loading() ? 'Creating...' : 'Create Site' }}
+              </button>
+              <button type="button" (click)="showCreateForm.set(false)" class="border px-6 py-2 rounded-lg text-sm">Cancel</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      @if (sites().length === 0) {
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-12 text-center">
+          <lucide-icon [img]="MapPin" [size]="48" class="text-slate-300 mx-auto mb-4"></lucide-icon>
+          <p class="text-slate-500">No sites yet. Add your first property to get started.</p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (site of sites(); track site.id) {
+            <div (click)="selectSite(site)" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:border-primary/30 transition-all">
+              <div class="flex items-start gap-3">
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <lucide-icon [img]="MapPin" [size]="20"></lucide-icon>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900">{{ site.name }}</h4>
+                  <p class="text-sm text-slate-500 mt-1">{{ site.address }}</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</app-admin-layout>

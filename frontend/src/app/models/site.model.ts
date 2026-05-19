@@ -38,6 +38,7 @@ export interface CreateSiteRequest {
   address: string;
   latitude: number;
   longitude: number;
+  timezone: string;
   notes?: string;
 }
 
