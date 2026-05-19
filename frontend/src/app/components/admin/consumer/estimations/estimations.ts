@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from '../../admin-layout/admin-layout';
 import { AuthService } from '../../../../services/auth.service';
 import { EstimationsService } from '../../../../services/estimations.service';
-import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, Download, FileText, ClipboardCheck } from 'lucide-angular';
+import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, Download, FileText, ClipboardCheck, MapPin } from 'lucide-angular';
 import { GuestEstimation } from '../../../../models/estimation.model';
 @Component({
   selector: 'app-customer-estimations',
@@ -29,6 +29,7 @@ export class CustomerEstimationsComponent implements OnInit {
   readonly Download = Download;
   readonly FileText = FileText;
   readonly ClipboardCheck = ClipboardCheck;
+  readonly MapPin = MapPin;
 
   ngOnInit(): void {
     const user = this.authService.currentUser();

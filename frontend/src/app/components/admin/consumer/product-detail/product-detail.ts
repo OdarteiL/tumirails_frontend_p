@@ -17,7 +17,8 @@ import {
   Truck,
   Plus,
   Minus,
-  ShoppingCart
+  ShoppingCart,
+  MapPin
 } from 'lucide-angular';
 
 @Component({
@@ -39,6 +40,13 @@ import {
            class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
           <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon>
           <span>Dashboard</span>
+        </a>
+        <a routerLink="/customer/sites" 
+           routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
+           [routerLinkActiveOptions]="{exact: false}" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="MapPin" [size]="20"></lucide-icon>
+          <span>My Sites</span>
         </a>
         <a routerLink="/customer/marketplace" 
            routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
@@ -65,6 +73,13 @@ import {
 
       <div class="animate-in fade-in slide-in-from-left-4 duration-500">
         <!-- Back Button -->
+        <a routerLink="/customer/sites" 
+           routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
+           [routerLinkActiveOptions]="{exact: false}" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="MapPin" [size]="20"></lucide-icon>
+          <span>My Sites</span>
+        </a>
         <button routerLink="/customer/marketplace" class="flex items-center gap-2 text-slate-500 font-bold hover:text-primary mb-8 transition-colors group">
           <lucide-icon [img]="ArrowLeft" [size]="20" class="group-hover:-translate-x-1 transition-transform"></lucide-icon>
           Back to Marketplace
@@ -184,6 +199,7 @@ export class ProductDetailComponent implements OnInit {
   readonly Plus = Plus;
   readonly Minus = Minus;
   readonly ShoppingCart = ShoppingCart;
+  readonly MapPin = MapPin;
 
   ngOnInit(): void {
     const user = this.authService.currentUser();

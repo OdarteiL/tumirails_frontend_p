@@ -5,6 +5,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { AdminLayoutComponent } from '../../admin-layout/admin-layout';
 import { AuthService } from '../../../../services/auth.service';
 import { SiteAssessmentService, SiteAssessment } from '../../../../services/site-assessment.service';
+import { SitesService } from '../../../../services/sites.service';
+import { Site } from '../../../../models/site.model';
 import {
     LucideAngularModule, LayoutDashboard, History, Settings,
     ClipboardCheck, Calendar, MapPin, Clock, ShoppingBag, Plus, X, CheckCircle, AlertCircle
@@ -20,12 +22,14 @@ import {
 export class SiteAssessmentsComponent implements OnInit {
     private authService = inject(AuthService);
     private assessmentService = inject(SiteAssessmentService);
+    private sitesService = inject(SitesService);
     private fb = inject(FormBuilder);
 
     userName = signal('');
     userRole = signal('');
     userInitials = signal('');
     assessments = signal<SiteAssessment[]>([]);
+    sites = signal<Site[]>([]);
     showForm = signal(false);
     isSubmitting = signal(false);
     successMessage = signal('');
@@ -65,6 +69,10 @@ export class SiteAssessmentsComponent implements OnInit {
             this.userInitials.set(`${user.first_name?.[0] || 'U'}${user.last_name?.[0] || ''}`);
         }
         this.loadAssessments();
+        this.sitesService.getSites().subscribe({
+            next: (res) => this.sites.set(res.data),
+            error: () => {}
+        });
     }
 
     loadAssessments(): void {
@@ -91,6 +99,14 @@ export class SiteAssessmentsComponent implements OnInit {
                 this.isSubmitting.set(false);
             }
         });
+    }
+
+    onSiteSelect(event: Event): void {
+        const id = (event.target as HTMLSelectElement).value;
+        if (id) {
+            const site = this.sites().find(s => s.id === +id);
+            if (site) this.form.patchValue({ address: site.address });
+        }
     }
 
     statusClass(status: string): string {

@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AdminLayoutComponent } from '../../admin-layout/admin-layout';
 import { AuthService } from '../../../../services/auth.service';
-import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, User, Lock, Bell, ClipboardCheck } from 'lucide-angular';
+import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, User, Lock, Bell, ClipboardCheck, MapPin } from 'lucide-angular';
 
 @Component({
   selector: 'app-customer-settings',
@@ -24,6 +24,13 @@ import { LucideAngularModule, LayoutDashboard, ShoppingBag, History, Settings, U
            class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
           <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon>
           <span>Dashboard</span>
+        </a>
+        <a routerLink="/customer/sites" 
+           routerLinkActive="!bg-white/10 !text-secondary shadow-inner"
+           [routerLinkActiveOptions]="{exact: false}" 
+           class="flex items-center gap-4 px-5 py-3.5 rounded-xl text-white/60 hover:text-white hover:bg-white/5 hover:translate-x-1 transition-all duration-300 font-medium text-[0.95rem] mb-2 group">
+          <lucide-icon [img]="MapPin" [size]="20"></lucide-icon>
+          <span>My Sites</span>
         </a>
         <a routerLink="/customer/marketplace" 
            routerLinkActive="!bg-white/10 !text-secondary shadow-inner" 
@@ -187,6 +194,7 @@ export class CustomerSettingsComponent implements OnInit {
   readonly Lock = Lock;
   readonly Bell = Bell;
   readonly ClipboardCheck = ClipboardCheck;
+  readonly MapPin = MapPin;
 
   ngOnInit(): void {
     const user = this.authService.currentUser();
