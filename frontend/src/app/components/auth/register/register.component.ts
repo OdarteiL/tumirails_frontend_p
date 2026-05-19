@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LucideAngularModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -16,6 +17,9 @@ export class RegisterComponent {
   isLoading = signal(false);
   errorMessage = signal('');
   backendErrors = signal<Record<string, string[]>>({});
+  showPassword = false;
+  readonly Eye = Eye;
+  readonly EyeOff = EyeOff;
 
   passwordMatchValidator(form: FormGroup): { [key: string]: boolean } | null {
     const password = form.get('password');

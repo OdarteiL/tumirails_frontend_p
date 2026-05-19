@@ -58,12 +58,19 @@
         <div class="field-row">
           <div class="field">
             <label for="password">Password</label>
-            <input id="password" type="password" formControlName="password" placeholder="••••••••">
+            <div class="password-wrapper">
+              <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="••••••••">
+              <button type="button" class="toggle-password" (click)="showPassword = !showPassword" aria-label="Toggle password visibility">
+                <lucide-icon [img]="showPassword ? EyeOff : Eye" [size]="18"></lucide-icon>
+              </button>
+            </div>
             @if (getFieldError('password')) { <span class="field-error">{{ getFieldError('password') }}</span> }
           </div>
           <div class="field">
             <label for="password_confirmation">Confirm Password</label>
-            <input id="password_confirmation" type="password" formControlName="password_confirmation" placeholder="••••••••">
+            <div class="password-wrapper">
+              <input id="password_confirmation" [type]="showPassword ? 'text' : 'password'" formControlName="password_confirmation" placeholder="••••••••">
+            </div>
             @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('password_confirmation')?.touched) {
               <span class="field-error">Passwords do not match</span>
             }

@@ -28,7 +28,12 @@
 
         <div class="field">
           <label for="password">Password</label>
-          <input id="password" type="password" formControlName="password" placeholder="••••••••">
+          <div class="password-wrapper">
+            <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="••••••••">
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword" aria-label="Toggle password visibility">
+              <lucide-icon [img]="showPassword ? EyeOff : Eye" [size]="18"></lucide-icon>
+            </button>
+          </div>
           @if (getFieldError('password')) {
             <span class="field-error">{{ getFieldError('password') }}</span>
           }
