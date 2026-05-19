@@ -1,4 +1,4 @@
-import { Component, signal, input, inject } from '@angular/core';
+import { Component, signal, input, inject, HostListener } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import {
     LucideAngularModule,
@@ -34,6 +34,7 @@ export class AdminLayoutComponent {
     userInitials = input<string>('JS');
 
     isSidebarOpen = signal(false);
+    isProfileDropdownOpen = signal(false);
 
     // Icons for template
     readonly Menu = Menu;
@@ -45,6 +46,29 @@ export class AdminLayoutComponent {
 
     toggleSidebar() {
         this.isSidebarOpen.update(v => !v);
+    }
+
+    toggleProfileDropdown() {
+        this.isProfileDropdownOpen.update(v => !v);
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.user-profile')) {
+            this.isProfileDropdownOpen.set(false);
+        }
+    }
+
+    get settingsLink(): string {
+        const user = this.authService.currentUser();
+        if (!user) return '/customer/settings';
+        switch (user.role) {
+            case 'admin': return '/admin/settings';
+            case 'provider': return '/vendor/settings';
+            case 'installer': return '/installer/settings';
+            default: return '/customer/settings';
+        }
     }
 
     logout(event: Event) {

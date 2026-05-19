@@ -40,7 +40,7 @@
             </div>
 
             <div class="header-right">
-                <div class="user-profile group">
+                <div class="user-profile group relative" (click)="toggleProfileDropdown()">
                     <div class="user-avatar bg-gradient-to-br from-primary to-indigo-600">
                         {{ userInitials() }}
                     </div>
@@ -50,6 +50,19 @@
                     </div>
                     <lucide-icon [img]="ChevronDown" [size]="16"
                         class="text-slate-300 group-hover:text-primary transition-colors ml-1"></lucide-icon>
+
+                    <!-- Dropdown Menu -->
+                    <div *ngIf="isProfileDropdownOpen()" class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
+                        <a [routerLink]="settingsLink" (click)="isProfileDropdownOpen.set(false)" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                            <lucide-icon [img]="ChevronDown" [size]="16"></lucide-icon>
+                            <span>Settings</span>
+                        </a>
+                        <hr class="my-1 border-slate-100">
+                        <a href="#" (click)="logout($event); isProfileDropdownOpen.set(false)" class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            <lucide-icon [img]="LogOut" [size]="16"></lucide-icon>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </header>
