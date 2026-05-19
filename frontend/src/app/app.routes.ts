@@ -25,6 +25,8 @@ import { AdminAddUserComponent } from './components/admin/users/admin-add-user';
 import { AdminSettingsComponent } from './components/admin/settings/admin-settings';
 import { MarketplaceComponent } from './components/admin/consumer/marketplace/marketplace';
 import { ProductDetailComponent } from './components/admin/consumer/product-detail/product-detail';
+import { RegisterVendorComponent } from './components/auth/register-vendor/register-vendor.component';
+import { RegisterInstallerComponent } from './components/auth/register-installer/register-installer.component';
 import { HomeComponent } from './components/guest/pages/home/home';
 import { AboutComponent } from './components/guest/pages/about/about';
 import { ConsumersComponent } from './components/guest/pages/consumers/consumers';
@@ -106,6 +108,8 @@ export const routes: Routes = [
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'register/vendor', component: RegisterVendorComponent },
+  { path: 'register/installer', component: RegisterInstallerComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'dashboard', redirectTo: 'customer/dashboard' },

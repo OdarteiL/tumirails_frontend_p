@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { LucideAngularModule,Menu,X,ChevronDown } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -22,10 +23,21 @@ export class NavbarComponent {
 
   @ViewChild('servicesDropdown') servicesDropdown?: ElementRef;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, public authService: AuthService) {
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: NavigationEnd) => {
       this.isHomePage = e.urlAfterRedirects === '/';
     });
+  }
+
+  get dashboardLink(): string {
+    const user = this.authService.currentUser();
+    if (!user) return '/login';
+    switch (user.role) {
+      case 'admin': return '/admin/dashboard';
+      case 'provider': return '/vendor/dashboard';
+      case 'installer': return '/installer/dashboard';
+      default: return '/customer/dashboard';
+    }
   }
 
   @HostListener('window:scroll')

@@ -1,0 +1,90 @@
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-inner">
+      <a routerLink="/" class="auth-logo">
+        <img src="assets/tumi_logo.png" alt="Tumirails">
+      </a>
+
+      <h1 class="auth-heading">installer registration</h1>
+      <p class="auth-subtext">Register as a certified solar installer on Tumirails.</p>
+
+      @if (errorMessage()) {
+        <div class="auth-error">{{ errorMessage() }}</div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="field-row">
+          <div class="field">
+            <label for="first_name">First Name</label>
+            <input id="first_name" type="text" formControlName="first_name" placeholder="John">
+            @if (getFieldError('first_name')) { <span class="field-error">{{ getFieldError('first_name') }}</span> }
+          </div>
+          <div class="field">
+            <label for="last_name">Last Name</label>
+            <input id="last_name" type="text" formControlName="last_name" placeholder="Doe">
+            @if (getFieldError('last_name')) { <span class="field-error">{{ getFieldError('last_name') }}</span> }
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input id="email" type="email" formControlName="email" placeholder="you@example.com">
+          @if (getFieldError('email')) { <span class="field-error">{{ getFieldError('email') }}</span> }
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone (optional)</label>
+          <input id="phone" type="tel" formControlName="phone" placeholder="+233 XX XXX XXXX">
+        </div>
+
+        <div class="field">
+          <label for="company_name">Company Name</label>
+          <input id="company_name" type="text" formControlName="company_name" placeholder="Solar Installers GH">
+          @if (getFieldError('company_name')) { <span class="field-error">{{ getFieldError('company_name') }}</span> }
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="license_number">License Number</label>
+            <input id="license_number" type="text" formControlName="license_number" placeholder="LIC-XXXXXXX">
+            @if (getFieldError('license_number')) { <span class="field-error">{{ getFieldError('license_number') }}</span> }
+          </div>
+          <div class="field">
+            <label for="years_experience">Years of Experience</label>
+            <input id="years_experience" type="number" formControlName="years_experience" placeholder="5">
+            @if (getFieldError('years_experience')) { <span class="field-error">{{ getFieldError('years_experience') }}</span> }
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="service_areas">Service Areas (comma-separated)</label>
+          <input id="service_areas" type="text" formControlName="service_areas" placeholder="Accra, Kumasi, Tamale">
+          @if (getFieldError('service_areas')) { <span class="field-error">{{ getFieldError('service_areas') }}</span> }
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" type="password" formControlName="password" placeholder="••••••••">
+            @if (getFieldError('password')) { <span class="field-error">{{ getFieldError('password') }}</span> }
+          </div>
+          <div class="field">
+            <label for="password_confirmation">Confirm Password</label>
+            <input id="password_confirmation" type="password" formControlName="password_confirmation" placeholder="••••••••">
+            @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('password_confirmation')?.touched) {
+              <span class="field-error">Passwords do not match</span>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          {{ isLoading() ? 'Creating account...' : 'Register as Installer' }}
+        </button>
+
+        <p class="auth-switch">Already have an account? <a routerLink="/login">Login</a></p>
+        <p class="auth-switch">Register as <a routerLink="/register">Customer</a> or <a routerLink="/register/vendor">Vendor</a></p>
+      </form>
+    </div>
+  </div>
+  <div class="auth-right"></div>
+</div>

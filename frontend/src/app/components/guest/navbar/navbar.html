@@ -14,15 +14,15 @@
             <a routerLink="/estimator" routerLinkActive="active" class="nav-link">SOLAR FIT CHECK</a>
         </div>
 
-        <!-- Right: Sign Up + Search -->
+        <!-- Right: Sign Up / Dashboard -->
         <div class="navbar-actions">
-            <a routerLink="/register" class="btn-signup">SIGN UP HERE</a>
-            <div class="search-bar">
-                <input type="text" placeholder="Search..." class="search-input" />
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-                </svg>
-            </div>
+            <ng-container *ngIf="authService.isAuthenticated(); else guestActions">
+                <a [routerLink]="dashboardLink" class="btn-signup">DASHBOARD</a>
+            </ng-container>
+            <ng-template #guestActions>
+                <a routerLink="/login" class="btn-signup" style="margin-right: 0.5rem;">SIGN IN</a>
+                <a routerLink="/register" class="btn-signup">SIGN UP</a>
+            </ng-template>
         </div>
 
         <!-- Mobile Hamburger -->
@@ -49,8 +49,13 @@
             <a routerLink="/estimator" routerLinkActive="active" (click)="toggleMenu()" class="mobile-link">SOLAR FIT CHECK</a>
         </div>
         <div class="mobile-actions">
-            <a routerLink="/login" (click)="toggleMenu()" class="btn-signup w-full text-center">SIGN IN</a>
-            <a routerLink="/register" (click)="toggleMenu()" class="btn-signup w-full text-center">SIGN UP HERE</a>
+            <ng-container *ngIf="authService.isAuthenticated(); else guestMobileActions">
+                <a [routerLink]="dashboardLink" (click)="toggleMenu()" class="btn-signup w-full text-center">DASHBOARD</a>
+            </ng-container>
+            <ng-template #guestMobileActions>
+                <a routerLink="/login" (click)="toggleMenu()" class="btn-signup w-full text-center">SIGN IN</a>
+                <a routerLink="/register" (click)="toggleMenu()" class="btn-signup w-full text-center">SIGN UP</a>
+            </ng-template>
         </div>
     </div>
 </div>
